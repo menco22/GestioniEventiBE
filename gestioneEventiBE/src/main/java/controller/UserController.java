@@ -28,11 +28,10 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.compression.*;
 import dao.LocationDao;
 import dao.UserDao;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
 import beans.CredentialBean;
 import beans.LocationBean;
 import beans.UserBean;
@@ -144,7 +143,7 @@ public class UserController extends HttpServlet {
 		System.out.print(user);
 		if(user != null) {
 			LocalDate now = LocalDate.now();
-			Serializable jwtToken = Jwts.builder()
+			String jwtToken = Jwts.builder()
 			        .claim("username", user.getUsername())
 			        .claim("password", user.getPassword())
 			        .setSubject("jane")
