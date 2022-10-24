@@ -140,13 +140,13 @@ public class UserController extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.print(user);
+		//System.out.print(user);
 		if(user != null) {
 			LocalDate now = LocalDate.now();
 			String jwtToken = Jwts.builder()
-			        .claim("username", user.getUsername())
-			        .claim("password", user.getPassword())
-			        .setSubject("jane")
+			        .claim("username", credential.getUsername())
+			        .claim("password", credential.getPassword())
+			        .setSubject("user")
 			        .compact();			
 			System.out.println(jwtToken);		 
 
