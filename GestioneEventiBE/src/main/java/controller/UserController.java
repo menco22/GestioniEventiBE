@@ -3,6 +3,7 @@ package controller;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,16 +12,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.security.Key;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +34,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.compression.*;
 import dao.LocationDao;
 import dao.UserDao;
@@ -41,6 +47,7 @@ import beans.UserBean;
  */
 public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final long VALIDITY_TIME_MS = 5000;
 	private Connection connection;
        
     /**
@@ -144,11 +151,17 @@ public class UserController extends HttpServlet {
 		if(user != null) {
 			LocalDate now = LocalDate.now();
 			String jwtToken = Jwts.builder()
-			        .claim("username", user.getUsername())
-			        .claim("password", user.getPassword())
-			        .setSubject("user")
-			        .compact();			
-			System.out.println(jwtToken);		 
+					   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*60))
+					   .setSubject(user.getUsername())
+					   .claim("id", user.getIdUser())
+					   .claim("email", user.getEmail())
+					   .claim("roles", user.getIdRole())
+					  //.signWith( SignatureAlgorithm.HS512, JwtConstants.SECRET)
+					   .compact();			
+			System.out.println(jwtToken);		
+			Cookie cookie = new Cookie("loginCookie", jwtToken);
+
+			response.addCookie(cookie);
 
 		}
 		//doGet(request, response);
