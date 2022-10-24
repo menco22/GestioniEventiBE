@@ -1,6 +1,8 @@
 package beans;
 
-public class UserBean {
+import java.lang.reflect.Type;
+
+public class UserBean implements Type {
 	
 	private int idUser;
 	private String name;

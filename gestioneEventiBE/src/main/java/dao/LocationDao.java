@@ -69,7 +69,7 @@ public class LocationDao {
 			// A prepared statement is used here because the query contains parameters
 			statement = connection.prepareStatement(query);
 			// This sets the article's code as first parameter of the query
-			
+			statement.setInt(1, type);
 			result = statement.executeQuery();
 			// If there is a match the entire row is returned here as a result
 			while(result.next()) {

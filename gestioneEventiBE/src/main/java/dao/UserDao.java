@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
 import beans.UserBean;
 
 public class UserDao {
@@ -69,16 +71,19 @@ public class UserDao {
 		int r=0;
 		try {
 			statement = connection.prepareStatement(query);
+			statement.setString(1, username);
+			statement.setString(2, password);
 			result = statement.executeQuery();
 			while(result.next()) {
-				int idUser = result.getInt("id_user");
+				user = new UserBean(result.getInt("id_user"), result.getString("name"), result.getString("surname"), result.getString("email"),result.getString("username"), result.getString("password"), result.getInt("role_id"));
+				/*int idUser = result.getInt("id_user");
 				String name = result.getString("name");
 				String surname = result.getString("surname");
 				String email = result.getString("email");
-				//String username = result.getString("username");
-				//String password = result.getString("password");
+				username = result.getString("username");
+				password = result.getString("password");
 				int roleId = result.getInt("role_id");
-				user = new UserBean( idUser, name, surname, email, username, password, roleId);
+				user = new UserBean( idUser, name, surname, email, username, password, roleId);*/
 				
 				
 			}

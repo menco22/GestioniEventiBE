@@ -23,5 +23,8 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jstl-1.2.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/mysql-connector-java-8.0.29.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/tomcat-servlet-api-10.0.0-M4.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/java-json.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jjwt-impl-0.11.2.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jjwt-impl-0.11.5.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
