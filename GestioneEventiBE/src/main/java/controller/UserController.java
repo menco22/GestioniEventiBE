@@ -144,8 +144,8 @@ public class UserController extends HttpServlet {
 		if(user != null) {
 			LocalDate now = LocalDate.now();
 			String jwtToken = Jwts.builder()
-			        .claim("username", credential.getUsername())
-			        .claim("password", credential.getPassword())
+			        .claim("username", user.getUsername())
+			        .claim("password", user.getPassword())
 			        .setSubject("user")
 			        .compact();			
 			System.out.println(jwtToken);		 
