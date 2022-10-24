@@ -6,7 +6,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,11 +22,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
 
-import com.google.gson.Gson;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import io.jsonwebtoken.impl.compression.*;
 import dao.LocationDao;
 import dao.UserDao;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import beans.CredentialBean;
 import beans.LocationBean;
 import beans.UserBean;
 
@@ -73,6 +84,7 @@ public class UserController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		UserDao userDao = new UserDao(this.connection);
+		UserBean user = null;
 		String userResponse = "";
 		try {
 			ArrayList<UserBean> userList = userDao.getUserList();
@@ -92,29 +104,52 @@ public class UserController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		connectToDb();
-		response.setContentType("text/html");
-		String username=request.getParameter("username");
-		String password=request.getParameter("password");
-		UserDao loginDao=new UserDao(this.connection);
-		UserBean user=null;
+		StringBuilder buffer = new StringBuilder();
+	    BufferedReader reader = request.getReader();
+	    String line;
+	    while ((line = reader.readLine()) != null) {
+	        buffer.append(line);
+	        buffer.append(System.lineSeparator());
+	    }
+	    String data = buffer.toString();
+	    System.out.println("i parametri sono:" +data);
+	   
+	    String username ="";
+	    String password = "";
+	    JSONObject jsonObject = null;
 		try {
-			user = loginDao.getUser(username, password);
-		} catch (SQLException e) {
+			 jsonObject = new JSONObject(data);
+			username = jsonObject.getString("username");
+			password = jsonObject.getString("password");
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	    
+	    System.out.println(username + " " + password);
+		//response.setContentType("text/html");
+		//String password=request.getParameter("password");
+		UserDao loginDao=new UserDao(this.connection);
+		UserBean user = null;
+		CredentialBean credential= null;
+		Gson datas = new Gson();
+		try {
+		credential = datas.fromJson(data, CredentialBean.class);
+		user = loginDao.getUser(credential.getUsername(), credential.getPassword());
+			//user = loginDao.getUser(username, password);
+		} catch (JsonSyntaxException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.print(user);
 		if(user != null) {
-			//LocalDate now = LocalDate.now();
-			/*String jwtToken = Jwts.builder()
-			        .claim("username", username)
-			        .claim("password", password)
+			LocalDate now = LocalDate.now();
+			Serializable jwtToken = Jwts.builder()
+			        .claim("username", user.getUsername())
+			        .claim("password", user.getPassword())
 			        .setSubject("jane")
-			        .setId(UUID.randomUUID().toString())
-			        .setIssuedAt(Date.from(now))
-			        .setExpiration(Date.from(now.plus(5l, ChronoUnit.MINUTES)))
-			        .compact();*/
-			 
+			        .compact();			
+			System.out.println(jwtToken);		 
 
 		}
 		//doGet(request, response);

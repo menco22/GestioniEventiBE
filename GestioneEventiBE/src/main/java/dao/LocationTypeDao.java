@@ -20,7 +20,7 @@ public class LocationTypeDao {
 		this.connection = connection;
 	}
 		
-		public ArrayList<LocationTypeBean> getUser () throws SQLException {
+		public ArrayList<LocationTypeBean> getLocationType () throws SQLException {
 			ArrayList <LocationTypeBean> typeList = new ArrayList();
 			
 			query = "SELECT * FROM t_location_types";
