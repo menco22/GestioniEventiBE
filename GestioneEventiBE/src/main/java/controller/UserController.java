@@ -45,7 +45,7 @@ import beans.UserBean;
 /**
  * Servlet implementation class UserController
  */
-public class LoginController extends HttpServlet {
+public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final long VALIDITY_TIME_MS = 5000;
 	private Connection connection;
@@ -53,7 +53,7 @@ public class LoginController extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginController() {
+    public UserController() {
         super();
         // TODO Auto-generated constructor stub
     }
