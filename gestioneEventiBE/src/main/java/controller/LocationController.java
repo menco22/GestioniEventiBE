@@ -3,6 +3,7 @@ package controller;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +12,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.*;
+
+import org.apache.http.protocol.HttpContext;
 
 import com.google.gson.Gson;
 
@@ -20,7 +24,7 @@ import dao.LocationDao;
 /**
  * Servlet implementation class LocationController
  */
-public class LocationController extends HttpServlet {
+public class LocationController extends HttpServlet implements HttpContext {
 	private static final long serialVersionUID = 1L;
     private Connection connection; 
     /**
@@ -65,7 +69,9 @@ public class LocationController extends HttpServlet {
 		// TODO Auto-generated method stub
 		LocationDao locationDao = new LocationDao(this.connection);
 		String locationResponse = "";
-		try {
+		try { 
+			Cookie[] cookies = request.getCookies();
+			System.out.println(cookies);
 			ArrayList<LocationBean> locationList = locationDao.getLocations();
 		    locationResponse = new Gson().toJson(locationList);
 		} catch (SQLException e) {
@@ -84,6 +90,24 @@ public class LocationController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+
+	@Override
+	public Object getAttribute(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object removeAttribute(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAttribute(String arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

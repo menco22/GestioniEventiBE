@@ -160,7 +160,8 @@ public class LoginController extends HttpServlet {
 					   .compact();			
 			System.out.println(jwtToken);		
 			Cookie cookie = new Cookie("loginCookie", jwtToken);
-
+			//cookie.setMaxAge(60*60);
+			cookie.setPath("/LocationController");
 			response.addCookie(cookie);
 
 		}
