@@ -162,6 +162,7 @@ public class UserController extends HttpServlet {
 			Cookie cookie = new Cookie("loginCookie", jwtToken);
 			//cookie.setMaxAge(60*60);
 			cookie.setPath("/LocationController");
+			cookie.setHttpOnly(true);
 			response.addCookie(cookie);
 
 		}
