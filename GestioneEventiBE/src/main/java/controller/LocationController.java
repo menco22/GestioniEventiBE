@@ -72,8 +72,13 @@ public class LocationController extends HttpServlet implements HttpContext {
 		try { 
 			Cookie[] cookies = request.getCookies();
 			System.out.println(cookies);
-			ArrayList<LocationBean> locationList = locationDao.getLocations();
-		    locationResponse = new Gson().toJson(locationList);
+			if(cookies!=null) { 
+				ArrayList<LocationBean> locationList = locationDao.getLocations();
+				locationResponse = new Gson().toJson(locationList);
+			}else {
+				response.sendError(401,"Effettuare login");
+			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
