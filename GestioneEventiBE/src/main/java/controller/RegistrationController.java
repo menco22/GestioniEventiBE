@@ -11,6 +11,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import beans.RegistrationBean;
+import beans.UserBean;
+import dao.UserDao;
 
 /**
  * Servlet implementation class RegistrationController
@@ -76,6 +87,43 @@ public class RegistrationController extends HttpServlet {
 	    }
 	    String data = buffer.toString();
 	    System.out.println("i parametri sono:" +data);
+	    
+	    String name ="";
+	    String surname ="";
+	    String email ="";
+	    String username ="";
+	    String password = "";
+	    Integer idRole = null;
+	    JSONObject jsonObject = null;
+		try {
+			 jsonObject = new JSONObject(data);
+			 name = jsonObject.getString("name");
+			 surname = jsonObject.getString("surname");
+			 email = jsonObject.getString("email");
+			 username = jsonObject.getString("username");
+			 password = jsonObject.getString("password");
+			 idRole = jsonObject.getInt("id_role");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(name+" "+surname+" "+email+" "+username + " " + password+" "+idRole);
+		UserDao registrationDao = new UserDao(this.connection);
+		RegistrationBean registration = null;
+		boolean addedUser = false;
+		//UserBean newUser = null;
+		Gson datas = new Gson();
+		try {
+			registration = datas.fromJson(data, RegistrationBean.class );
+			addedUser = registrationDao.addUser(registration.getName(), registration.getSurname(),
+								registration.getEmail(), registration.getUsername(), registration.getPassword(), registration.getIdRole());
+			if(addedUser == true ) {
+				System.out.println("Utente aggiunto con successo");
+			}
+		}catch(JsonSyntaxException | SQLException e) {
+			e.printStackTrace();
+		}
 		//doGet(request, response);
 	}
 
