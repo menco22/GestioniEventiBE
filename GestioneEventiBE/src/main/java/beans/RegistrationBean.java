@@ -1,6 +1,14 @@
 package beans;
 
 public class RegistrationBean {
+	
+	private String name;
+	private String surname;
+	private String username;
+	private String email;
+	private String password;
+	private int idRole;
+	
 	public String getName() {
 		return name;
 	}
@@ -13,6 +21,14 @@ public class RegistrationBean {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
+	
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	public String getEmail() {
 		return email;
 	}
@@ -31,10 +47,5 @@ public class RegistrationBean {
 	public void setIdRole(int idRole) {
 		this.idRole = idRole;
 	}
-	private String name;
-	private String surname;
-	private String email;
-	private String password;
-	private int idRole;
 
 }
