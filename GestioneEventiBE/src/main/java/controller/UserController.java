@@ -161,11 +161,10 @@ public class UserController extends HttpServlet {
 			System.out.println(jwtToken);		
 			Cookie cookie = new Cookie("loginCookie", jwtToken);
 			//cookie.setMaxAge(60*60);
-			System.out.println("ciao");
 			cookie.setPath("/LocationController");
 			cookie.setHttpOnly(true);
 			response.addCookie(cookie);
-
+            //TODO: if user == null
 		}
 		//doGet(request, response);
 	}

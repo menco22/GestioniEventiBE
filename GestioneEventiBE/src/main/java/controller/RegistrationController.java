@@ -93,22 +93,8 @@ public class RegistrationController extends HttpServlet {
 	    String email ="";
 	    String username ="";
 	    String password = "";
-	    Integer idRole = null;
+	    int idRole = -1;
 	    JSONObject jsonObject = null;
-		try {
-			 jsonObject = new JSONObject(data);
-			 name = jsonObject.getString("name");
-			 surname = jsonObject.getString("surname");
-			 email = jsonObject.getString("email");
-			 username = jsonObject.getString("username");
-			 password = jsonObject.getString("password");
-			 idRole = jsonObject.getInt("id_role");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println(name+" "+surname+" "+email+" "+username + " " + password+" "+idRole);
 		UserDao registrationDao = new UserDao(this.connection);
 		RegistrationBean registration = null;
 		boolean addedUser = false;
@@ -126,5 +112,5 @@ public class RegistrationController extends HttpServlet {
 		}
 		//doGet(request, response);
 	}
-
+   //CHECK: stampare la query
 }
