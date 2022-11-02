@@ -3,6 +3,7 @@ package controller;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,12 +24,14 @@ import com.google.gson.JsonSyntaxException;
 import beans.RegistrationBean;
 import beans.UserBean;
 import dao.UserDao;
+import io.jsonwebtoken.Jwts;
 
 /**
  * Servlet implementation class RegistrationController
  */
 public class RegistrationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final int VALIDITY_TIME_MS = 0;
 	private Connection connection;
        
     /**
@@ -106,6 +110,20 @@ public class RegistrationController extends HttpServlet {
 								registration.getEmail(), registration.getUsername(), registration.getPassword(), registration.getIdRole());
 			if(addedUser == true ) {
 				System.out.println("Utente aggiunto con successo");
+				String jwtToken = Jwts.builder()
+						   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*60))
+						   .setSubject(registration.getUsername())
+						   //.claim("id", registration.getIdUser())
+						   .claim("email", registration.getEmail())
+						   .claim("roles", registration.getIdRole())
+						  //.signWith( SignatureAlgorithm.HS512, JwtConstants.SECRET)
+						   .compact();
+				System.out.println(jwtToken);		
+				Cookie cookie = new Cookie("signInCookie", jwtToken);
+				//cookie.setMaxAge(60*60);
+				//cookie.setPath("/LocationController");
+				cookie.setHttpOnly(true);
+				response.addCookie(cookie);
 			}
 		}catch(JsonSyntaxException | SQLException e) {
 			e.printStackTrace();
