@@ -9,8 +9,9 @@ public class EventBean {
 	private int idCreator;
 	private int idLocation;
 	private String eventName;
-	private LocalDateTime date;
-	public EventBean(int idEvent, int idCreator, int idLocation, String eventName, LocalDateTime date) {
+	private String date;
+
+	public EventBean(int idEvent, int idCreator, int idLocation, String eventName, String date) {
 		super();
 		this.idCreator = idCreator;
 		this.idLocation = idLocation;
@@ -42,10 +43,10 @@ public class EventBean {
 	public void setEventName(String eventName) {
 		this.eventName = eventName;
 	}
-	public LocalDateTime getDate() {
+	public String getDate() {
 		return date;
 	}
-	public void setDate(LocalDateTime date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
