@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.*;
 
@@ -22,7 +23,7 @@ public class EventDao {
 		this.connection = connection;
 	}
 	
-	public ArrayList<EventBean> getEvent () throws SQLException {
+	public ArrayList<EventBean> getEvents () throws SQLException {
 		ArrayList <EventBean> eventList = new ArrayList();
 		
 		query = "SELECT * FROM t_events";
@@ -40,7 +41,9 @@ public class EventDao {
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
 				String eventName = result.getString("name");
-				LocalDateTime date = (LocalDateTime) result.getObject("date_time");
+				String date = (String) result.getObject("data_time");
+				/*DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				LocalDateTime dateTime = LocalDateTime.parse(date, formatter);*/
 				EventBean event = new EventBean( idEvent, idCreator, idLocation, eventName, date);
 				eventList.add(event);
 			}

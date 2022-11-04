@@ -10,7 +10,6 @@ public class EventBean {
 	private int idLocation;
 	private String eventName;
 	private String date;
-
 	public EventBean(int idEvent, int idCreator, int idLocation, String eventName, String date) {
 		super();
 		this.idCreator = idCreator;
