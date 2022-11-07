@@ -76,6 +76,8 @@ public class EventController extends HttpServlet {
 		String eventResponse ="";
 		try {
 			ArrayList <EventBean> eventList = eventDao.getEvents();
+			int id0 = eventList.get(0).getIdEvent();
+			System.out.println(id0);
 			//System.out.println(eventList);
 			   eventResponse = new Gson().toJson(eventList);
 				
@@ -106,6 +108,10 @@ public class EventController extends HttpServlet {
 		Gson datas = new Gson();
 		try {
 			newEvent = datas.fromJson(data, NewEventBean.class );
+			System.out.println(newEvent.getIdCreator());
+			System.out.println(newEvent.getIdLocation());
+			System.out.println(newEvent.getEventName());
+			System.out.println(newEvent.getDate());
 			addedEvent = newEventDao.addEvent(newEvent.getIdCreator(), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate());
 			if(addedEvent == true ) {
 				System.out.println("Evento aggiunto con successo");

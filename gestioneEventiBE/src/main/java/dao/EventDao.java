@@ -41,10 +41,13 @@ public class EventDao {
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
 				String eventName = result.getString("name");
-				String date = (String) result.getObject("data_time");
-				/*DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-				LocalDateTime dateTime = LocalDateTime.parse(date, formatter);*/
-				EventBean event = new EventBean( idEvent, idCreator, idLocation, eventName, date);
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				String formattedDateTime = date.format(formatter); 
+				System.out.println(idEvent);
+				EventBean event = new EventBean( idEvent, idCreator, idLocation, eventName, formattedDateTime);
+				int id0 = event.getIdEvent();
+				System.out.println(id0);
 				eventList.add(event);
 			}
 		} catch (SQLException e) {
@@ -67,17 +70,18 @@ public class EventDao {
 		return eventList;
 	}
 	
-	public boolean addEvent( int idCreator, int idLocation, String eventName, LocalDateTime date) throws SQLException
+	public boolean addEvent( int idCreator, int idLocation, String eventName, String date) throws SQLException
 	{
-			String query = "INSERT INTO t_events (id_creator, id_location, name, date_time) VALUES(?, ?, ?, ?)";
+			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?)";
 			int r=0;
 			try {
+				LocalDateTime data = LocalDateTime.parse(date);				
 				statement = connection.prepareStatement(query);
 				//statement.setInt(1, id_person);
 				statement.setInt(1, idCreator);
 				statement.setInt(2, idLocation);
 				statement.setString(3, eventName);
-				statement.setObject(4, date);
+				statement.setObject(4, data);
 			    r=statement.executeUpdate();
 				//result = statement.executeUpdate();
 				// If there is an affected row, it means the user has been added

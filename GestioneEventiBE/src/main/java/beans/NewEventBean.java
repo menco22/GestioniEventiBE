@@ -21,15 +21,15 @@ public class NewEventBean {
 	public void setEventName(String eventName) {
 		this.eventName = eventName;
 	}
-	public LocalDateTime getDate() {
+	public String getDate() {
 		return date;
 	}
-	public void setDate(LocalDateTime date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	private int idCreator;
 	private int idLocation;
 	private String eventName;
-	private LocalDateTime date;
+	private String date;
 
 }

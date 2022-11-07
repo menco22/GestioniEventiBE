@@ -47,7 +47,7 @@ import beans.UserBean;
  */
 public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final long VALIDITY_TIME_MS = 5000;
+	private static final long VALIDITY_TIME_MS = 1000;
 	private Connection connection;
        
     /**
@@ -151,7 +151,7 @@ public class UserController extends HttpServlet {
 		if(user != null) {
 			LocalDate now = LocalDate.now();
 			String jwtToken = Jwts.builder()
-					   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*60))
+					   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*3600*4))
 					   .setSubject(user.getUsername())
 					   .claim("id", user.getIdUser())
 					   .claim("email", user.getEmail())

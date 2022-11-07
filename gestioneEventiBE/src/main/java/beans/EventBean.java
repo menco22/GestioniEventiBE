@@ -12,6 +12,7 @@ public class EventBean {
 	private String date;
 	public EventBean(int idEvent, int idCreator, int idLocation, String eventName, String date) {
 		super();
+		this.idEvent = idEvent;
 		this.idCreator = idCreator;
 		this.idLocation = idLocation;
 		this.eventName = eventName;
