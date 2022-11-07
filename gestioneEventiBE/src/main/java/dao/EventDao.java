@@ -74,8 +74,11 @@ public class EventDao {
 	{
 			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?)";
 			int r=0;
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			LocalDateTime data = LocalDateTime.parse(date, formatter);		
+			System.out.println(data);
 			try {
-				LocalDateTime data = LocalDateTime.parse(date);				
+				
 				statement = connection.prepareStatement(query);
 				//statement.setInt(1, id_person);
 				statement.setInt(1, idCreator);
