@@ -42,7 +42,7 @@ public class EventDao {
 				int idLocation = result.getInt("id_location");
 				String eventName = result.getString("name");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
 				System.out.println(idEvent);
 				EventBean event = new EventBean( idEvent, idCreator, idLocation, eventName, formattedDateTime);
@@ -74,7 +74,7 @@ public class EventDao {
 	{
 			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?)";
 			int r=0;
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 			LocalDateTime data = LocalDateTime.parse(date, formatter);		
 			System.out.println(data);
 			try {
