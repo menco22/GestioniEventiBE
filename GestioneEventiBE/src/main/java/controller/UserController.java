@@ -21,6 +21,7 @@ import java.util.Base64;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
@@ -41,6 +42,7 @@ import dao.UserDao;
 import beans.CredentialBean;
 import beans.LocationBean;
 import beans.UserBean;
+import controller.AuthenticationController;
 
 /**
  * Servlet implementation class UserController
@@ -151,7 +153,7 @@ public class UserController extends HttpServlet {
 		if(user != null) {
 			LocalDate now = LocalDate.now();
 			String jwtToken = Jwts.builder()
-					   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*3600*4))
+					   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*3600*5))
 					   .setSubject(user.getUsername())
 					   .claim("id", user.getIdUser())
 					   .claim("email", user.getEmail())
@@ -161,7 +163,8 @@ public class UserController extends HttpServlet {
 			System.out.println(jwtToken);		
 			Cookie cookie = new Cookie("loginCookie", jwtToken);
 			//cookie.setMaxAge(60*60);
-			cookie.setPath("/LocationController");
+			cookie.setMaxAge(5*3600);
+			//cookie.setDomain("localhost:8080/gestioneEventiBE");
 			cookie.setHttpOnly(true);
 			response.addCookie(cookie);
             //TODO: if user == null

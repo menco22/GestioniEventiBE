@@ -44,10 +44,10 @@ public class EventDao {
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
-				System.out.println(idEvent);
+				//System.out.println(idEvent);
 				EventBean event = new EventBean( idEvent, idCreator, idLocation, eventName, formattedDateTime);
-				int id0 = event.getIdEvent();
-				System.out.println(id0);
+				//int id0 = event.getIdEvent();
+				//System.out.println(id0);
 				eventList.add(event);
 			}
 		} catch (SQLException e) {

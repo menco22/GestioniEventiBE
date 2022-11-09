@@ -67,18 +67,16 @@ public class LocationController extends HttpServlet implements HttpContext {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		AuthenticationController auth = new AuthenticationController (request);
+		if(auth.checkToken(request)==true) {
 		LocationDao locationDao = new LocationDao(this.connection);
 		String locationResponse = "";
 		try { 
 			Cookie[] cookies = request.getCookies();
 			System.out.println(cookies);
-			if(cookies!=null) { 
-				ArrayList<LocationBean> locationList = locationDao.getLocations();
-				locationResponse = new Gson().toJson(locationList);
-			}else {
-				response.sendError(401,"Effettuare login");
-			}
-			
+			ArrayList<LocationBean> locationList = locationDao.getLocations();
+			locationResponse = new Gson().toJson(locationList);
+	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -86,6 +84,9 @@ public class LocationController extends HttpServlet implements HttpContext {
 		
 		
 		response.getWriter().append(locationResponse);
+		}else {
+			response.sendError(401,"Effettuare login");
+		}
 		
 	}
 

@@ -25,6 +25,7 @@ import beans.NewEventBean;
 import beans.RegistrationBean;
 import dao.EventDao;
 import dao.UserDao;
+import controller.AuthenticationController;
 
 /**
  * Servlet implementation class EventController
@@ -72,6 +73,10 @@ public class EventController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		AuthenticationController auth = new AuthenticationController(request);
+		if(auth.checkToken(request)==true) {
+			System.out.println("token valido");
+		
 		EventDao eventDao = new EventDao(this.connection);
 		String eventResponse ="";
 		try {
@@ -86,6 +91,9 @@ public class EventController extends HttpServlet {
 			e.printStackTrace();
 		}
 		response.getWriter().append(eventResponse);
+		}else {
+			response.sendError(401,"Effettuare il login");
+		}
 	}
 
 	/**
@@ -93,6 +101,8 @@ public class EventController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		AuthenticationController auth = new AuthenticationController(request); 
+		if(auth.checkToken(request)==true) {
 		connectToDb();
 		StringBuilder buffer = new StringBuilder();
 	    BufferedReader reader = request.getReader();
@@ -120,6 +130,9 @@ public class EventController extends HttpServlet {
 				e.printStackTrace();
 			}
 		//doGet(request, response);
+	}else {
+		response.sendError(401, "Effettuare Login");
+	}
 	}
 
 }
