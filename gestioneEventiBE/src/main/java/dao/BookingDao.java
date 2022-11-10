@@ -65,7 +65,7 @@ public class BookingDao {
 	
 	public boolean addBooking( String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException
 	{
-			String query = "INSERT INTO t_users (code, booking_type, id_user, id_event, id_table) VALUES(?, ?, ?, ?, ?)";
+			String query = "INSERT INTO t_bookings (code, booking_type, id_user, id_event, id_table) VALUES(?, ?, ?, ?, ?)";
 			int r=0;
 			try {
 				statement = connection.prepareStatement(query);
