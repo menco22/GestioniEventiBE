@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -27,9 +28,13 @@ public class AuthenticationController {
 	public boolean checkToken( HttpServletRequest request ) {
 		Cookie[]cookie = request.getCookies();
 		ArrayList <Cookie> cookies = new ArrayList();
-		for(int i=0; i<cookie.length; i++) {
-			cookies.add((Cookie) Array.get(cookie, i));
-		}
+		if(cookie != null) {
+			for(int i=0; i<cookie.length; i++) {
+				cookies.add((Cookie) Array.get(cookie, i));
+			}
+		}else {
+				return false;
+			}
 		//Cookie[] cookies = request.getCookies();
 		if(cookies!=null) {
 			for(int i=0; i<cookies.size(); i++) {
