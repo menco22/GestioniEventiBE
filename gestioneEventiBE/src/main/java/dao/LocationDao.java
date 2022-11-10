@@ -103,7 +103,7 @@ public class LocationDao {
 	
 	public boolean addLocation( String name, String address, int locationType) throws SQLException
 	{
-			String query = "INSERT INTO t_locations (location_name, address, location_type) VALUES(?, ?, ?,)";
+			String query = "INSERT INTO t_locations (location_name, address, location_type) VALUES(?, ?, ?)";
 			int r=0;
 			try {
 				statement = connection.prepareStatement(query);

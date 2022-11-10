@@ -7,6 +7,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,8 +19,10 @@ import java.util.concurrent.*;
 import org.apache.http.protocol.HttpContext;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import beans.LocationBean;
+import beans.NewLocationBean;
 import dao.LocationDao;
 
 /**
@@ -69,21 +73,19 @@ public class LocationController extends HttpServlet implements HttpContext {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController (request);
 		if(auth.checkToken(request)==true) {
-		LocationDao locationDao = new LocationDao(this.connection);
-		String locationResponse = "";
-		try { 
-			Cookie[] cookies = request.getCookies();
-			System.out.println(cookies);
-			ArrayList<LocationBean> locationList = locationDao.getLocations();
-			locationResponse = new Gson().toJson(locationList);
+			LocationDao locationDao = new LocationDao(this.connection);
+			String locationResponse = "";
+			try { 
+				Cookie[] cookies = request.getCookies();
+				System.out.println(cookies);
+				ArrayList<LocationBean> locationList = locationDao.getLocations();
+				locationResponse = new Gson().toJson(locationList);
 	
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		response.getWriter().append(locationResponse);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			response.getWriter().append(locationResponse);
 		}else {
 			response.sendError(401,"Effettuare login");
 		}
@@ -95,7 +97,34 @@ public class LocationController extends HttpServlet implements HttpContext {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		AuthenticationController auth = new AuthenticationController (request);
+		if(auth.checkToken(request)==true) {
+			connectToDb();
+			StringBuilder buffer = new StringBuilder();
+		    BufferedReader reader = request.getReader();
+		    String line;
+		    while ((line = reader.readLine()) != null) {
+		        buffer.append(line);
+		        buffer.append(System.lineSeparator());
+		    }
+		    String data = buffer.toString();
+		    LocationDao newLocationDao = new LocationDao(this.connection);
+		    NewLocationBean newLocation = null;
+		    boolean addedLocation = false;
+		    Gson datas = new Gson();
+		    try {
+		    	newLocation = datas.fromJson(data, NewLocationBean.class);
+		    	addedLocation = newLocationDao.addLocation(newLocation.getLocationName(), newLocation.getLocationAddress(), newLocation.getLocationType());
+		    	if(addedLocation == true) {
+		    		System.out.println("Location aggiunta con successo");
+		    	}
+		    }catch(JsonSyntaxException | SQLException e) {
+				e.printStackTrace();
+		    }
+		}else {
+			response.sendError(401, "Effettuare il login");
+		}
+		//doGet(request, response);
 	}
 
 	@Override
