@@ -70,6 +70,44 @@ public class EventDao {
 		return eventList;
 	}
 	
+	public EventBean getEventById (int idEvent) throws SQLException {
+		String query="SELECT * FROM t_events WHERE id_event = ?";
+		int r=0;
+		EventBean event = null;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idEvent);
+			r=statement.executeUpdate();
+			while(result.next()) {
+			//int idEvent = result.getInt("id_event");
+				int idCreator = result.getInt("id_creator");
+				int idLocation = result.getInt("id_location");
+				String eventName = result.getString("name");
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				String formattedDateTime = date.format(formatter); 
+				event = new EventBean( idEvent, idCreator, idLocation, eventName, formattedDateTime);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+			return event;
+			
+	}
+	
 	public boolean addEvent( int idCreator, int idLocation, String eventName, String date) throws SQLException
 	{
 			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?)";
