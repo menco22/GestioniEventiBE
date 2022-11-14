@@ -63,6 +63,41 @@ public class BookingDao {
 		return bookingList;
 	}
 	
+	public BookingBean getBookingById(int idBooking) throws SQLException {
+		String query ="SELECT * FROM t_bookings WHERE id_booking = ?";
+		int r=0;
+		BookingBean booking = null;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idBooking);
+			r=statement.executeUpdate();
+			while(result.next()) {
+				String code = result.getString("code");
+				String bookingType = result.getString("booking_type");
+				int idUser = result.getInt("id_user");
+				int  idEvent = result.getInt("id_event");
+				int idTable = result.getInt("id_table");
+				booking = new BookingBean(idBooking, code, bookingType, idUser, idEvent, idTable);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return booking;
+	}
+	
 	public boolean addBooking( String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException
 	{
 			String query = "INSERT INTO t_bookings (code, booking_type, id_user, id_event, id_table) VALUES(?, ?, ?, ?, ?)";
