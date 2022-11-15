@@ -59,6 +59,36 @@ public class LocationTypeDao {
 			return typeList;
 		}
 		
+		public LocationTypeBean getTypeById (int idType) throws SQLException {
+			LocationTypeBean type = null;
+			String query = "SELECT * FROM t_location_type WHERE id_location_type = ?";
+			try {
+				statement = connection.prepareStatement(query);
+				statement.setInt(1, idType);
+				result = statement.executeQuery();
+				while(result.next()) {
+					String description = result.getString("description");
+					type = new LocationTypeBean(idType, description); 
+				}
+			}catch(SQLException e) {
+			    e.printStackTrace();
+				throw new SQLException(e);
+
+			} finally {
+				try {
+					result.close();
+				} catch (Exception e1) {
+					throw new SQLException(e1);
+				}
+				try {
+					statement.close();
+				} catch (Exception e2) {
+					throw new SQLException(e2);
+				}
+			}
+			return type;
+		}
+		
 		public boolean addType( String description) throws SQLException
 		{
 				String query = "INSERT INTO t_location_types (description) VALUES(?)";

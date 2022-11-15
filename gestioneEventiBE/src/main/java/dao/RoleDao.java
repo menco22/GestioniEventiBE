@@ -59,6 +59,36 @@ public class RoleDao {
 		return roleList;
 	}
 	
+	public RoleBean getRoleById (int idRole) throws SQLException {
+		RoleBean role =null;
+		String query = "SELECT * FROM t_roles WHERE id_role = ?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idRole);
+			result = statement.executeQuery();
+			while(result.next()) {
+				String roleCode = result.getString("code");	
+				role = new RoleBean(idRole, roleCode); 
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return role;
+	}
+	
 	public boolean addRole( String code) throws SQLException
 	{
 			String query = "INSERT INTO t_roles (code) VALUES(?)";

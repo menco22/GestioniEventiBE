@@ -72,12 +72,11 @@ public class EventDao {
 	
 	public EventBean getEventById (int idEvent) throws SQLException {
 		String query="SELECT * FROM t_events WHERE id_event = ?";
-		int r=0;
 		EventBean event = null;
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idEvent);
-			r=statement.executeUpdate();
+			result =statement.executeQuery();
 			while(result.next()) {
 			//int idEvent = result.getInt("id_event");
 				int idCreator = result.getInt("id_creator");
@@ -106,6 +105,78 @@ public class EventDao {
 		}
 			return event;
 			
+	}
+	
+	public ArrayList<EventBean> getEventByName (String eventName) throws SQLException{
+		ArrayList <EventBean> eventList = new ArrayList();
+		String query = "SELECT * FROM t_event WHERE name = ?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setString(1, eventName);
+			result = statement.executeQuery();
+			while(result.next()){
+				int idEvent = result.getInt("id_event");
+				int idCreator = result.getInt("id_creator");
+				int idLocation = result.getInt("id_location");
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				String formattedDateTime = date.format(formatter); 
+				EventBean event = new EventBean(idEvent, idCreator, idLocation, eventName, formattedDateTime);
+				eventList.add(event);
+			}
+		}catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}	
+		return eventList;
+	}
+	
+	public ArrayList<EventBean> getEventByDate (String eventDate) throws SQLException{
+		ArrayList <EventBean> eventList = new ArrayList();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.parse(eventDate, formatter);
+		String query = "SELECT * FROM t_event WHERE data_time = ?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setObject(1, date);
+			result = statement.executeQuery();
+			while(result.next()){
+				int idEvent = result.getInt("id_event");
+				int idCreator = result.getInt("id_creator");
+				int idLocation = result.getInt("id_location");
+				String eventName = result.getString("name");
+				EventBean event = new EventBean(idEvent, idCreator, idLocation, eventName, eventDate);
+				eventList.add(event);
+			}
+		}catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}	
+		return eventList;
 	}
 	
 	public boolean addEvent( int idCreator, int idLocation, String eventName, String date) throws SQLException

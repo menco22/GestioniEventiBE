@@ -65,12 +65,11 @@ public class BookingDao {
 	
 	public BookingBean getBookingById(int idBooking) throws SQLException {
 		String query ="SELECT * FROM t_bookings WHERE id_booking = ?";
-		int r=0;
 		BookingBean booking = null;
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idBooking);
-			r=statement.executeUpdate();
+			result=statement.executeQuery();
 			while(result.next()) {
 				String code = result.getString("code");
 				String bookingType = result.getString("booking_type");

@@ -60,6 +60,39 @@ public class LocationDao {
 		return locationList;
 	}
 	
+	public LocationBean getLocationById(int idLocation) throws SQLException {
+		LocationBean location = null;
+		String query = "SELECT * FROM t_locations WHERE id_location = ?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idLocation);
+			result = statement.executeQuery();
+			while(result.next()) {
+				String locationName = result.getString("location_name");
+				String address = result.getString("address");
+				int locationType = result.getInt("location_type");
+				location = new LocationBean(idLocation, locationName, address, locationType);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		
+		return location;
+	}
+	
 	public ArrayList<LocationBean> getLocationsByType (int type) throws SQLException {
 		ArrayList <LocationBean> locationList = new ArrayList();
 		
@@ -98,6 +131,39 @@ public class LocationDao {
 			}
 		}	
 		
+		return locationList;
+	}
+	
+	public ArrayList<LocationBean> getLocationByName (String locationName) throws SQLException{
+		ArrayList <LocationBean> locationList = new ArrayList();
+		String query = "SELECT * FROM t_locations WHERE location_name = ?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setString(1, locationName);
+			result = statement.executeQuery();
+			while(result.next()) {
+				int idLocation = result.getInt("id_location");
+				String locationAddress = result.getString("address");
+				int locationType = result.getInt("location_type");
+				LocationBean location = new LocationBean (idLocation, locationName, locationAddress, locationType);
+				locationList.add(location);
+			}
+		} catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}	
 		return locationList;
 	}
 	

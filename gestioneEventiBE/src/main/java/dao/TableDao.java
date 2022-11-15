@@ -60,6 +60,69 @@ public class TableDao {
 		return userList;
 	}
 	
+	public TableBean getTableById (int idTable) throws SQLException {
+		TableBean table = null;
+		String query = "SELECT * FROM t_tables WHERE id_table = ?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idTable);
+			result = statement.executeQuery();
+			while(result.next()) {
+				int tableCapacity = result.getInt("table_capacity");
+				int idEvent = result.getInt("id_event");
+				table = new TableBean (idTable, tableCapacity, idEvent);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return table;
+	}
+	
+	public ArrayList <TableBean> getTableByCapacity (int tableCapacity) throws SQLException {
+		ArrayList <TableBean> tableList = new ArrayList();
+		String query = "SELECT * FROM t_tables WHERE table_capacity = ?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, tableCapacity);
+			result = statement.executeQuery();
+			while(result.next()) {
+				int idTable = result.getInt("id_table");
+				int idEvent = result.getInt("id_event");
+				TableBean table = new TableBean (idTable, tableCapacity, idEvent);
+				tableList.add(table);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return tableList;
+	}
+	
 	public boolean addTable(int tableCapacity, int idEvent) throws SQLException
 	{
 			String query = "INSERT INTO t_tables (tableCapacity, idEvent) VALUES(?, ?)";
