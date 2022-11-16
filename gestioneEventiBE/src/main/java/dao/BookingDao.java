@@ -126,6 +126,28 @@ public class BookingDao {
 					e1.printStackTrace();
 				}
 			}
-			
 		}
+	
+	public boolean deleteBooking(int idBooking) throws SQLException {
+		String query = "DELETE FROM t_bookings WHERE id_booking = ?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idBooking);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 }

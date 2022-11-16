@@ -139,5 +139,26 @@ public class UserDao {
 			
 		}
 
-
+	public boolean deleteUser (int idUser) throws SQLException {
+		String query = "DELETE FROM t_users WHERE id_user = ?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idUser);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 }

@@ -125,7 +125,31 @@ public class FeedbackDao {
 				}
 			}
 			
-		}
+			
+			
+	}
 	
+	public boolean deleteFeedback (int idFeedback) throws SQLException {
+		String query = "DELETE FROM t_feedbacks WHERE id_feedback = ?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idFeedback);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 	
 }

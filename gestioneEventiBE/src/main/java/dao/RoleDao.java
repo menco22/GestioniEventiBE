@@ -116,4 +116,27 @@ public class RoleDao {
 			}
 			
 		}
+	
+	public boolean deleteRole (int idRole) throws SQLException {
+		String query ="DELETE FROM t_roles WHERE id_roles = ?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idRole);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 }

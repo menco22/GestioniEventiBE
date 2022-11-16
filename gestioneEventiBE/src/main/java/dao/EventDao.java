@@ -214,5 +214,30 @@ public class EventDao {
 			
 		}
 
+	
+	public boolean deleteEvent ( int idEvent) throws SQLException {
+		String query = "DELETE FROM t_events WHERE id_event = ?";
+		int r = 0;
+		try{
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idEvent);
+		    r=statement.executeUpdate();
+		    if(r>0) {
+		    	return true;
+		    }else {
+		    	return false;
+		    }
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+	}
+	
 
 }

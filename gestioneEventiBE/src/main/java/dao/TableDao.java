@@ -151,4 +151,27 @@ public class TableDao {
 			}
 			
 		}
+	
+	public boolean deleteTable (int idTable) throws SQLException {
+		String query = "DELETE FROM t_tables WHERE id_table = ?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idTable);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 }
