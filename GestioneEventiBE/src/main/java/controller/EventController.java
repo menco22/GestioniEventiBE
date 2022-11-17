@@ -74,23 +74,43 @@ public class EventController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request);
-		if(auth.checkToken(request)==true) {
-			System.out.println("token valido");
-		
 		EventDao eventDao = new EventDao(this.connection);
 		String eventResponse ="";
-		try {
-			ArrayList <EventBean> eventList = eventDao.getEvents();
-			int id0 = eventList.get(0).getIdEvent();
-			System.out.println(id0);
-			//System.out.println(eventList);
-			   eventResponse = new Gson().toJson(eventList);
+		if(auth.checkToken(request)==true) {
+			//System.out.println("token valido");
+			String id = request.getParameter("id");	
+			if(id != null) {
+				try {
+					EventBean event = eventDao.getEventById(Integer.parseInt(id));
+					eventResponse = new Gson().toJson(event);
+				}catch (SQLException e) {
+					e.printStackTrace();
+				}
+				response.getWriter().append(eventResponse);
+				
+			}else {
+			
+			try {
+				String orderBy = request.getParameter("orderBy");
+				String orderDirection = request.getParameter("orderDirection");
+				if(orderBy == null) {
+					orderBy = "id_event";
+				}
+				if (orderDirection == null) {
+					orderDirection = "asc";
+				}
+				ArrayList <EventBean> eventList = eventDao.getEvents(orderBy, orderDirection);
+				/*int id0 = eventList.get(0).getIdEvent();
+				System.out.println(id0);*/
+				//System.out.println(eventList);
+				eventResponse = new Gson().toJson(eventList);
 				
 				
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
-		response.getWriter().append(eventResponse);
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+			response.getWriter().append(eventResponse);
+			}
 		}else {
 			response.sendError(401,"Effettuare il login");
 		}
@@ -103,36 +123,83 @@ public class EventController extends HttpServlet {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request); 
 		if(auth.checkToken(request)==true) {
-		connectToDb();
-		StringBuilder buffer = new StringBuilder();
-	    BufferedReader reader = request.getReader();
-	    String line;
-	    while ((line = reader.readLine()) != null) {
-	        buffer.append(line);
-	        buffer.append(System.lineSeparator());
-	    }
-	    String data = buffer.toString();
-		EventDao newEventDao = new EventDao(this.connection);
-		NewEventBean newEvent = null;
-		boolean addedEvent = false;
-		Gson datas = new Gson();
-		try {
-			newEvent = datas.fromJson(data, NewEventBean.class );
-			System.out.println(newEvent.getIdCreator());
-			System.out.println(newEvent.getIdLocation());
-			System.out.println(newEvent.getEventName());
-			System.out.println(newEvent.getDate());
-			addedEvent = newEventDao.addEvent(newEvent.getIdCreator(), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate());
-			if(addedEvent == true ) {
-				System.out.println("Evento aggiunto con successo");
+			connectToDb();
+			StringBuilder buffer = new StringBuilder();
+			BufferedReader reader = request.getReader();
+			String line;
+			String id = request.getParameter("id");	
+			String action = request.getParameter("action");	
+			System.out.println(id + " " + action);
+			if(action == null && id == null) { 
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
 				}
-			}catch(JsonSyntaxException | SQLException e) {
-				e.printStackTrace();
+				String data = buffer.toString();
+				EventDao newEventDao = new EventDao(this.connection);
+				NewEventBean newEvent = null;
+				boolean addedEvent = false;
+				Gson datas = new Gson();
+				try {
+					newEvent = datas.fromJson(data, NewEventBean.class );
+					/*System.out.println(newEvent.getIdCreator());
+					System.out.println(newEvent.getIdLocation());
+					System.out.println(newEvent.getEventName());
+					System.out.println(newEvent.getDate());*/
+					addedEvent = newEventDao.addEvent(newEvent.getIdCreator(), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate());
+					if(addedEvent == true ) {
+						System.out.println("Evento aggiunto con successo");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("delete") && id != null) {
+				EventDao eventDao = new EventDao(this.connection);
+				boolean deleteEvent = false;
+				try {
+					deleteEvent = eventDao.deleteEvent(Integer.parseInt(id));
+					if(deleteEvent == true) {
+						System.out.println("Evento rimosso con successo");
+					}
+				} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("update") && id!=null) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				EventDao updateEventDao = new EventDao(this.connection);
+				NewEventBean newDetailEvent = null;
+				boolean updatedEvent = false;
+				Gson datas = new Gson();
+				try {
+					newDetailEvent = datas.fromJson(data, NewEventBean.class );
+					updatedEvent = updateEventDao.updateEvent(Integer.parseInt(id), newDetailEvent.getIdCreator(),
+					newDetailEvent.getIdLocation(), newDetailEvent.getEventName(), newDetailEvent.getDate());
+					if(updatedEvent == true) {
+						System.out.println("Evento aggiornato ocn successo");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else	if(action != null && id == null) {
+						if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+							response.sendError(400, "Specificare l'evento");
+						}else {
+							response.sendError(400, "Azione non valida e evento non specificato");
+						}
 			}
+				
 		//doGet(request, response);
 	}else {
 		response.sendError(401, "Effettuare Login");
 	}
-	}
+ }
 
 }
