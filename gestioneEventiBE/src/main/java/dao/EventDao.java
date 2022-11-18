@@ -23,10 +23,10 @@ public class EventDao {
 		this.connection = connection;
 	}
 	
-	public ArrayList<EventBean> getEvents () throws SQLException {
+	public ArrayList<EventBean> getEvents (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <EventBean> eventList = new ArrayList();
 		
-		query = "SELECT * FROM t_events";
+		query = "SELECT * FROM t_events Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			// A prepared statement is used here because the query contains parameters
@@ -239,5 +239,35 @@ public class EventDao {
 		
 	}
 	
+	public boolean updateEvent (int idEvent, int idCreator, int idLocation, String eventName, String date) throws SQLException {
+		String query = "UPDATE t_events SET id_creator=?, id_location=?, name=?, data_time=?  WHERE id_event = ?";
+		int r=0;
+		//ciao
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		LocalDateTime data = LocalDateTime.parse(date, formatter);	
+		try {
+			statement = connection.prepareStatement(query);
+			
+			statement.setInt(1, idCreator);
+			statement.setInt(2, idLocation);
+			statement.setString(3, eventName);
+			statement.setObject(4, data);
+			statement.setInt(5, idEvent);		
+			r = statement.executeUpdate();
+		    if(r>0) {
+		    return true;
+		    }else {
+		    	return false;
+		    }
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+	 }
+	}
 
 }
