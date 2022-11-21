@@ -21,6 +21,7 @@ import beans.BookingBean;
 import beans.NewBookingBean;
 import beans.NewLocationBean;
 import dao.BookingDao;
+import dao.EventDao;
 
 /**
  * Servlet implementation class BookingController
@@ -71,15 +72,34 @@ public class BookingController extends HttpServlet {
 		if(auth.checkToken(request)==true) {
 			BookingDao bookingDao = new BookingDao(this.connection);
 			String bookingResponse = "";
-			try {
-				ArrayList <BookingBean> bookingList = bookingDao.getBooking();
-				bookingResponse = new Gson().toJson(bookingList);
+			String id = request.getParameter("id");
+			if(id != null) {
+				try {
+					BookingBean booking = bookingDao.getBookingById(Integer.parseInt(id));
+					bookingResponse = new Gson().toJson(booking);
+				}catch (SQLException e) {
+					e.printStackTrace();
+				}
+				response.getWriter().append(bookingResponse);
+			}else {
+				try {
+					String orderBy = request.getParameter("orderBy");
+					String orderDirection = request.getParameter("orderDirection");
+					if(orderBy == null) {
+						orderBy = "id_booking";
+					}
+					if (orderDirection == null) {
+						orderDirection = "asc";
+					}
+					ArrayList <BookingBean> bookingList = bookingDao.getBooking(orderBy, orderDirection);
+					bookingResponse = new Gson().toJson(bookingList);
 				
-			} catch (SQLException e) {
+				} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		response.getWriter().append(bookingResponse);
+					e.printStackTrace();
+				}
+				response.getWriter().append(bookingResponse);
+		  }
 		}else {
 			response.sendError(401,"Effettuare login");
 		}
@@ -96,25 +116,64 @@ public class BookingController extends HttpServlet {
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
 		    String line;
-		    while ((line = reader.readLine()) != null) {
-		        buffer.append(line);
-		        buffer.append(System.lineSeparator());
-		    }
-		    String data = buffer.toString();
-		    BookingDao newBookingDao = new BookingDao(this.connection);
-		    NewBookingBean newBooking = null;
-		    boolean addedBooking = false;
-		    Gson datas = new Gson();
-		    try {
-		    	newBooking = datas.fromJson(data, NewBookingBean.class);
-		    	addedBooking = newBookingDao.addBooking(newBooking.getCode(), newBooking.getBookingType(), 
+		    String id = request.getParameter("id");	
+			String action = request.getParameter("action");
+			if(id == null && action == null) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				BookingDao newBookingDao = new BookingDao(this.connection);
+				NewBookingBean newBooking = null;
+				boolean addedBooking = false;
+				Gson datas = new Gson();
+				try {
+					newBooking = datas.fromJson(data, NewBookingBean.class);
+					addedBooking = newBookingDao.addBooking(newBooking.getCode(), newBooking.getBookingType(), 
 		    			                newBooking.getIdUser(), newBooking.getIdEvent(), newBooking.getIdTable());
-		    	if(addedBooking == true) {
-		    		System.out.println("Booking aggiunto con successo");
-		    	}
-		    }catch(JsonSyntaxException | SQLException e) {
-				e.printStackTrace();
-		    }
+					if(addedBooking == true) {
+						System.out.println("Booking aggiunto con successo");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("update") && id != null) {
+				while ((line = reader.readLine()) != null) {
+			    	buffer.append(line);
+			    	buffer.append(System.lineSeparator());
+			    }
+				String data = buffer.toString();
+				BookingDao updatedBookingDao = new BookingDao(this.connection);
+				NewBookingBean updateBooking = null;
+				boolean updatedBooking = false;
+				Gson datas = new Gson();
+				try {
+					updateBooking = datas.fromJson(data, NewBookingBean.class);
+					updatedBooking = updatedBookingDao.updateBooking(Integer.parseInt(id), updateBooking.getCode(),
+							updateBooking.getBookingType(), updateBooking.getIdUser()	, updateBooking.getIdEvent(), updateBooking.getIdTable());
+					if(updatedBooking == true) {
+						System.out.println("Aggiornato con successo");
+					}
+				}catch(JsonSyntaxException | SQLException | NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("delete") && id != null) {
+				BookingDao bookingDao = new BookingDao(this.connection);
+				boolean deleteBooking = false;
+				try {
+					deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
+					if(deleteBooking == true) {
+						System.out.println("Prenotazione rimossa con successo");
+					}
+				} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		//doGet(request, response);
 		}else {
 			response.sendError(401, "Effettuare il login");

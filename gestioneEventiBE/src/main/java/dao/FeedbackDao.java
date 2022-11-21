@@ -20,20 +20,16 @@ public class FeedbackDao {
 	this.connection = connection;
 	}
 	
-	public ArrayList<FeedbackBean> getFeedback () throws SQLException {
+	public ArrayList<FeedbackBean> getFeedback (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <FeedbackBean> feedbackList = new ArrayList();
 		
-		query = "SELECT * FROM t_feedbacks";
+		String query = "SELECT * FROM t_feedbacks Order by " + orderBy + " " + orderDirection;
 		
 		try {
-			// A prepared statement is used here because the query contains parameters
 			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			
 			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
+
 			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
 				int idFeedback = result.getInt("id_feedback");
 				int idCreator = result.getInt("id_creator");
 				int idBooking = result.getInt("id_booking");

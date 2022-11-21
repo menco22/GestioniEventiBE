@@ -74,4 +74,24 @@
     <servlet-name>BookingController</servlet-name>
     <url-pattern>/BookingController</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>TableController</display-name>
+    <servlet-name>TableController</servlet-name>
+    <servlet-class>controller.TableController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TableController</servlet-name>
+    <url-pattern>/TableController</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>FeedbackController</display-name>
+    <servlet-name>FeedbackController</servlet-name>
+    <servlet-class>controller.FeedbackController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FeedbackController</servlet-name>
+    <url-pattern>/FeedbackController</url-pattern>
+  </servlet-mapping>
 </web-app>

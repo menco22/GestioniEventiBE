@@ -72,20 +72,40 @@ public class LocationController extends HttpServlet implements HttpContext {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController (request);
+		LocationDao locationDao = new LocationDao(this.connection);
+		String locationResponse = "";
 		if(auth.checkToken(request)==true) {
-			LocationDao locationDao = new LocationDao(this.connection);
-			String locationResponse = "";
-			try { 
-				/*Cookie[] cookies = request.getCookies();
-				System.out.println(cookies);*/
-				ArrayList<LocationBean> locationList = locationDao.getLocations();
-				locationResponse = new Gson().toJson(locationList);
+			String id = request.getParameter("id");
+			if(id == null) {
+				try { 
+					String orderBy = request.getParameter("orderBy");
+					String orderDirection = request.getParameter("orderDirection");
+					if(orderBy == null) {
+						orderBy = "id_location";
+					}
+					if (orderDirection == null) {
+						orderDirection = "asc";
+					}
+					ArrayList<LocationBean> locationList = locationDao.getLocations(orderBy, orderDirection);
+					locationResponse = new Gson().toJson(locationList);
 	
-			} catch (SQLException e) {
+				} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				}
+				response.getWriter().append(locationResponse);
+			}else {
+				try {
+					LocationBean location  = locationDao.getLocationById(Integer.parseInt(id));
+					locationResponse = new Gson().toJson(location);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					}
+					response.getWriter().append(locationResponse);
 			}
-			response.getWriter().append(locationResponse);
+		
+			
 		}else {
 			response.sendError(401,"Effettuare login");
 		}
@@ -103,24 +123,67 @@ public class LocationController extends HttpServlet implements HttpContext {
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
 		    String line;
-		    while ((line = reader.readLine()) != null) {
-		        buffer.append(line);
-		        buffer.append(System.lineSeparator());
-		    }
-		    String data = buffer.toString();
-		    LocationDao newLocationDao = new LocationDao(this.connection);
-		    NewLocationBean newLocation = null;
-		    boolean addedLocation = false;
-		    Gson datas = new Gson();
-		    try {
-		    	newLocation = datas.fromJson(data, NewLocationBean.class);
-		    	addedLocation = newLocationDao.addLocation(newLocation.getLocationName(), newLocation.getLocationAddress(), newLocation.getLocationType());
-		    	if(addedLocation == true) {
-		    		System.out.println("Location aggiunta con successo");
-		    	}
-		    }catch(JsonSyntaxException | SQLException e) {
-				e.printStackTrace();
-		    }
+		    String id = request.getParameter("id");	
+			String action = request.getParameter("action");
+			System.out.println(id + " " + action);
+			if(id == null && action == null) {
+			    while ((line = reader.readLine()) != null) {
+			    	buffer.append(line);
+			    	buffer.append(System.lineSeparator());
+			    }
+			    String data = buffer.toString();
+			    LocationDao newLocationDao = new LocationDao(this.connection);
+			    NewLocationBean newLocation = null;
+			    boolean addedLocation = false;
+			    Gson datas = new Gson();
+			    try {
+			    	newLocation = datas.fromJson(data, NewLocationBean.class);
+			    	addedLocation = newLocationDao.addLocation(newLocation.getLocationName(), newLocation.getLocationAddress(), newLocation.getLocationType());
+			    	if(addedLocation == true) {
+			    		System.out.println("Location aggiunta con successo");
+			    	}
+			    }catch(JsonSyntaxException | SQLException e) {
+			    	e.printStackTrace();
+			    }
+			/*}else if(action.equalsIgnoreCase("delete") && id != null) {
+				LocationDao locationDao = new LocationDao(this.connection);
+				boolean deletedLocation = false;
+				try {
+					deletedLocation = locationDao.deleteLocation(Integer.parseInt(id));
+					if(deletedLocation == true) {
+						System.out.println("Location eliminata con successo");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}*/
+			}else if(action.equalsIgnoreCase("update") && id != null) {
+				while ((line = reader.readLine()) != null) {
+			    	buffer.append(line);
+			    	buffer.append(System.lineSeparator());
+			    }
+			    String data = buffer.toString();
+			    LocationDao updatedLocationDao = new LocationDao(this.connection);
+			    NewLocationBean updateLocation = null;
+			    boolean updatedLocation = false;
+			    Gson datas = new Gson();
+			    try {
+			    	updateLocation = datas.fromJson(data, NewLocationBean.class);
+			    	updatedLocation = updatedLocationDao.updateLocation(Integer.parseInt(id), updateLocation.getLocationName(),
+			    			updateLocation.getLocationAddress(), updateLocation.getLocationType());
+			    	if(updatedLocation == true) {
+			    		System.out.println("Location aggiornata con successo");
+			    	}
+			    }catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else if(action != null && id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare la location");
+				}else {
+					response.sendError(400, "Azione non valida e location non specificata");
+				}
+			}
+		   
 		}else {
 			response.sendError(401, "Effettuare il login");
 		}

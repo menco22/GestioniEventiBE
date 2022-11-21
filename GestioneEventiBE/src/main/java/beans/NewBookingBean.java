@@ -1,6 +1,12 @@
 package beans;
 
 public class NewBookingBean {
+	private String code;
+	private String bookingType;
+	private int idUser;
+	private int idEvent;
+	private int idTable;
+	
 	public String getCode() {
 		return code;
 	}
@@ -31,10 +37,4 @@ public class NewBookingBean {
 	public void setIdTable(int idTable) {
 		this.idTable = idTable;
 	}
-	private String code;
-	private String bookingType;
-	private int idUser;
-	private int idEvent;
-	private int idTable;
-	
 }

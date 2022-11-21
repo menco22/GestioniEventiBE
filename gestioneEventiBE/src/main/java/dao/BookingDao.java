@@ -20,20 +20,16 @@ public class BookingDao {
 		this.connection = connection;
 	}
 	
-	public ArrayList<BookingBean> getBooking () throws SQLException {
+	public ArrayList<BookingBean> getBooking (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
 		
-		query = "SELECT * FROM t_bookings";
+		query = "SELECT * FROM t_bookings Order by " + orderBy + " " + orderDirection;
 		
 		try {
-			// A prepared statement is used here because the query contains parameters
 			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			
 			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
+			
 			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
 				int idBooking = result.getInt("id_booking");
 				String code = result.getString("code");
 				String bookingType = result.getString("booking_type");
@@ -127,6 +123,34 @@ public class BookingDao {
 				}
 			}
 		}
+	
+	public boolean updateBooking (int idBooking, String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException {
+		String query = "UPDATE t_bookings SET code=?, booking_type=?, id_user=?, id_event=?, id_table=?  WHERE id_booking=?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setString(1, code);
+			statement.setString(2, bookingType);
+			statement.setInt(3, idUser);
+			statement.setInt(4, idEvent);
+			statement.setInt(5, idTable);
+			statement.setInt(6, idBooking);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 	
 	public boolean deleteBooking(int idBooking) throws SQLException {
 		String query = "DELETE FROM t_bookings WHERE id_booking = ?";

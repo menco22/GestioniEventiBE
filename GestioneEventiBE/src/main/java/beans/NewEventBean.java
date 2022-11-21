@@ -3,6 +3,11 @@ package beans;
 import java.time.LocalDateTime;
 
 public class NewEventBean {
+	private int idCreator;
+	private int idLocation;
+	private String eventName;
+	private String date;
+
 	public int getIdCreator() {
 		return idCreator;
 	}
@@ -27,9 +32,4 @@ public class NewEventBean {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	private int idCreator;
-	private int idLocation;
-	private String eventName;
-	private String date;
-
 }

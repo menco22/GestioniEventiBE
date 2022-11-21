@@ -20,10 +20,10 @@ public class TableDao {
 		this.connection = connection;
 	}
 	
-	public ArrayList<TableBean> getUser () throws SQLException {
+	public ArrayList<TableBean> getTables (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <TableBean> userList = new ArrayList();
 		
-		query = "SELECT * FROM t_tables";
+		query = "SELECT * FROM t_tables Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			// A prepared statement is used here because the query contains parameters
@@ -125,7 +125,7 @@ public class TableDao {
 	
 	public boolean addTable(int tableCapacity, int idEvent) throws SQLException
 	{
-			String query = "INSERT INTO t_tables (tableCapacity, idEvent) VALUES(?, ?)";
+			String query = "INSERT INTO t_tables (table_capacity, id_event) VALUES(?, ?)";
 			int r=0;
 			try {
 				statement = connection.prepareStatement(query);
@@ -151,6 +151,31 @@ public class TableDao {
 			}
 			
 		}
+	
+	public boolean updateTable (int idTable, int tableCapacity, int idEvent) throws SQLException {
+		String query = "UPDATE t_tables SET table_capacity=?, id_event=? WHERE id_table=?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, tableCapacity);
+			statement.setInt(2, idEvent);
+			statement.setInt(3, idTable);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 	
 	public boolean deleteTable (int idTable) throws SQLException {
 		String query = "DELETE FROM t_tables WHERE id_table = ?";

@@ -1,26 +1,11 @@
 package beans;
 
-public class FeedbackBean {	
-	private int idFeedback;
+public class NewFeedbackBean {
 	private int idCreator;
 	private int idBooking;
 	private int evaluation;
 	private String description;
 	
-	public FeedbackBean(int idFeedback, int idCreator, int idBooking, int evaluation, String description) {
-		super();
-		this.idFeedback = idFeedback;
-		this.idCreator = idCreator;
-		this.idBooking = idBooking;
-		this.evaluation = evaluation;
-		this.description = description;
-	}
-	public int getIdFeedback() {
-		return idFeedback;
-	}
-	public void setIdFeedback(int idFeedback) {
-		this.idFeedback = idFeedback;
-	}
 	public int getIdCreator() {
 		return idCreator;
 	}
@@ -45,7 +30,4 @@ public class FeedbackBean {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-
-
 }

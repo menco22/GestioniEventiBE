@@ -19,10 +19,10 @@ public class LocationDao {
 		this.connection = connection;
 	}
 	
-	public ArrayList<LocationBean> getLocations () throws SQLException {
+	public ArrayList<LocationBean> getLocations (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <LocationBean> locationList = new ArrayList();
 		
-		query = "SELECT * FROM t_locations";
+		query = "SELECT * FROM t_locations Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			// A prepared statement is used here because the query contains parameters
@@ -197,18 +197,21 @@ public class LocationDao {
 			
 		}
 	
-	public boolean deleteLocation (int idLocation) throws SQLException {
-		String query = "DELETE FROM t_locations 	WHERE id_location = ?";
+	public boolean updateLocation (int idLocation, String locationName, String address, int locationType) throws SQLException {
+		String query = "UPDATE t_locations SET location_name = ?, address = ?, location_type = ? WHERE id_location = ?";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, idLocation);
+			statement.setString(1, locationName);
+			statement.setString(2, address);
+			statement.setInt(3, locationType);
+			statement.setInt(4, idLocation);
 			r = statement.executeUpdate();
-			if (r>0) {
-				return true;
-			}else {
-				return false;
-			}
+			if(r>0) {
+			    return true;
+			    }else {
+			    	return false;
+			    }
 		}catch (SQLException e) {
 			throw new SQLException(e);
 		} finally {
