@@ -134,6 +134,8 @@ public class BookingController extends HttpServlet {
 		    			                newBooking.getIdUser(), newBooking.getIdEvent(), newBooking.getIdTable());
 					if(addedBooking == true) {
 						System.out.println("Booking aggiunto con successo");
+					}else {
+						System.out.println("Aggiunta fallita");
 					}
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
@@ -154,6 +156,8 @@ public class BookingController extends HttpServlet {
 							updateBooking.getBookingType(), updateBooking.getIdUser()	, updateBooking.getIdEvent(), updateBooking.getIdTable());
 					if(updatedBooking == true) {
 						System.out.println("Aggiornato con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
 					}
 				}catch(JsonSyntaxException | SQLException | NumberFormatException e) {
 					e.printStackTrace();
@@ -165,6 +169,8 @@ public class BookingController extends HttpServlet {
 					deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
 					if(deleteBooking == true) {
 						System.out.println("Prenotazione rimossa con successo");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
 					}
 				} catch (NumberFormatException e) {
 						// TODO Auto-generated catch block
@@ -172,6 +178,14 @@ public class BookingController extends HttpServlet {
 				} catch (SQLException e) {
 						// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+			}else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare la prenotazione");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e prenotazione non specificata");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida sulla prenotazione specificata");
 				}
 			}
 		//doGet(request, response);

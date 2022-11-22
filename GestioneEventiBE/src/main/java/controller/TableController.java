@@ -131,8 +131,10 @@ public class TableController extends HttpServlet {
 					addedTable = newTableDao.addTable(newTable.getTableCapacity(), newTable.getIdEvent());
 					if(addedTable == true) {
 						System.out.println("Tavolo aggiunto con successo!");
+					}else {
+						System.out.println("Aggiunta fallita");
 					}
-					}catch(JsonSyntaxException | SQLException e) {
+				}catch(JsonSyntaxException | SQLException e) {
 						e.printStackTrace();
 					}
 				}/*else if (action.equalsIgnoreCase("delete") && id != null) {
@@ -163,17 +165,21 @@ public class TableController extends HttpServlet {
 													newDetailTable.getIdEvent());
 						if(updatedTable == true) {
 							System.out.println("Tavolo aggiornato con successo!");
+						}else {
+							System.out.println("Aggiornamento non avvenuto");
 						}
 					}catch(JsonSyntaxException | SQLException e) {
 						e.printStackTrace();
 					}
-				}else	if(action != null && id == null) {
+				}else	if(action != null || id == null) {
 					if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
-						response.sendError(400, "Specificare l'evento");
-					}else {
-						response.sendError(400, "Azione non valida e evento non specificato");
+						response.sendError(400, "Specificare il tavolo");
+					}else if(id == null){
+						response.sendError(400, "Azione non valida e tavolo non specificato");
+					}else if(id != null) {
+						response.sendError(400,"Azione non valida sul tavolo specificato");
 					}
-		}
+				}
 		}else {
 			response.sendError(401, "Effettuare Login");
 		}

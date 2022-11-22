@@ -131,6 +131,8 @@ public class FeedbackController extends HttpServlet {
 							newFeedback.getEvaluation(), newFeedback.getDescription());
 					if(addedFeedback == true ) {
 						System.out.println("Feedback aggiunto con successo");
+					}else {
+						System.out.println("Aggiunta fallita");
 					}
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
@@ -142,6 +144,8 @@ public class FeedbackController extends HttpServlet {
 					deleteFeedback = feedbackDao.deleteFeedback(Integer.parseInt(id));
 					if(deleteFeedback == true) {
 						System.out.println("Feedback rimosso con successo!");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
 					}
 				}catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
@@ -166,17 +170,21 @@ public class FeedbackController extends HttpServlet {
 								updateFeedback.getEvaluation(), updateFeedback.getDescription());
 					if(updatedFeedback == true) {
 						System.out.println("Feedback aggiornato con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
 					}
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else	if(action != null && id == null) {
+			}else	if(action != null || id == null) {
 				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
-					response.sendError(400, "Specificare l'evento");
-				}else {
-					response.sendError(400, "Azione non valida e evento non specificato");
+					response.sendError(400, "Specificare il feedback");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e feedback non specificato");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida sul feedback specificato");
 				}
-	}
+			}
 		}else {
 			response.sendError(401, "Effettuare Login");
 		}

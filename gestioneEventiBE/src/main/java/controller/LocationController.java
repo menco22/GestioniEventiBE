@@ -141,7 +141,9 @@ public class LocationController extends HttpServlet implements HttpContext {
 			    	addedLocation = newLocationDao.addLocation(newLocation.getLocationName(), newLocation.getLocationAddress(), newLocation.getLocationType());
 			    	if(addedLocation == true) {
 			    		System.out.println("Location aggiunta con successo");
-			    	}
+			    	}else {
+						System.out.println("Aggiunta fallita");
+					}
 			    }catch(JsonSyntaxException | SQLException e) {
 			    	e.printStackTrace();
 			    }
@@ -172,15 +174,19 @@ public class LocationController extends HttpServlet implements HttpContext {
 			    			updateLocation.getLocationAddress(), updateLocation.getLocationType());
 			    	if(updatedLocation == true) {
 			    		System.out.println("Location aggiornata con successo");
-			    	}
+			    	}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
 			    }catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else if(action != null && id == null) {
+			}else	if(action != null || id == null) {
 				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
 					response.sendError(400, "Specificare la location");
-				}else {
-					response.sendError(400, "Azione non valida e location non specificata");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e  location non specificata");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida sulla location specificata");
 				}
 			}
 		   

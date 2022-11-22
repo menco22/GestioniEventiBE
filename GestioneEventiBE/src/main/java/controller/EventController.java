@@ -149,6 +149,8 @@ public class EventController extends HttpServlet {
 					addedEvent = newEventDao.addEvent(newEvent.getIdCreator(), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate());
 					if(addedEvent == true ) {
 						System.out.println("Evento aggiunto con successo");
+					}else {
+						System.out.println("Aggiunta fallita");
 					}
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
@@ -160,6 +162,8 @@ public class EventController extends HttpServlet {
 					deleteEvent = eventDao.deleteEvent(Integer.parseInt(id));
 					if(deleteEvent == true) {
 						System.out.println("Evento rimosso con successo");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
 					}
 				} catch (NumberFormatException e) {
 						// TODO Auto-generated catch block
@@ -183,20 +187,22 @@ public class EventController extends HttpServlet {
 					updatedEvent = updateEventDao.updateEvent(Integer.parseInt(id), newDetailEvent.getIdCreator(),
 					newDetailEvent.getIdLocation(), newDetailEvent.getEventName(), newDetailEvent.getDate());
 					if(updatedEvent == true) {
-						System.out.println("Evento aggiornato ocn successo");
+						System.out.println("Evento aggiornato con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
 					}
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else	if(action != null && id == null) {
-						if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
-							response.sendError(400, "Specificare l'evento");
-						}else {
-							response.sendError(400, "Azione non valida e evento non specificato");
-						}
+			}else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare evento");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e evento non specificato");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida su evento specificato");
+				}
 			}
-				
-		//doGet(request, response);
 	}else {
 		response.sendError(401, "Effettuare Login");
 	}
