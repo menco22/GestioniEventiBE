@@ -6,6 +6,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,8 +15,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import beans.FeedbackBean;
+import beans.NewFeedbackBean;
 import dao.FeedbackDao;
 
 /**
@@ -29,6 +33,13 @@ public class FeedbackController extends HttpServlet {
     public FeedbackController() {
         super();
         // TODO Auto-generated constructor stub
+    }
+    
+    public void init()
+    {
+    	System.out.println("mi connetto al db");
+    	connection = connectToDb();
+    	System.out.println("connessione avvenuta con successo");
     }
 
     private Connection connectToDb(){
@@ -95,7 +106,81 @@ public class FeedbackController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		AuthenticationController auth = new AuthenticationController(request);
+		if(auth.checkToken(request)==true) {
+			connectToDb();
+			StringBuilder buffer = new StringBuilder();
+			BufferedReader reader = request.getReader();
+			String line;
+			String id = request.getParameter("id");	
+			String action = request.getParameter("action");	
+			System.out.println(id + " " + action);
+			if(action == null && id == null) { 
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				FeedbackDao newFeedbackDao = new FeedbackDao(this.connection);
+				NewFeedbackBean newFeedback = null;
+				boolean addedFeedback = false;
+				Gson datas = new Gson();
+				try {
+					newFeedback = datas.fromJson(data, NewFeedbackBean.class);
+					addedFeedback = newFeedbackDao.addFeedback(newFeedback.getIdCreator(),	newFeedback.getIdBooking(),
+							newFeedback.getEvaluation(), newFeedback.getDescription());
+					if(addedFeedback == true ) {
+						System.out.println("Feedback aggiunto con successo");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("delete") && id != null) {
+				FeedbackDao feedbackDao = new FeedbackDao (this.connection);
+				boolean deleteFeedback = false;
+				try {
+					deleteFeedback = feedbackDao.deleteFeedback(Integer.parseInt(id));
+					if(deleteFeedback == true) {
+						System.out.println("Feedback rimosso con successo!");
+					}
+				}catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+				e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("update") && id!=null) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				FeedbackDao updateFeedbackDao = new FeedbackDao(this.connection);
+				NewFeedbackBean updateFeedback = null;
+				boolean updatedFeedback = false;
+				Gson datas = new Gson();
+				try {
+					updateFeedback = datas.fromJson(data, NewFeedbackBean.class);
+					updatedFeedback = updateFeedbackDao.updateFeedback(Integer.parseInt(id),updateFeedback.getIdCreator(), updateFeedback.getIdBooking(), 
+								updateFeedback.getEvaluation(), updateFeedback.getDescription());
+					if(updatedFeedback == true) {
+						System.out.println("Feedback aggiornato con successo");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else	if(action != null && id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare l'evento");
+				}else {
+					response.sendError(400, "Azione non valida e evento non specificato");
+				}
+	}
+		}else {
+			response.sendError(401, "Effettuare Login");
+		}
+		
 	}
 
 }

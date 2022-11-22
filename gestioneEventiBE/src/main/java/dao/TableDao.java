@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import beans.TableBean;
-import beans.UserBean;
 
 public class TableDao {
 	private Connection connection;
@@ -21,24 +20,20 @@ public class TableDao {
 	}
 	
 	public ArrayList<TableBean> getTables (String orderBy, String orderDirection) throws SQLException {
-		ArrayList <TableBean> userList = new ArrayList();
+		ArrayList <TableBean> tableList = new ArrayList();
 		
 		query = "SELECT * FROM t_tables Order by " + orderBy + " " + orderDirection;
 		
 		try {
-			// A prepared statement is used here because the query contains parameters
 			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			
 			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
+		
 			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
 				int idTable = result.getInt("id_table");
 				int tableCapacity = result.getInt("table_capacity");
 				int eventId= result.getInt("id_event");
 				TableBean table = new TableBean( idTable, tableCapacity, eventId);
-				userList.add(table);
+				tableList.add(table);
 			}
 		} catch (SQLException e) {
 		    e.printStackTrace();
@@ -57,7 +52,7 @@ public class TableDao {
 			}
 		}	
 		
-		return userList;
+		return tableList;
 	}
 	
 	public TableBean getTableById (int idTable) throws SQLException {

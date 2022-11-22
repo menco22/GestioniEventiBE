@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import beans.FeedbackBean;
-import beans.UserBean;
 
 public class FeedbackDao {
 	private Connection connection;
@@ -60,7 +59,7 @@ public class FeedbackDao {
 	
 	public FeedbackBean getFeedbackById(int idFeedback) throws SQLException {
 		FeedbackBean feedback = null;
-		String query = "SELECT * FROM t_feedbacks WHERE id_feedback = ?";
+		String query = "SELECT * FROM t_feedbacks WHERE id_feedback=?";
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idFeedback);
@@ -98,14 +97,11 @@ public class FeedbackDao {
 			int r=0;
 			try {
 				statement = connection.prepareStatement(query);
-				//statement.setInt(1, id_person);
 				statement.setInt(1, idCreator);
 				statement.setInt(2,idBooking);
 				statement.setInt(3, evaluation);
 				statement.setString(4, description);
 			    r=statement.executeUpdate();
-				//result = statement.executeUpdate();
-				// If there is an affected row, it means the user has been added
 			    if(r>0) {
 			    return true;
 			    }else {
@@ -119,10 +115,34 @@ public class FeedbackDao {
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
+			}	
+	}
+	
+	public boolean updateFeedback (int idFeedback, int idCreator, int idBooking, int evaluation, String description) throws SQLException {
+		String query = "UPDATE t_feedbacks SET id_creator=?, id_booking=?, evaluation=?, description=? WHERE id_feedback=?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idCreator);
+			statement.setInt(2, idBooking);
+			statement.setInt(3, evaluation);
+			statement.setString(4, description);
+			statement.setInt(5, idFeedback);
+			r = statement.executeUpdate();
+			if (r>0) {
+				return true;
+			}else {
+				return false;
 			}
-			
-			
-			
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 	
 	public boolean deleteFeedback (int idFeedback) throws SQLException {
