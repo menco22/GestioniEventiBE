@@ -94,16 +94,44 @@ public class UserController extends HttpServlet {
 		UserDao userDao = new UserDao(this.connection);
 		UserBean user = null;
 		String userResponse = "";
-		try {
-			ArrayList<UserBean> userList = userDao.getUserList();
-		    userResponse = new Gson().toJson(userList);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String id = request.getParameter("id");	
+		String username = request.getParameter("username");
+		if(id != null && username == null) {
+			try {
+				user=userDao.getUserById(Integer.parseInt(id));
+				userResponse = new Gson().toJson(user);
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+			response.getWriter().append(userResponse);
+		}else if (id == null && username == null){
+			try {
+				String orderBy = request.getParameter("orderBy");
+				String orderDirection = request.getParameter("orderDirection");
+				if(orderBy == null) {
+					orderBy = "id_event";
+				}
+				if (orderDirection == null) {
+					orderDirection = "asc";
+				}
+				ArrayList<UserBean> userList = userDao.getUserList(orderBy, orderDirection);
+				userResponse = new Gson().toJson(userList);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			response.getWriter().append(userResponse);
+		}else if (id == null && username != null) {
+			try {
+				user = userDao.getUserByUsername(username);
+				userResponse = new Gson().toJson(user);
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+			response.getWriter().append(userResponse);
+		}else if (id != null && username != null) {
+			response.sendError(400, "Passare un solo parametro di ricerca alla volta");
 		}
-		
-		
-		response.getWriter().append(userResponse);
 	}
 
 	/**
@@ -135,8 +163,6 @@ public class UserController extends HttpServlet {
 		}
 	    
 	    System.out.println(username + " " + password);
-		//response.setContentType("text/html");
-		//String password=request.getParameter("password");
 		UserDao loginDao=new UserDao(this.connection);
 		UserBean user = null;
 		CredentialBean credential= null;
@@ -144,12 +170,11 @@ public class UserController extends HttpServlet {
 		try {
 		credential = datas.fromJson(data, CredentialBean.class);
 		user = loginDao.getUser(credential.getUsername(), credential.getPassword());
-			//user = loginDao.getUser(username, password);
 		} catch (JsonSyntaxException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//System.out.print(user);
+		
 		if(user != null) {
 			LocalDate now = LocalDate.now();
 			String jwtToken = Jwts.builder()
@@ -158,18 +183,14 @@ public class UserController extends HttpServlet {
 					   .claim("id", user.getIdUser())
 					   .claim("email", user.getEmail())
 					   .claim("roles", user.getIdRole())
-					  //.signWith( SignatureAlgorithm.HS512, JwtConstants.SECRET)
 					   .compact();			
 			System.out.println(jwtToken);		
 			Cookie cookie = new Cookie("loginCookie", jwtToken);
-			//cookie.setMaxAge(60*60);
 			cookie.setMaxAge(5*3600);
-			//cookie.setDomain("localhost:8080/gestioneEventiBE");
 			cookie.setHttpOnly(true);
 			response.addCookie(cookie);
             //TODO: if user == null
 		}
-		//doGet(request, response);
 	}
 
 }

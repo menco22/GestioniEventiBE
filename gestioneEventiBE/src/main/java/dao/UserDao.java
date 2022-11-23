@@ -21,20 +21,86 @@ public class UserDao {
 		this.connection = connection;
 	}
 	
-	public ArrayList<UserBean> getUserList () throws SQLException {
+	public UserBean getUserByUsername (String username) throws SQLException{
+		String query = "SELECT * FROM t_users WHERE username=?";
+		UserBean user = null;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setString(1, username);
+			result=statement.executeQuery();
+			while(result.next()) {
+				int idUser = result.getInt("id_user");
+				String name = result.getString("name");
+				String surname = result.getString("surname");
+				String email = result.getString("email");
+				String password = result.getString("password");
+				int roleId = result.getInt("role_id");
+				user = new UserBean(idUser, name, surname, email, username, password, roleId);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return user;
+	}
+	
+	public UserBean getUserById (int idUser) throws SQLException {
+		String query = "SELECT * FROM t_users WHERE id_user=?";
+		UserBean user = null;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idUser);
+			result=statement.executeQuery();
+			while(result.next()) {
+				String name = result.getString("name");
+				String surname = result.getString("surname");
+				String email = result.getString("email");
+				String username = result.getString("username");
+				String password = result.getString("password");
+				int roleId = result.getInt("role_id");
+				user = new UserBean(idUser, name, surname, email, username, password, roleId);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return user;
+	}
+	
+	public ArrayList<UserBean> getUserList (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <UserBean> userList = new ArrayList();
 		
-		query = "SELECT * FROM t_users";
+		query = "SELECT * FROM t_users Order by " + orderBy + " " + orderDirection ;
 		
 		try {
-			// A prepared statement is used here because the query contains parameters
 			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			
 			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
+		
 			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
 				int idUser = result.getInt("id_user");
 				String name = result.getString("name");
 				String surname = result.getString("surname");
@@ -75,7 +141,9 @@ public class UserDao {
 			statement.setString(2, password);
 			result = statement.executeQuery();
 			while(result.next()) {
-				user = new UserBean(result.getInt("id_user"), result.getString("name"), result.getString("surname"), result.getString("email"),result.getString("username"), result.getString("password"), result.getInt("role_id"));
+				user = new UserBean(result.getInt("id_user"), result.getString("name"), 
+						result.getString("surname"), result.getString("email"),
+						result.getString("username"), result.getString("password"), result.getInt("role_id"));
 				/*int idUser = result.getInt("id_user");
 				String name = result.getString("name");
 				String surname = result.getString("surname");

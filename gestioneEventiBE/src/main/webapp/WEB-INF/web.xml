@@ -94,4 +94,14 @@
     <servlet-name>FeedbackController</servlet-name>
     <url-pattern>/FeedbackController</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>LocationTypeController</display-name>
+    <servlet-name>LocationTypeController</servlet-name>
+    <servlet-class>controller.LocationTypeController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LocationTypeController</servlet-name>
+    <url-pattern>/LocationTypeController</url-pattern>
+  </servlet-mapping>
 </web-app>
