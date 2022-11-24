@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.GenericServlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,10 +19,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import beans.BookingBean;
+import beans.FeedbackBean;
 import beans.NewBookingBean;
 import beans.NewLocationBean;
 import dao.BookingDao;
 import dao.EventDao;
+import dao.FeedbackDao;
 
 /**
  * Servlet implementation class BookingController
@@ -116,9 +119,9 @@ public class BookingController extends HttpServlet {
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
 		    String line;
-		    String id = request.getParameter("id");	
-			String action = request.getParameter("action");
-			if(id == null && action == null) {
+			String id = request.getParameter("id");	
+			String action = request.getParameter("action");	
+			if(action == null && id == null) {
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());
@@ -131,7 +134,7 @@ public class BookingController extends HttpServlet {
 				try {
 					newBooking = datas.fromJson(data, NewBookingBean.class);
 					addedBooking = newBookingDao.addBooking(newBooking.getCode(), newBooking.getBookingType(), 
-		    			                newBooking.getIdUser(), newBooking.getIdEvent(), newBooking.getIdTable());
+		    			               newBooking.getIdUser(), newBooking.getIdEvent(), newBooking.getIdTable());
 					if(addedBooking == true) {
 						System.out.println("Booking aggiunto con successo");
 					}else {
@@ -140,57 +143,85 @@ public class BookingController extends HttpServlet {
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else if(action.equalsIgnoreCase("update") && id != null) {
-				while ((line = reader.readLine()) != null) {
-			    	buffer.append(line);
-			    	buffer.append(System.lineSeparator());
-			    }
-				String data = buffer.toString();
-				BookingDao updatedBookingDao = new BookingDao(this.connection);
-				NewBookingBean updateBooking = null;
-				boolean updatedBooking = false;
-				Gson datas = new Gson();
-				try {
-					updateBooking = datas.fromJson(data, NewBookingBean.class);
-					updatedBooking = updatedBookingDao.updateBooking(Integer.parseInt(id), updateBooking.getCode(),
-							updateBooking.getBookingType(), updateBooking.getIdUser()	, updateBooking.getIdEvent(), updateBooking.getIdTable());
-					if(updatedBooking == true) {
-						System.out.println("Aggiornato con successo");
-					}else {
-						System.out.println("Aggiornamento non avvenuto");
-					}
-				}catch(JsonSyntaxException | SQLException | NumberFormatException e) {
-					e.printStackTrace();
-				}
-			}else if(action.equalsIgnoreCase("delete") && id != null) {
-				BookingDao bookingDao = new BookingDao(this.connection);
-				boolean deleteBooking = false;
-				try {
-					deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
-					if(deleteBooking == true) {
-						System.out.println("Prenotazione rimossa con successo");
-					}else {
-						System.out.println("Eliminazione non avvenuta");
-					}
-				} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-						// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}else	if(action != null || id == null) {
-				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
-					response.sendError(400, "Specificare la prenotazione");
-				}else if(id == null){
-					response.sendError(400, "Azione non valida e prenotazione non specificata");
-				}else if(id != null) {
-					response.sendError(400,"Azione non valida sulla prenotazione specificata");
-				}
+			}else {
+				response.sendError(400, "Id e action non richiesti per l'aggiunta");
 			}
 		//doGet(request, response);
 		}else {
 			response.sendError(401, "Effettuare il login");
 		}
 	}
+
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.doOptions(req, resp);
+		AuthenticationController auth = new AuthenticationController (req);
+		if(auth.checkToken(req)==true) {
+			StringBuilder buffer = new StringBuilder();
+			BufferedReader reader = req.getReader();
+			String line;
+			connectToDb();
+			String id = req.getParameter("id");	
+			String action = req.getParameter("action");
+			BookingDao bookingDao = new BookingDao(this.connection);
+		   if(id != null && action.equalsIgnoreCase("delete")) {
+			 FeedbackDao feedbackDao = new FeedbackDao(this.connection);
+			 FeedbackBean feedback = null; 
+			 boolean deleteBooking = false;  
+			 try {
+				feedback = feedbackDao.getFeedbackByBooking(Integer.parseInt(id));
+				if(feedback == null) {
+					deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
+					if(deleteBooking == true) {
+						System.out.println("Prenotazione rimossa con successo");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
+					}
+				}else {
+					System.out.println("Eliminazione non avvenuta");
+				}
+			 } catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				 e.printStackTrace();
+			 } catch (SQLException e) {
+				// TODO Auto-generated catch block
+				 e.printStackTrace();
+			 }
+		   }else if(id != null && action.equalsIgnoreCase("update")) {
+				while ((line = reader.readLine()) != null) {
+			    	buffer.append(line);
+			    	buffer.append(System.lineSeparator());
+			    }
+				String data = buffer.toString();
+				NewBookingBean newBookingDetail = null;
+				boolean updatedBooking = false;
+				Gson datas = new Gson();
+				try {
+					newBookingDetail = datas.fromJson(data, NewBookingBean.class);
+					updatedBooking = bookingDao.updateBooking(Integer.parseInt(id), newBookingDetail.getCode(),
+							newBookingDetail.getBookingType(), newBookingDetail.getIdUser()	, newBookingDetail.getIdEvent(), newBookingDetail.getIdTable());
+					if(updatedBooking == true) {
+						System.out.println("Dati prenotazione aggiornati con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
+				}catch(JsonSyntaxException | SQLException | NumberFormatException e) {
+					e.printStackTrace();
+				}
+		   }else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					resp.sendError(400, "Specificare la prenotazione");
+				}else if(id == null){
+					resp.sendError(400, "Azione non valida e prenotazione non specificata");
+				}else if(id != null) {
+					resp.sendError(400,"Azione non valida sulla prenotazione specificata");
+				}
+			}
+		}else {
+			resp.sendError(401, "Effettuare il login");
+		}
+	}
+
+	
 }

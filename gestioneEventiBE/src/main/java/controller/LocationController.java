@@ -28,7 +28,7 @@ import dao.LocationDao;
 /**
  * Servlet implementation class LocationController
  */
-public class LocationController extends HttpServlet implements HttpContext {
+public class LocationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private Connection connection; 
     /**
@@ -146,50 +146,10 @@ public class LocationController extends HttpServlet implements HttpContext {
 					}
 			    }catch(JsonSyntaxException | SQLException e) {
 			    	e.printStackTrace();
-			    }
-			/*}else if(action.equalsIgnoreCase("delete") && id != null) {
-				LocationDao locationDao = new LocationDao(this.connection);
-				boolean deletedLocation = false;
-				try {
-					deletedLocation = locationDao.deleteLocation(Integer.parseInt(id));
-					if(deletedLocation == true) {
-						System.out.println("Location eliminata con successo");
-					}
-				}catch(JsonSyntaxException | SQLException e) {
-					e.printStackTrace();
-				}*/
-			}else if(action.equalsIgnoreCase("update") && id != null) {
-				while ((line = reader.readLine()) != null) {
-			    	buffer.append(line);
-			    	buffer.append(System.lineSeparator());
-			    }
-			    String data = buffer.toString();
-			    LocationDao updatedLocationDao = new LocationDao(this.connection);
-			    NewLocationBean updateLocation = null;
-			    boolean updatedLocation = false;
-			    Gson datas = new Gson();
-			    try {
-			    	updateLocation = datas.fromJson(data, NewLocationBean.class);
-			    	updatedLocation = updatedLocationDao.updateLocation(Integer.parseInt(id), updateLocation.getLocationName(),
-			    			updateLocation.getLocationAddress(), updateLocation.getLocationType());
-			    	if(updatedLocation == true) {
-			    		System.out.println("Location aggiornata con successo");
-			    	}else {
-						System.out.println("Aggiornamento non avvenuto");
-					}
-			    }catch(JsonSyntaxException | SQLException e) {
-					e.printStackTrace();
-				}
-			}else	if(action != null || id == null) {
-				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
-					response.sendError(400, "Specificare la location");
-				}else if(id == null){
-					response.sendError(400, "Azione non valida e  location non specificata");
-				}else if(id != null) {
-					response.sendError(400,"Azione non valida sulla location specificata");
-				}
+			    }  
+			}else {
+				response.sendError(400, "Id e action non richiesti per l'aggiunta");
 			}
-		   
 		}else {
 			response.sendError(401, "Effettuare il login");
 		}
@@ -197,21 +157,53 @@ public class LocationController extends HttpServlet implements HttpContext {
 	}
 
 	@Override
-	public Object getAttribute(String arg0) {
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object removeAttribute(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setAttribute(String arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+		super.doOptions(req, resp);
+		AuthenticationController auth = new AuthenticationController(req);
+		if(auth.checkToken(req)==true) {
+			StringBuilder buffer = new StringBuilder();
+			BufferedReader reader = req.getReader();
+			String line;
+			connectToDb();
+			String id = req.getParameter("id");	
+			String action = req.getParameter("action");
+			LocationDao locationDao = new LocationDao(this.connection);
+			if(id != null && action.equalsIgnoreCase("update")) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				NewLocationBean newDetailLocation= null;
+				boolean updatedLocation = false;
+				Gson datas = new Gson();
+				try {
+					newDetailLocation = datas.fromJson(data, NewLocationBean.class);
+					updatedLocation = locationDao.updateLocation(Integer.parseInt(id), newDetailLocation.getLocationName(),
+							newDetailLocation.getLocationAddress(), newDetailLocation.getLocationType());
+					if(updatedLocation == true) {
+						System.out.println("Dati Location modificati con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("delete") && id != null) {
+				System.out.println("Da implementare");
+			}else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					resp.sendError(400, "Specificare la location");
+				}else if(id == null){
+					resp.sendError(400, "Azione non valida e  location non specificata");
+				}else if(id != null) {
+					resp.sendError(400,"Azione non valida sulla location specificata");
+				}
+			}
+		}else {
+			resp.sendError(401, "Effettuare il login");
+		}
 	}
 
 }

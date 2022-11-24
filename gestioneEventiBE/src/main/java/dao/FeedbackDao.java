@@ -91,6 +91,40 @@ public class FeedbackDao {
 		
 	}
 	
+	public FeedbackBean getFeedbackByBooking (int idBooking) throws SQLException {
+		String query = "SELECT * FROM t_feedbacks WHERE id_booking=?";
+		FeedbackBean feedback = null;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idBooking);
+			result = statement.executeQuery();
+			while(result.next()) {
+				int idFeedback = result.getInt("id_feedback");
+				int idCreator = result.getInt("id_creator");
+				idBooking = result.getInt("id_booking");
+				int evaluation = result.getInt("evaluation");
+				String description = result.getString("description");
+				feedback = new FeedbackBean(idFeedback, idCreator, idBooking, evaluation, description);
+			}
+		}catch(SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return feedback;
+	}
+	
 	public boolean addFeedback(int idCreator, int idBooking, int evaluation, String description) throws SQLException
 	{
 			String query = "INSERT INTO t_feedbacks (id_creator, id_booking, evaluation, description) VALUES(?, ?, ?, ?)";
