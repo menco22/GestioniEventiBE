@@ -136,7 +136,7 @@ public class LocationDao {
 	
 	public ArrayList<LocationBean> getLocationByName (String locationName) throws SQLException{
 		ArrayList <LocationBean> locationList = new ArrayList();
-		String query = "SELECT * FROM t_locations WHERE location_name = ?";
+		String query = "SELECT * FROM t_locations WHERE location_name = ? AND deleted = false";
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setString(1, locationName);
@@ -197,13 +197,12 @@ public class LocationDao {
 			
 		}
 	
-	public boolean deleteLocation(int idLocation, boolean delete) throws SQLException {
-		String query = "UPDATE t_locations SET deleted =? WHERE id_location=?";
+	public boolean deleteLocation(int idLocation) throws SQLException {
+		String query = "UPDATE t_locations SET deleted = true WHERE id_location=?";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setBoolean(1, delete);
-			statement.setInt(2, idLocation);
+			statement.setInt(1, idLocation);
 			r = statement.executeUpdate();
 			if(r>0) {
 			    return true;
@@ -222,7 +221,7 @@ public class LocationDao {
 	}
 	
 	public boolean updateLocation (int idLocation, String locationName, String address, int locationType) throws SQLException {
-		String query = "UPDATE t_locations SET location_name = ?, address = ?, location_type = ? WHERE id_location = ?";
+		String query = "UPDATE t_locations SET location_name = ?, address = ?, location_type = ? WHERE id_location = ? AND deleted = false";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);

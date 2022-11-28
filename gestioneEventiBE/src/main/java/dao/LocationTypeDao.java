@@ -23,7 +23,7 @@ public class LocationTypeDao {
 		public ArrayList<LocationTypeBean> getLocationType (String orderBy, String orderDirection) throws SQLException {
 			ArrayList <LocationTypeBean> typeList = new ArrayList();
 			
-			query = "SELECT * FROM t_location_types Order by " + orderBy + " " + orderDirection;
+			query = "SELECT * FROM t_location_types WHERE deleted = false Order by " + orderBy + " " + orderDirection;
 			
 			try {
 				statement = connection.prepareStatement(query);
@@ -56,7 +56,7 @@ public class LocationTypeDao {
 		
 		public LocationTypeBean getTypeById (int idType) throws SQLException {
 			LocationTypeBean type = null;
-			String query = "SELECT * FROM t_location_types WHERE id_location_type = ?";
+			String query = "SELECT * FROM t_location_types WHERE id_location_type = ? AND deleted = false";
 			try {
 				statement = connection.prepareStatement(query);
 				statement.setInt(1, idType);
@@ -110,7 +110,7 @@ public class LocationTypeDao {
 			}
 		
 		public boolean updateLocationType (int idLocationType, String description) throws SQLException{
-			String query = "UPDATE t_location_types SET description=? WHERE id_location_type=?";
+			String query = "UPDATE t_location_types SET description=? WHERE id_location_type=? AND deleted = false";
 			int r = 0;
 			try {
 				statement = connection.prepareStatement(query);
@@ -134,7 +134,7 @@ public class LocationTypeDao {
 		}
 		
 		public boolean deleteLocationType (int idLocationType) throws SQLException {
-			String query = "DELETE FROM t_location_types WHERE id_location_type = ?";
+			String query = "UPDATE t_location_types SET deleted=true WHERE id_location_type=?";
 			int r = 0;
 			try {
 				statement = connection.prepareStatement(query);

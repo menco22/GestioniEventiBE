@@ -22,7 +22,7 @@ public class TableDao {
 	public ArrayList<TableBean> getTables (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <TableBean> tableList = new ArrayList();
 		
-		query = "SELECT * FROM t_tables Order by " + orderBy + " " + orderDirection;
+		query = "SELECT * FROM t_tables WHERE deleted=false Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			statement = connection.prepareStatement(query);
@@ -57,7 +57,7 @@ public class TableDao {
 	
 	public TableBean getTableById (int idTable) throws SQLException {
 		TableBean table = null;
-		String query = "SELECT * FROM t_tables WHERE id_table = ?";
+		String query = "SELECT * FROM t_tables WHERE id_table = ? AND deleted=false";
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idTable);
@@ -88,7 +88,7 @@ public class TableDao {
 	
 	public ArrayList <TableBean> getTableByCapacity (int tableCapacity) throws SQLException {
 		ArrayList <TableBean> tableList = new ArrayList();
-		String query = "SELECT * FROM t_tables WHERE table_capacity = ?";
+		String query = "SELECT * FROM t_tables WHERE table_capacity = ? AND deleted=false";
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, tableCapacity);
@@ -148,7 +148,7 @@ public class TableDao {
 		}
 	
 	public boolean updateTable (int idTable, int tableCapacity, int idEvent) throws SQLException {
-		String query = "UPDATE t_tables SET table_capacity=?, id_event=? WHERE id_table=?";
+		String query = "UPDATE t_tables SET table_capacity=?, id_event=? WHERE id_table=? AND deleted=false";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
@@ -173,7 +173,7 @@ public class TableDao {
 	}
 	
 	public boolean deleteTable (int idTable) throws SQLException {
-		String query = "DELETE FROM t_tables WHERE id_table = ?";
+		String query = "UPDATE t_tables SET deleted = true WHERE id_table = ?";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);

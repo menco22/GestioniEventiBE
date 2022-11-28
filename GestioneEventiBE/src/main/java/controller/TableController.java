@@ -138,7 +138,17 @@ public class TableController extends HttpServlet {
 						e.printStackTrace();
 					}
 				}else if(id != null && action.equalsIgnoreCase("delete")) {
-					System.out.println("Da implementare");
+					boolean deletedTable = false;
+					try {
+						deletedTable = tableDao.deleteTable(Integer.parseInt(id));
+						if(deletedTable == true) {
+							System.out.println("Tavolo rimosso con successo");
+						}else {
+							System.out.println("Eliminazione non avvenuta");
+						}
+					}catch(JsonSyntaxException | SQLException e) {
+						e.printStackTrace();
+					}
 				}else if(action.equalsIgnoreCase("update") && id!=null) {
 					while ((line = reader.readLine()) != null) {
 						buffer.append(line);
@@ -176,55 +186,4 @@ public class TableController extends HttpServlet {
 		}
 		
 	}
-
-	@Override
-	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doOptions(req, resp);
-		AuthenticationController auth = new AuthenticationController(req);
-		if(auth.checkToken(req)==true) {
-			StringBuilder buffer = new StringBuilder();
-			BufferedReader reader = req.getReader();
-			String line;
-			connectToDb();
-			String id = req.getParameter("id");	
-			String action = req.getParameter("action");
-			TableDao tableDao = new TableDao (this.connection);
-			if(id != null && action.equalsIgnoreCase("delete")) {
-				System.out.println("Da implementare");
-			}else if(action.equalsIgnoreCase("update") && id!=null) {
-				while ((line = reader.readLine()) != null) {
-					buffer.append(line);
-					buffer.append(System.lineSeparator());
-				}
-				String data = buffer.toString();
-				NewTableBean newDetailTable = null;
-				boolean updatedTable = false;
-				Gson datas = new Gson();
-				try {
-					newDetailTable = datas.fromJson(data, NewTableBean.class);
-					updatedTable = tableDao.updateTable(Integer.parseInt(id), newDetailTable.getTableCapacity(),
-							newDetailTable.getIdEvent());
-					if(updatedTable == true) {
-						System.out.println("Dati Tavolo aggiornati con successo");
-					}else {
-						System.out.println("Aggiornamento non avvenuto");
-					}
-				}catch(JsonSyntaxException | SQLException e) {
-					e.printStackTrace();
-				}
-			}else	if(action != null || id == null) {
-				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
-					resp.sendError(400, "Specificare evento");
-				}else if(id == null){
-					resp.sendError(400, "Azione non valida e evento non specificato");
-				}else if(id != null) {
-					resp.sendError(400,"Azione non valida su evento specificato");
-				}
-			}
-		}else {
-			resp.sendError(401, "Effettuare il login");
-		}
-	}
-
 }

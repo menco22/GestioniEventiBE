@@ -91,8 +91,9 @@ public class FeedbackDao {
 		
 	}
 	
-	public FeedbackBean getFeedbackByBooking (int idBooking) throws SQLException {
+	public ArrayList<FeedbackBean> getFeedbackByBooking (int idBooking) throws SQLException {
 		String query = "SELECT * FROM t_feedbacks WHERE id_booking=?";
+		ArrayList <FeedbackBean> feedbackList = new ArrayList();
 		FeedbackBean feedback = null;
 		try {
 			statement = connection.prepareStatement(query);
@@ -105,6 +106,7 @@ public class FeedbackDao {
 				int evaluation = result.getInt("evaluation");
 				String description = result.getString("description");
 				feedback = new FeedbackBean(idFeedback, idCreator, idBooking, evaluation, description);
+				feedbackList.add(feedback);
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();
@@ -122,7 +124,7 @@ public class FeedbackDao {
 				throw new SQLException(e2);
 			}
 		}
-		return feedback;
+		return feedbackList;
 	}
 	
 	public boolean addFeedback(int idCreator, int idBooking, int evaluation, String description) throws SQLException
