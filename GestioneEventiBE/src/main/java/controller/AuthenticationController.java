@@ -64,5 +64,40 @@ public class AuthenticationController {
 			}
 		}return false;
 	}
+	
+	public int getIdUser ( HttpServletRequest request ) throws IOException {
+		Cookie[]cookie = request.getCookies();
+		ArrayList <Cookie> cookies = new ArrayList();
+		int idUser = 0;
+		if(cookie!=null) {
+			for(int i=0; i<cookie.length; i++) {
+				cookies.add((Cookie) Array.get(cookie, i));
+			}
+		}else {
+			return idUser;
+			}
+		if(cookies!=null) {
+			for(int i=0; i<cookies.size(); i++) {
+				if(cookies.get(i).getName().equals("loginCookie")){
+					String jwt = cookies.get(i).getValue();
+					String[] parts = jwt.split("\\.");
+					String body = new String (Base64.getUrlDecoder().decode(parts[1]));
+					//System.out.println(body);
+					JSONObject payload;
+					try {
+						payload = new JSONObject(body);
+						idUser = payload.getInt("id");
+						//return idUser;
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				i++;
+			}
+		}
+		return idUser;
+	}
 
 }

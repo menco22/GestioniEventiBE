@@ -78,6 +78,7 @@ public class EventController extends HttpServlet {
 		EventDao eventDao = new EventDao(this.connection);
 		String eventResponse ="";
 		if(auth.checkToken(request)==true) {
+			System.out.println(auth.getIdUser(request));
 			//System.out.println("token valido");
 			String id = request.getParameter("id");	
 			if(id != null) {
@@ -119,25 +120,26 @@ public class EventController extends HttpServlet {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request); 
 		if(auth.checkToken(request)==true) {
+			System.out.println(auth.getIdUser(request));
 			connectToDb();
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
 			String line;
 			String id = request.getParameter("id");	
 			String action = request.getParameter("action");	
+			EventDao eventDao = new EventDao(this.connection);
 			if(action == null && id == null) { 
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());
 				}
 				String data = buffer.toString();
-				EventDao newEventDao = new EventDao(this.connection);
 				NewEventBean newEvent = null;
 				boolean addedEvent = false;
 				Gson datas = new Gson();
 				try {
 					newEvent = datas.fromJson(data, NewEventBean.class );
-					addedEvent = newEventDao.addEvent(newEvent.getIdCreator(), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate());
+					addedEvent = eventDao.addEvent(auth.getIdUser(request), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate());
 					if(addedEvent == true ) {
 						System.out.println("Evento aggiunto con successo");
 					}else {
@@ -146,8 +148,51 @@ public class EventController extends HttpServlet {
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else {
-				response.sendError(400, "Id e action non richiesti per l'aggiunta");
+			}else if(id != null && action.equalsIgnoreCase("delete")){
+    			boolean deleteEvent = false;
+				try {
+					deleteEvent = eventDao.deleteEvent(Integer.parseInt(id));
+					if(deleteEvent == true) {
+						System.out.println("Evento rimosso con successo");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
+					}
+				} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("update") && id!=null) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				NewEventBean newDetailEvent = null;
+				boolean updatedEvent = false;
+				Gson datas = new Gson();
+				try {
+					newDetailEvent = datas.fromJson(data, NewEventBean.class );
+					updatedEvent = eventDao.updateEvent(Integer.parseInt(id), auth.getIdUser(request),
+					newDetailEvent.getIdLocation(), newDetailEvent.getEventName(), newDetailEvent.getDate());
+					if(updatedEvent == true) {
+						System.out.println("Dati Evento aggiornati con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+            }else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare evento");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e evento non specificato");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida su evento specificato");
+				}
 			}
 	}else {
 		response.sendError(401, "Effettuare Login");
@@ -194,7 +239,71 @@ public class EventController extends HttpServlet {
 				Gson datas = new Gson();
 				try {
 					newDetailEvent = datas.fromJson(data, NewEventBean.class );
-					updatedEvent = eventDao.updateEvent(Integer.parseInt(id), newDetailEvent.getIdCreator(),
+					updatedEvent = eventDao.updateEvent(Integer.parseInt(id), auth.getIdUser(req),
+					newDetailEvent.getIdLocation(), newDetailEvent.getEventName(), newDetailEvent.getDate());
+					if(updatedEvent == true) {
+						System.out.println("Dati Evento aggiornati con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+            }else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					resp.sendError(400, "Specificare evento");
+				}else if(id == null){
+					resp.sendError(400, "Azione non valida e evento non specificato");
+				}else if(id != null) {
+					resp.sendError(400,"Azione non valida su evento specificato");
+				}
+			}
+		}else {
+			resp.sendError(401, "Effettuare il login");
+		}
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.doPut(req, resp);
+		AuthenticationController auth = new AuthenticationController(req);
+		if(auth.checkToken(req)==true) {
+			StringBuilder buffer = new StringBuilder();
+			BufferedReader reader = req.getReader();
+			String line;
+			connectToDb();
+			String id = req.getParameter("id");	
+			String action = req.getParameter("action");
+            EventDao eventDao = new EventDao(this.connection);
+            if(id != null && action.equalsIgnoreCase("delete")) {
+    			boolean deleteEvent = false;
+				try {
+					deleteEvent = eventDao.deleteEvent(Integer.parseInt(id));
+					if(deleteEvent == true) {
+						System.out.println("Evento rimosso con successo");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
+					}
+				} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }else if(action.equalsIgnoreCase("update") && id!=null) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				NewEventBean newDetailEvent = null;
+				boolean updatedEvent = false;
+				Gson datas = new Gson();
+				try {
+					newDetailEvent = datas.fromJson(data, NewEventBean.class );
+					updatedEvent = eventDao.updateEvent(Integer.parseInt(id), auth.getIdUser(req),
 					newDetailEvent.getIdLocation(), newDetailEvent.getEventName(), newDetailEvent.getDate());
 					if(updatedEvent == true) {
 						System.out.println("Dati Evento aggiornati con successo");

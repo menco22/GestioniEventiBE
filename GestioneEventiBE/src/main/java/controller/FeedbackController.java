@@ -109,6 +109,7 @@ public class FeedbackController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController(request);
 		if(auth.checkToken(request)==true) {
 			connectToDb();
+			FeedbackDao feedbackDao = new FeedbackDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
 			String line;
@@ -121,13 +122,12 @@ public class FeedbackController extends HttpServlet {
 					buffer.append(System.lineSeparator());
 				}
 				String data = buffer.toString();
-				FeedbackDao newFeedbackDao = new FeedbackDao(this.connection);
 				NewFeedbackBean newFeedback = null;
 				boolean addedFeedback = false;
 				Gson datas = new Gson();
 				try {
 					newFeedback = datas.fromJson(data, NewFeedbackBean.class);
-					addedFeedback = newFeedbackDao.addFeedback(newFeedback.getIdCreator(),	newFeedback.getIdBooking(),
+					addedFeedback = feedbackDao.addFeedback(auth.getIdUser(request),	newFeedback.getIdBooking(),
 							newFeedback.getEvaluation(), newFeedback.getDescription());
 					if(addedFeedback == true ) {
 						System.out.println("Feedback aggiunto con successo");
@@ -137,9 +137,54 @@ public class FeedbackController extends HttpServlet {
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else {
-					response.sendError(400, "Id e action non richiesti per l'aggiunta");
+			}else if(id != null && action.equalsIgnoreCase("delete")) {
+				boolean deletedFeedback = false;
+				try {
+					deletedFeedback = feedbackDao.deleteFeedback(Integer.parseInt(id));
+					if (deletedFeedback == true) {
+						System.out.println("Feedback rimosso con successo");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
+					}	
+				}catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+				e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+			}else if(action.equalsIgnoreCase("update") && id!=null) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				NewFeedbackBean newDetailFeedback = null;
+				boolean updatedFeedback = false;
+				Gson datas = new Gson();
+				try {
+					newDetailFeedback = datas.fromJson(data, NewFeedbackBean.class);
+					updatedFeedback = feedbackDao.updateFeedback(Integer.parseInt(id), auth.getIdUser(request),
+							newDetailFeedback.getIdBooking(), newDetailFeedback.getEvaluation(), newDetailFeedback.getDescription());
+					if (updatedFeedback == true) {
+						System.out.println("Feedback aggiornato con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare evento");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e evento non specificato");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida su evento specificato");
+				}
+			}
+					
+				
 		}else {
 			response.sendError(401, "Effettuare Login");
 		}
@@ -186,7 +231,7 @@ public class FeedbackController extends HttpServlet {
 				Gson datas = new Gson();
 				try {
 					newDetailFeedback = datas.fromJson(data, NewFeedbackBean.class);
-					updatedFeedback = feedbackDao.updateFeedback(Integer.parseInt(id), newDetailFeedback.getIdCreator(),
+					updatedFeedback = feedbackDao.updateFeedback(Integer.parseInt(id), auth.getIdUser(req),
 							newDetailFeedback.getIdBooking(), newDetailFeedback.getEvaluation(), newDetailFeedback.getDescription());
 					if (updatedFeedback == true) {
 						System.out.println("Feedback aggiornato con successo");

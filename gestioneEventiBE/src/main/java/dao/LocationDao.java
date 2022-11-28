@@ -22,7 +22,7 @@ public class LocationDao {
 	public ArrayList<LocationBean> getLocations (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <LocationBean> locationList = new ArrayList();
 		
-		query = "SELECT * FROM t_locations Order by " + orderBy + " " + orderDirection;
+		query = "SELECT * FROM t_locations WHERE  deleted = false Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			// A prepared statement is used here because the query contains parameters
@@ -62,7 +62,7 @@ public class LocationDao {
 	
 	public LocationBean getLocationById(int idLocation) throws SQLException {
 		LocationBean location = null;
-		String query = "SELECT * FROM t_locations WHERE id_location = ?";
+		String query = "SELECT * FROM t_locations WHERE id_location = ? AND deleted = false";
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idLocation);
@@ -96,7 +96,7 @@ public class LocationDao {
 	public ArrayList<LocationBean> getLocationsByType (int type) throws SQLException {
 		ArrayList <LocationBean> locationList = new ArrayList();
 		
-		query = "SELECT location_name FROM t_locations WHERE location_type = ?";
+		query = "SELECT location_name FROM t_locations WHERE location_type = ?  AND deleted = false";
 		
 		try {
 			// A prepared statement is used here because the query contains parameters

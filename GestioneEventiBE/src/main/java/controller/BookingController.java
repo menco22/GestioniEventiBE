@@ -116,6 +116,7 @@ public class BookingController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController (request);
 		if(auth.checkToken(request)==true) {
 			connectToDb();
+			BookingDao bookingDao = new BookingDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
 		    String line;
@@ -127,14 +128,13 @@ public class BookingController extends HttpServlet {
 					buffer.append(System.lineSeparator());
 				}
 				String data = buffer.toString();
-				BookingDao newBookingDao = new BookingDao(this.connection);
 				NewBookingBean newBooking = null;
 				boolean addedBooking = false;
 				Gson datas = new Gson();
 				try {
 					newBooking = datas.fromJson(data, NewBookingBean.class);
-					addedBooking = newBookingDao.addBooking(newBooking.getCode(), newBooking.getBookingType(), 
-		    			               newBooking.getIdUser(), newBooking.getIdEvent(), newBooking.getIdTable());
+					addedBooking = bookingDao.addBooking(newBooking.getCode(), newBooking.getBookingType(), 
+		    			               auth.getIdUser(request), newBooking.getIdEvent(), newBooking.getIdTable());
 					if(addedBooking == true) {
 						System.out.println("Booking aggiunto con successo");
 					}else {
@@ -143,10 +143,59 @@ public class BookingController extends HttpServlet {
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else {
-				response.sendError(400, "Id e action non richiesti per l'aggiunta");
-			}
-		//doGet(request, response);
+			}else if(id != null && action.equalsIgnoreCase("delete")) {
+				 FeedbackDao feedbackDao = new FeedbackDao(this.connection);
+				 FeedbackBean feedback = null; 
+				 boolean deleteBooking = false;  
+				 try {
+					feedback = feedbackDao.getFeedbackByBooking(Integer.parseInt(id));
+					if(feedback == null) {
+						deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
+						if(deleteBooking == true) {
+							System.out.println("Prenotazione rimossa con successo");
+						}else {
+							System.out.println("Eliminazione non avvenuta");
+						}
+					}else {
+						System.out.println("Eliminazione non avvenuta");
+					}
+				 } catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					 e.printStackTrace();
+				 } catch (SQLException e) {
+					// TODO Auto-generated catch block
+					 e.printStackTrace();
+				 }
+			   }else if(id != null && action.equalsIgnoreCase("update")) {
+					while ((line = reader.readLine()) != null) {
+				    	buffer.append(line);
+				    	buffer.append(System.lineSeparator());
+				    }
+					String data = buffer.toString();
+					NewBookingBean newBookingDetail = null;
+					boolean updatedBooking = false;
+					Gson datas = new Gson();
+					try {
+						newBookingDetail = datas.fromJson(data, NewBookingBean.class);
+						updatedBooking = bookingDao.updateBooking(Integer.parseInt(id), newBookingDetail.getCode(),
+								newBookingDetail.getBookingType(), auth.getIdUser(request), newBookingDetail.getIdEvent(), newBookingDetail.getIdTable());
+						if(updatedBooking == true) {
+							System.out.println("Dati prenotazione aggiornati con successo");
+						}else {
+							System.out.println("Aggiornamento non avvenuto");
+						}
+					}catch(JsonSyntaxException | SQLException | NumberFormatException e) {
+						e.printStackTrace();
+					}
+			   }else	if(action != null || id == null) {
+					if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+						response.sendError(400, "Specificare la prenotazione");
+					}else if(id == null){
+						response.sendError(400, "Azione non valida e prenotazione non specificata");
+					}else if(id != null) {
+						response.sendError(400,"Azione non valida sulla prenotazione specificata");
+					}
+				}
 		}else {
 			response.sendError(401, "Effettuare il login");
 		}
@@ -200,7 +249,7 @@ public class BookingController extends HttpServlet {
 				try {
 					newBookingDetail = datas.fromJson(data, NewBookingBean.class);
 					updatedBooking = bookingDao.updateBooking(Integer.parseInt(id), newBookingDetail.getCode(),
-							newBookingDetail.getBookingType(), newBookingDetail.getIdUser()	, newBookingDetail.getIdEvent(), newBookingDetail.getIdTable());
+							newBookingDetail.getBookingType(), auth.getIdUser(req), newBookingDetail.getIdEvent(), newBookingDetail.getIdTable());
 					if(updatedBooking == true) {
 						System.out.println("Dati prenotazione aggiornati con successo");
 					}else {

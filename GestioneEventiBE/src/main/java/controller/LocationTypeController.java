@@ -110,6 +110,7 @@ public class LocationTypeController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController(request);
 		if(auth.checkToken(request)==true) {
 			connectToDb();
+			LocationTypeDao typeDao = new LocationTypeDao (this.connection);
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
 			String line;
@@ -122,7 +123,6 @@ public class LocationTypeController extends HttpServlet {
 					buffer.append(System.lineSeparator());
 				}
 				String data = buffer.toString();
-				LocationTypeDao typeDao = new LocationTypeDao (this.connection);
 				NewTypeBean newType = null;
 				boolean addedType = false;
 				Gson datas = new Gson();
@@ -137,9 +137,39 @@ public class LocationTypeController extends HttpServlet {
 				}catch(JsonSyntaxException | SQLException e) {
 					e.printStackTrace();
 				}
-			}else {
-				response.sendError(400, "Id e action non richiesti per l'aggiunta");
+			}else if(id != null && action.equalsIgnoreCase("delete")) {
+				System.out.println("da implementare");
+			}else if(action.equalsIgnoreCase("update") && id!=null) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				NewTypeBean newDetailType = null;
+				boolean updatedType = false;
+				Gson datas = new Gson();
+				try {
+					newDetailType = datas.fromJson(data, NewTypeBean.class);
+					updatedType  =typeDao.updateLocationType(Integer.parseInt(id), newDetailType.getDescription());
+					if(updatedType == true) {
+						System.out.println("Dati Tipo aggiornato con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare evento");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e evento non specificato");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida su evento specificato");
+				}
 			}
+				
+			
 		}else {
 			response.sendError(401, "Effettuare Login");
 		}

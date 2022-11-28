@@ -120,6 +120,7 @@ public class LocationController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController (request);
 		if(auth.checkToken(request)==true) {
 			connectToDb();
+			LocationDao locationDao = new LocationDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
 		    String line;
@@ -132,13 +133,12 @@ public class LocationController extends HttpServlet {
 			    	buffer.append(System.lineSeparator());
 			    }
 			    String data = buffer.toString();
-			    LocationDao newLocationDao = new LocationDao(this.connection);
 			    NewLocationBean newLocation = null;
 			    boolean addedLocation = false;
 			    Gson datas = new Gson();
 			    try {
 			    	newLocation = datas.fromJson(data, NewLocationBean.class);
-			    	addedLocation = newLocationDao.addLocation(newLocation.getLocationName(), newLocation.getLocationAddress(), newLocation.getLocationType());
+			    	addedLocation = locationDao.addLocation(newLocation.getLocationName(), newLocation.getLocationAddress(), newLocation.getLocationType());
 			    	if(addedLocation == true) {
 			    		System.out.println("Location aggiunta con successo");
 			    	}else {
@@ -147,13 +147,41 @@ public class LocationController extends HttpServlet {
 			    }catch(JsonSyntaxException | SQLException e) {
 			    	e.printStackTrace();
 			    }  
-			}else {
-				response.sendError(400, "Id e action non richiesti per l'aggiunta");
-			}
+			}else if(id != null && action.equalsIgnoreCase("update")) {
+				while ((line = reader.readLine()) != null) {
+					buffer.append(line);
+					buffer.append(System.lineSeparator());
+				}
+				String data = buffer.toString();
+				NewLocationBean newDetailLocation= null;
+				boolean updatedLocation = false;
+				Gson datas = new Gson();
+				try {
+					newDetailLocation = datas.fromJson(data, NewLocationBean.class);
+					updatedLocation = locationDao.updateLocation(Integer.parseInt(id), newDetailLocation.getLocationName(),
+							newDetailLocation.getLocationAddress(), newDetailLocation.getLocationType());
+					if(updatedLocation == true) {
+						System.out.println("Dati Location modificati con successo");
+					}else {
+						System.out.println("Aggiornamento non avvenuto");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
+			}else if(action.equalsIgnoreCase("delete") && id != null) {
+				System.out.println("Da implementare");
+			}else	if(action != null || id == null) {
+				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
+					response.sendError(400, "Specificare la location");
+				}else if(id == null){
+					response.sendError(400, "Azione non valida e  location non specificata");
+				}else if(id != null) {
+					response.sendError(400,"Azione non valida sulla location specificata");
+				}
+			}		
 		}else {
 			response.sendError(401, "Effettuare il login");
 		}
-		//doGet(request, response);
 	}
 
 	@Override
