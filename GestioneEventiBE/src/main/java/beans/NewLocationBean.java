@@ -1,6 +1,9 @@
 package beans;
 
 public class NewLocationBean {
+	private String locationName;
+	 private String locationAddress;
+	 private int locationType;
 	 public String getLocationName() {
 		return locationName;
 	}
@@ -19,7 +22,4 @@ public class NewLocationBean {
 	public void setLocationType(int locationType) {
 		this.locationType = locationType;
 	}
-	private String locationName;
-	 private String locationAddress;
-	 private int locationType;
 }

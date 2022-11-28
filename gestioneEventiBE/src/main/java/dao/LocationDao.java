@@ -197,6 +197,30 @@ public class LocationDao {
 			
 		}
 	
+	public boolean deleteLocation(int idLocation, boolean delete) throws SQLException {
+		String query = "UPDATE t_locations SET deleted =? WHERE id_location=?";
+		int r = 0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setBoolean(1, delete);
+			statement.setInt(2, idLocation);
+			r = statement.executeUpdate();
+			if(r>0) {
+			    return true;
+			    }else {
+			    	return false;
+			    }
+		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
 	public boolean updateLocation (int idLocation, String locationName, String address, int locationType) throws SQLException {
 		String query = "UPDATE t_locations SET location_name = ?, address = ?, location_type = ? WHERE id_location = ?";
 		int r = 0;

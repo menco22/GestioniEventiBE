@@ -169,7 +169,18 @@ public class LocationController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(action.equalsIgnoreCase("delete") && id != null) {
-				System.out.println("Da implementare");
+				boolean deleted = true;
+				boolean deletedLocation = false;
+				try {
+					deletedLocation = locationDao.deleteLocation(Integer.parseInt(id), deleted);
+					if(deletedLocation == true) {
+						System.out.println("Location rimossa con successo");
+					}else {
+						System.out.println("Eliminazione non avvenuta");
+					}
+				}catch(JsonSyntaxException | SQLException e) {
+					e.printStackTrace();
+				}
 			}else	if(action != null || id == null) {
 				if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("update")) {
 					response.sendError(400, "Specificare la location");
