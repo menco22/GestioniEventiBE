@@ -104,4 +104,14 @@
     <servlet-name>LocationTypeController</servlet-name>
     <url-pattern>/LocationTypeController</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UserProfileController</display-name>
+    <servlet-name>UserProfileController</servlet-name>
+    <servlet-class>controller.UserProfileController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserProfileController</servlet-name>
+    <url-pattern>/UserProfileController</url-pattern>
+  </servlet-mapping>
 </web-app>
