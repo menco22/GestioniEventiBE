@@ -2,7 +2,7 @@ package beans;
 
 public class NewLocationBean {
 	private String locationName;
-	 private String locationAddress;
+	 private String address;
 	 private int locationType;
 	 public String getLocationName() {
 		return locationName;
@@ -10,11 +10,11 @@ public class NewLocationBean {
 	public void setLocationName(String locationName) {
 		this.locationName = locationName;
 	}
-	public String getLocationAddress() {
-		return locationAddress;
+	public String getAddress() {
+		return address;
 	}
-	public void setLocationAddress(String locationAddress) {
-		this.locationAddress = locationAddress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 	public int getLocationType() {
 		return locationType;

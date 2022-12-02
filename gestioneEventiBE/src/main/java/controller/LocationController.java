@@ -138,7 +138,7 @@ public class LocationController extends HttpServlet {
 			    Gson datas = new Gson();
 			    try {
 			    	newLocation = datas.fromJson(data, NewLocationBean.class);
-			    	addedLocation = locationDao.addLocation(newLocation.getLocationName(), newLocation.getLocationAddress(), newLocation.getLocationType());
+			    	addedLocation = locationDao.addLocation(newLocation.getLocationName(), newLocation.getAddress(), newLocation.getLocationType());
 			    	if(addedLocation == true) {
 			    		System.out.println("Location aggiunta con successo");
 			    	}else {
@@ -159,7 +159,7 @@ public class LocationController extends HttpServlet {
 				try {
 					newDetailLocation = datas.fromJson(data, NewLocationBean.class);
 					updatedLocation = locationDao.updateLocation(Integer.parseInt(id), newDetailLocation.getLocationName(),
-							newDetailLocation.getLocationAddress(), newDetailLocation.getLocationType());
+							newDetailLocation.getAddress(), newDetailLocation.getLocationType());
 					if(updatedLocation == true) {
 						System.out.println("Dati Location modificati con successo");
 					}else {
