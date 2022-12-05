@@ -41,12 +41,13 @@ public class EventDao {
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
 				String locationName = result.getString("location_name");
+				String address = result.getString("address");
 				String eventName = result.getString("name");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
 				//System.out.println(idEvent);
-				EventBean event = new EventBean( idEvent, idCreator, idLocation, locationName, eventName, formattedDateTime);
+				EventBean event = new EventBean( idEvent, idCreator, idLocation, locationName, address ,eventName, formattedDateTime);
 				//int id0 = event.getIdEvent();
 				//System.out.println(id0);
 				eventList.add(event);
@@ -84,10 +85,11 @@ public class EventDao {
 				int idLocation = result.getInt("id_location");
 				String eventName = result.getString("name");
 				String locationName = result.getString("location_name");
+				String address = result.getString("address");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
-				event = new EventBean( idEvent, idCreator, idLocation, locationName,eventName, formattedDateTime);
+				event = new EventBean( idEvent, idCreator, idLocation, locationName, address, eventName, formattedDateTime);
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();
@@ -121,10 +123,11 @@ public class EventDao {
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
 				String locationName = result.getString("location_name");
+				String address = result.getString("address");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
-				EventBean event = new EventBean(idEvent, idCreator, idLocation, locationName,eventName, formattedDateTime);
+				EventBean event = new EventBean(idEvent, idCreator, idLocation, locationName, address, eventName, formattedDateTime);
 				eventList.add(event);
 			}
 		}catch (SQLException e) {
@@ -160,8 +163,9 @@ public class EventDao {
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
 				String locationName = result.getString("location_name");
+				String address = result.getString("address");
 				String eventName = result.getString("name");
-				EventBean event = new EventBean(idEvent, idCreator, idLocation, locationName,eventName, eventDate);
+				EventBean event = new EventBean(idEvent, idCreator, idLocation, locationName, address, eventName, eventDate);
 				eventList.add(event);
 			}
 		}catch (SQLException e) {

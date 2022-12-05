@@ -11,13 +11,15 @@ public class EventBean {
 	private String eventName;
 	private String date;
 	private String locationName;
+	private String address;
 	
-	public EventBean(int idEvent, int idCreator, int idLocation, String locationName,String eventName, String date) {
+	public EventBean(int idEvent, int idCreator, int idLocation, String locationName, String address, String eventName, String date) {
 		super();
 		this.idEvent = idEvent;
 		this.idCreator = idCreator;
 		this.idLocation = idLocation;
 		this.locationName = locationName;
+		this.address = address;
 		this.eventName = eventName;
 		this.date = date;
 	}
@@ -59,6 +61,14 @@ public class EventBean {
 
 	public void setLocationName(String locationName) {
 		this.locationName = locationName;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	
