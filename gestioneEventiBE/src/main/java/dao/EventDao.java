@@ -26,7 +26,7 @@ public class EventDao {
 	public ArrayList<EventBean> getEvents (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <EventBean> eventList = new ArrayList();
 		
-		query = "SELECT * FROM t_events Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			// A prepared statement is used here because the query contains parameters
@@ -40,12 +40,13 @@ public class EventDao {
 				int idEvent = result.getInt("id_event");
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
+				String locationName = result.getString("location_name");
 				String eventName = result.getString("name");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
 				//System.out.println(idEvent);
-				EventBean event = new EventBean( idEvent, idCreator, idLocation, eventName, formattedDateTime);
+				EventBean event = new EventBean( idEvent, idCreator, idLocation, locationName, eventName, formattedDateTime);
 				//int id0 = event.getIdEvent();
 				//System.out.println(id0);
 				eventList.add(event);
@@ -71,7 +72,7 @@ public class EventDao {
 	}
 	
 	public EventBean getEventById (int idEvent) throws SQLException {
-		String query="SELECT * FROM t_events WHERE id_event = ?";
+		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_event = ?";
 		EventBean event = null;
 		try {
 			statement = connection.prepareStatement(query);
@@ -82,10 +83,11 @@ public class EventDao {
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
 				String eventName = result.getString("name");
+				String locationName = result.getString("location_name");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
-				event = new EventBean( idEvent, idCreator, idLocation, eventName, formattedDateTime);
+				event = new EventBean( idEvent, idCreator, idLocation, locationName,eventName, formattedDateTime);
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();
@@ -118,10 +120,11 @@ public class EventDao {
 				int idEvent = result.getInt("id_event");
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
+				String locationName = result.getString("location_name");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); 
-				EventBean event = new EventBean(idEvent, idCreator, idLocation, eventName, formattedDateTime);
+				EventBean event = new EventBean(idEvent, idCreator, idLocation, locationName,eventName, formattedDateTime);
 				eventList.add(event);
 			}
 		}catch (SQLException e) {
@@ -156,8 +159,9 @@ public class EventDao {
 				int idEvent = result.getInt("id_event");
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
+				String locationName = result.getString("location_name");
 				String eventName = result.getString("name");
-				EventBean event = new EventBean(idEvent, idCreator, idLocation, eventName, eventDate);
+				EventBean event = new EventBean(idEvent, idCreator, idLocation, locationName,eventName, eventDate);
 				eventList.add(event);
 			}
 		}catch (SQLException e) {
