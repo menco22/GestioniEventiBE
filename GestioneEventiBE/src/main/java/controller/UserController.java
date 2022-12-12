@@ -190,6 +190,8 @@ public class UserController extends HttpServlet {
 			cookie.setHttpOnly(true);
 			response.addCookie(cookie);
             //TODO: if user == null
+		}else {
+			response.sendError(401, "Utente o password errati");
 		}
 	}
 
