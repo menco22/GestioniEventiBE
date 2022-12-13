@@ -1,8 +1,8 @@
 package beans;
 
-import java.time.LocalDateTime;
-
 public class NewEventBean {
+	//bean per la lettura del json inviato dal frontend alla crazione di un nuovo evento
+	//proprietà
 	private int idLocation;
 	private String eventName;
 	private String date;

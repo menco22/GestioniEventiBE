@@ -1,6 +1,8 @@
 package beans;
 
 public class NewBookingBean {
+	//bean per leggere il json che invia il frontend alla creazione di una nuova prenotazione
+	//proprietà
 	private String code;
 	private String bookingType;
 	private int idEvent;

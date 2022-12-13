@@ -1,7 +1,8 @@
 package beans;
 
 public class NewTableBean {
-	
+	//bean per la lettura del json inviato dal frontend alla creazione di un nuovo tavolo
+	//proprietà:
 	private int tableCapacity;
 	private int idEvent;
 	

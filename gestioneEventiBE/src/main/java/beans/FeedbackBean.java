@@ -1,6 +1,7 @@
 package beans;
 
-public class FeedbackBean {	
+public class FeedbackBean {
+	//proprietà del feedback
 	private int idFeedback;
 	private int idCreator;
 	private int idBooking;
@@ -8,6 +9,7 @@ public class FeedbackBean {
 	private String description;
 	
 	public FeedbackBean(int idFeedback, int idCreator, int idBooking, int evaluation, String description) {
+		//costruttore
 		super();
 		this.idFeedback = idFeedback;
 		this.idCreator = idCreator;
@@ -15,6 +17,8 @@ public class FeedbackBean {
 		this.evaluation = evaluation;
 		this.description = description;
 	}
+	
+	//getters e setters delle varie proprietà
 	public int getIdFeedback() {
 		return idFeedback;
 	}

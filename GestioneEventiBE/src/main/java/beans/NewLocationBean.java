@@ -1,6 +1,8 @@
 package beans;
 
 public class NewLocationBean {
+	//bean per la lettura del json inviato dal frontend alla creazione di una nuova location
+	//proprietà:
 	private String locationName;
 	 private String address;
 	 private int locationType;

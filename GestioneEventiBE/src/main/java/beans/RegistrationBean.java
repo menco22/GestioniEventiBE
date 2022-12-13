@@ -1,7 +1,7 @@
 package beans;
 
 public class RegistrationBean {
-	
+	//bean per leggere il json inviato dal frontend quando un utente si registra
 	private String name;
 	private String surname;
 	private String username;

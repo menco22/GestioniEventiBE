@@ -1,6 +1,7 @@
 package beans;
 
 public class LocationBean {
+	//proprietà della location
 	private int idLocation;
 	private String locationName;
 	private String address;
@@ -8,12 +9,15 @@ public class LocationBean {
 	
 	
 	public LocationBean(int idLocation, String name, String address, int locationType) {
+		//costruttore
+		super();
 		this.idLocation = idLocation;
 		this.locationName = name;
 		this.address = address;
 		this.locationType = locationType;
 	}
 	
+	//getters e setters delle proprietà
 	public String getLocationName () {
 		return this.locationName;
 	}

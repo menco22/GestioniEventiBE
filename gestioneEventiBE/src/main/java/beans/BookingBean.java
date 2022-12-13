@@ -1,6 +1,7 @@
 package beans;
 
 public class BookingBean {
+	//proprità delle prenotazioni o booking
 	private int idBooking;
 	private String code;
 	private String bookingType;
@@ -9,6 +10,8 @@ public class BookingBean {
 	private int idTable;
 	
 	public BookingBean (int idBooking, String code, String bookingType, int idUser, int idEvent, int idTable) {
+		//costruttore
+		super() ;
 		this.idBooking = idBooking;
 		this.code = code;
 		this.bookingType = bookingType;
@@ -17,6 +20,7 @@ public class BookingBean {
 		this.idTable = idTable;
 	}
 	
+	//getters e setters per le varie proprietà
 	public int getIdBooking() {
 		return idBooking;
 	}

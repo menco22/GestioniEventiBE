@@ -1,17 +1,20 @@
 package beans;
 
 public class TableBean {
+	//prorpietà dei tavoli
 	private int idTable;
 	private int tableCapacity;
 	private int idEvent;
 	
 	public TableBean(int idTable, int tableCapacity, int idEvent) {
+		//costruttore
 		super();
 		this.idTable = idTable;
 		this.tableCapacity = tableCapacity;
 		this.idEvent = idEvent;
 	}
-
+	
+	//getters e setters delle varie proprietà
 	public int getIdTable() {
 		return idTable;
 	}

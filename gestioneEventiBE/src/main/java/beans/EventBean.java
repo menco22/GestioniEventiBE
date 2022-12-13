@@ -5,6 +5,7 @@ import java.util.*;
 import java.time.LocalDateTime;
 
 public class EventBean {	
+	//proprietà di ogni evento
 	private int idEvent;
 	private int idCreator;
 	private int idLocation;
@@ -14,6 +15,7 @@ public class EventBean {
 	private String address;
 	
 	public EventBean(int idEvent, int idCreator, int idLocation, String locationName, String address, String eventName, String date) {
+		//costruttore
 		super();
 		this.idEvent = idEvent;
 		this.idCreator = idCreator;
@@ -24,6 +26,7 @@ public class EventBean {
 		this.date = date;
 	}
 
+	//getters e setters per le varie proprietà
 	public int getIdEvent() {
 		return idEvent;
 	}

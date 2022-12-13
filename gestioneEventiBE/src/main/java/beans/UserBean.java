@@ -1,7 +1,7 @@
 package beans;
 
 public class UserBean {
-	
+	//proprietà dello user
 	private int idUser;
 	private String name;
 	private String surname;
@@ -10,8 +10,8 @@ public class UserBean {
 	private String password;
 	private int idRole;
 	
-	public UserBean(int idUser, String name, String surname, String email, String username, String password,
-			int idRole) {
+	public UserBean(int idUser, String name, String surname, String email, String username, String password, int idRole) {
+		//costruttore
 		super();
 		this.idUser = idUser;
 		this.name = name;
@@ -22,7 +22,7 @@ public class UserBean {
 		this.idRole = idRole;
 	}
 
-
+	//getters e setters delle varie proprietà
 	public int getIdUser() {
 		return idUser;
 	}
