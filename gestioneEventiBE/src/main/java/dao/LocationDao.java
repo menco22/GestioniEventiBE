@@ -22,7 +22,7 @@ public class LocationDao {
 	public ArrayList<LocationBean> getLocations (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <LocationBean> locationList = new ArrayList();
 		
-		query = "SELECT * FROM t_locations WHERE  deleted = false Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_locations.location_type,t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type  WHERE t_locations.deleted = false Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			// A prepared statement is used here because the query contains parameters
@@ -37,7 +37,8 @@ public class LocationDao {
 				String locationName = result.getString("location_name");
 				String locationAddress = result.getString("address");
 				int locationType = result.getInt("location_type");
-				LocationBean location = new LocationBean(idLocation,locationName, locationAddress, locationType);
+				String description = result.getString("description");
+				LocationBean location = new LocationBean(idLocation,locationName, locationAddress, locationType,description);
 				locationList.add(location);
 			}
 		} catch (SQLException e) {
@@ -62,7 +63,7 @@ public class LocationDao {
 	
 	public LocationBean getLocationById(int idLocation) throws SQLException {
 		LocationBean location = null;
-		String query = "SELECT * FROM t_locations WHERE id_location = ? AND deleted = false";
+		String query = "SSELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type WHERE t_locations_id=? AND deleted = false";
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idLocation);
@@ -71,7 +72,8 @@ public class LocationDao {
 				String locationName = result.getString("location_name");
 				String address = result.getString("address");
 				int locationType = result.getInt("location_type");
-				location = new LocationBean(idLocation, locationName, address, locationType);
+				String description = result.getString("description");
+				location = new LocationBean(idLocation, locationName, address, locationType, description);
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();
@@ -93,10 +95,10 @@ public class LocationDao {
 		return location;
 	}
 	
-	public ArrayList<LocationBean> getLocationsByType (int type) throws SQLException {
+	/*public ArrayList<LocationBean> getLocationsByType (int type) throws SQLException {
 		ArrayList <LocationBean> locationList = new ArrayList();
 		
-		query = "SELECT location_name FROM t_locations WHERE location_type = ?  AND deleted = false";
+		query = "SELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type WHERE t_locations_id=? AND deleted = false";
 		
 		try {
 			// A prepared statement is used here because the query contains parameters
@@ -111,7 +113,8 @@ public class LocationDao {
 				String locationName = result.getString("location_name");
 				String locationAddress = result.getString("address");
 				int locationType = result.getInt("location_type");
-				LocationBean location = new LocationBean(locationId, locationName, locationAddress, locationType);
+				String description = result.getString("description");
+				LocationBean location = new LocationBean(locationId, locationName, locationAddress, locationType, description);
 				locationList.add(location);
 			}
 		} catch (SQLException e) {
@@ -165,7 +168,7 @@ public class LocationDao {
 			}
 		}	
 		return locationList;
-	}
+	}*/
 	
 	public boolean addLocation( String name, String address, int locationType) throws SQLException
 	{

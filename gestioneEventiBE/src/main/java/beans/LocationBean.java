@@ -6,17 +6,35 @@ public class LocationBean {
 	private String locationName;
 	private String address;
 	private int locationType;
+	private String description;
 	
 	
-	public LocationBean(int idLocation, String name, String address, int locationType) {
+	public LocationBean(int idLocation, String name, String address, int locationType, String description) {
 		//costruttore
 		super();
 		this.idLocation = idLocation;
 		this.locationName = name;
 		this.address = address;
 		this.locationType = locationType;
+		this.description = description;
 	}
 	
+	public int getIdLocation() {
+		return idLocation;
+	}
+
+	public void setIdLocation(int idLocation) {
+		this.idLocation = idLocation;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	//getters e setters delle proprietà
 	public String getLocationName () {
 		return this.locationName;
