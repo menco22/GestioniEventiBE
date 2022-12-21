@@ -20,10 +20,10 @@ public class RoleDao {
 		this.connection = connection;
 	}	
 	
-	public ArrayList<RoleBean> getRole () throws SQLException {
+	public ArrayList<RoleBean> getRole (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <RoleBean> roleList = new ArrayList();
 		
-		query = "SELECT * FROM t_roles";
+		query = "SELECT * FROM t_roles Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			// A prepared statement is used here because the query contains parameters

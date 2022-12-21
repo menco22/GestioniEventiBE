@@ -114,4 +114,14 @@
     <servlet-name>UserProfileController</servlet-name>
     <url-pattern>/UserProfileController</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>RoleController</display-name>
+    <servlet-name>RoleController</servlet-name>
+    <servlet-class>controller.RoleController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RoleController</servlet-name>
+    <url-pattern>/RoleController</url-pattern>
+  </servlet-mapping>
 </web-app>
