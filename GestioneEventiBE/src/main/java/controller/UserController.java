@@ -140,12 +140,6 @@ public class UserController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		connectToDb();
-		Cookie[]cookie = request.getCookies();
-		if(cookie!=null) {
-				for (int i = 0; i < cookie.length; i++) {
-				 cookie[i].setMaxAge(0);
-				}
-		}
 		StringBuilder buffer = new StringBuilder();
 	    BufferedReader reader = request.getReader();
 	    String line;
@@ -191,10 +185,10 @@ public class UserController extends HttpServlet {
 					   .claim("roles", user.getIdRole())
 					   .compact();			
 			System.out.println(jwtToken);		
-			Cookie cookie = new Cookie("loginCookie", jwtToken);
-			cookie.setMaxAge(5*3600);
-			cookie.setHttpOnly(true);
-			response.addCookie(cookie);
+			Cookie cookie1 = new Cookie("loginCookie", jwtToken);
+			cookie1.setMaxAge(5*3600);
+			cookie1.setHttpOnly(true);
+			response.addCookie(cookie1);
             //TODO: if user == null
 		}else {
 			response.sendError(401, "Utente o password errati");

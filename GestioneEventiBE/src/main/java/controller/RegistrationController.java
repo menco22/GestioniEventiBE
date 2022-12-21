@@ -110,7 +110,7 @@ public class RegistrationController extends HttpServlet {
 								registration.getEmail(), registration.getUsername(), registration.getPassword(), registration.getIdRole());
 			if(addedUser == true ) {
 				System.out.println("Utente aggiunto con successo");
-				String jwtToken = Jwts.builder()
+				/*String jwtToken = Jwts.builder()
 						   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*60))
 						   .setSubject(registration.getUsername())
 						   //.claim("id", registration.getIdUser())
@@ -123,7 +123,7 @@ public class RegistrationController extends HttpServlet {
 				//cookie.setMaxAge(60*60);
 				//cookie.setPath("/LocationController");
 				cookie.setHttpOnly(true);
-				response.addCookie(cookie);
+				response.addCookie(cookie);*/
 			}
 		}catch(JsonSyntaxException | SQLException e) {
 			e.printStackTrace();
