@@ -109,7 +109,7 @@ public class UserController extends HttpServlet {
 				String orderBy = request.getParameter("orderBy");
 				String orderDirection = request.getParameter("orderDirection");
 				if(orderBy == null) {
-					orderBy = "id_event";
+					orderBy = "id_user";
 				}
 				if (orderDirection == null) {
 					orderDirection = "asc";
