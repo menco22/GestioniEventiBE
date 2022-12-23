@@ -19,6 +19,8 @@ public class FeedbackDao {
 	this.connection = connection;
 	}
 	
+	// funzione per recuperare tutti i feedback contenuti nell'apposita tabella con ordine specificato dall'utente 
+	//(in caso non venga specificato è previsto un ordinamento di default)
 	public ArrayList<FeedbackBean> getFeedback (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <FeedbackBean> feedbackList = new ArrayList();
 		
@@ -57,11 +59,12 @@ public class FeedbackDao {
 		return feedbackList;
 	}
 	
+	//funzione che restituisce il feedback corrispondente all'id passatole
 	public FeedbackBean getFeedbackById(int idFeedback) throws SQLException {
 		FeedbackBean feedback = null;
 		String query = "SELECT * FROM t_feedbacks WHERE id_feedback=?";
 		try {
-			statement = connection.prepareStatement(query);
+			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
 			statement.setInt(1, idFeedback);
 			result = statement.executeQuery();
 			while(result.next()) {
@@ -91,12 +94,13 @@ public class FeedbackDao {
 		
 	}
 	
+	//funzione che restituisce il o i feedback/s corrispondenti a una certa prenotazione
 	public ArrayList<FeedbackBean> getFeedbackByBooking (int idBooking) throws SQLException {
 		String query = "SELECT * FROM t_feedbacks WHERE id_booking=?";
 		ArrayList <FeedbackBean> feedbackList = new ArrayList();
 		FeedbackBean feedback = null;
 		try {
-			statement = connection.prepareStatement(query);
+			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
 			statement.setInt(1, idBooking);
 			result = statement.executeQuery();
 			while(result.next()) {
@@ -127,17 +131,20 @@ public class FeedbackDao {
 		return feedbackList;
 	}
 	
+	
+	//funzione per l'aggiunta di  un nuovo feedback
 	public boolean addFeedback(int idCreator, int idBooking, int evaluation, String description) throws SQLException
 	{
 			String query = "INSERT INTO t_feedbacks (id_creator, id_booking, evaluation, description) VALUES(?, ?, ?, ?)";
 			int r=0;
 			try {
-				statement = connection.prepareStatement(query);
+				statement = connection.prepareStatement(query);//imposta i vari valori corrispondenti ai ? nella quey
 				statement.setInt(1, idCreator);
 				statement.setInt(2,idBooking);
 				statement.setInt(3, evaluation);
 				statement.setString(4, description);
 			    r=statement.executeUpdate();
+				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
 			    if(r>0) {
 			    return true;
 			    }else {
@@ -158,13 +165,14 @@ public class FeedbackDao {
 		String query = "UPDATE t_feedbacks SET id_creator=?, id_booking=?, evaluation=?, description=? WHERE id_feedback=?";
 		int r = 0;
 		try {
-			statement = connection.prepareStatement(query);
+			statement = connection.prepareStatement(query);//imposta i vari valori corrispondenti ai ? nella query e l'id del feedback da modificare
 			statement.setInt(1, idCreator);
 			statement.setInt(2, idBooking);
 			statement.setInt(3, evaluation);
 			statement.setString(4, description);
 			statement.setInt(5, idFeedback);
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che la modifica è avvenuta con successo
 			if (r>0) {
 				return true;
 			}else {
@@ -181,13 +189,15 @@ public class FeedbackDao {
 		}
 	}
 	
+	//funzione per l'eliminazione di un dato feedback
 	public boolean deleteFeedback (int idFeedback) throws SQLException {
 		String query = "DELETE FROM t_feedbacks WHERE id_feedback = ?";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, idFeedback);
+			statement.setInt(1, idFeedback);//imposta l'id del feedback da cancellare
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'eliminazione è avvenuta con successo
 			if (r>0) {
 				return true;
 			}else {

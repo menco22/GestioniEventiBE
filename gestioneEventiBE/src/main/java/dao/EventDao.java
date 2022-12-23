@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.*;
 
 import beans.EventBean;
+import beans.LocationBean;
 
 public class EventDao {
 	private Connection connection;
@@ -23,20 +24,14 @@ public class EventDao {
 		this.connection = connection;
 	}
 	
+	//funzione che ritorna l'elenco di eventi la cui location non risulti eliminata
 	public ArrayList<EventBean> getEvents (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <EventBean> eventList = new ArrayList();
-		
 		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false Order by " + orderBy + " " + orderDirection;
-		
 		try {
-			// A prepared statement is used here because the query contains parameters
-			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			
-			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
+			statement = connection.prepareStatement(query); 
+			result = statement.executeQuery(); 
 			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
 				int idEvent = result.getInt("id_event");
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
@@ -45,12 +40,10 @@ public class EventDao {
 				String eventName = result.getString("name");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-				String formattedDateTime = date.format(formatter); 
-				//System.out.println(idEvent);
-				EventBean event = new EventBean( idEvent, idCreator, idLocation, locationName, address ,eventName, formattedDateTime);
-				//int id0 = event.getIdEvent();
-				//System.out.println(id0);
-				eventList.add(event);
+				String formattedDateTime = date.format(formatter); //formatto la data da LocalDateTime a String 
+				LocationBean location = new LocationBean(idLocation, locationName, address); 
+				EventBean event = new EventBean( idEvent, idCreator,eventName, formattedDateTime, location);
+				eventList.add(event); 
 			}
 		} catch (SQLException e) {
 		    e.printStackTrace();
@@ -72,15 +65,15 @@ public class EventDao {
 		return eventList;
 	}
 	
+	//funzione per recuperare l'evento con un dato id
 	public EventBean getEventById (int idEvent) throws SQLException {
 		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_event = ?";
 		EventBean event = null;
 		try {
-			statement = connection.prepareStatement(query);
+			statement = connection.prepareStatement(query); //impostazione del parametro e invio dellla query al db
 			statement.setInt(1, idEvent);
-			result =statement.executeQuery();
+			result =statement.executeQuery(); 
 			while(result.next()) {
-			//int idEvent = result.getInt("id_event");
 				int idCreator = result.getInt("id_creator");
 				int idLocation = result.getInt("id_location");
 				String eventName = result.getString("name");
@@ -88,8 +81,10 @@ public class EventDao {
 				String address = result.getString("address");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-				String formattedDateTime = date.format(formatter); 
-				event = new EventBean( idEvent, idCreator, idLocation, locationName, address, eventName, formattedDateTime);
+				String formattedDateTime = date.format(formatter); //formattazione della data, si passa da LocalDateTime a stringa
+				LocationBean location = new LocationBean(idLocation, locationName, address); 
+				event = new EventBean( idEvent, idCreator, eventName, formattedDateTime, location);
+				
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();
@@ -111,7 +106,7 @@ public class EventDao {
 			
 	}
 	
-	public ArrayList<EventBean> getEventByName (String eventName) throws SQLException{
+	/*public ArrayList<EventBean> getEventByName (String eventName) throws SQLException{
 		ArrayList <EventBean> eventList = new ArrayList();
 		String query = "SELECT * FROM t_event WHERE name = ?";
 		try {
@@ -185,26 +180,22 @@ public class EventDao {
 			}
 		}	
 		return eventList;
-	}
+	}*/
 	
-	public boolean addEvent( int idCreator, int idLocation, String eventName, String date) throws SQLException
-	{
+	//funzione per l'aggiunta di un evento
+	public boolean addEvent( int idCreator, int idLocation, String eventName, String date) throws SQLException{
 			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?)";
 			int r=0;
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-			LocalDateTime data = LocalDateTime.parse(date, formatter);		
-			System.out.println(data);
+			LocalDateTime data = LocalDateTime.parse(date, formatter); //formatto la data, si passa da stringa a LocalDateTime		
 			try {
-				
-				statement = connection.prepareStatement(query);
-				//statement.setInt(1, id_person);
+				statement = connection.prepareStatement(query); // imposto valori e invio la query a db
 				statement.setInt(1, idCreator);
 				statement.setInt(2, idLocation);
 				statement.setString(3, eventName);
 				statement.setObject(4, data);
 			    r=statement.executeUpdate();
-				//result = statement.executeUpdate();
-				// If there is an affected row, it means the user has been added
+				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
 			    if(r>0) {
 			    return true;
 			    }else {
@@ -222,14 +213,15 @@ public class EventDao {
 			
 		}
 
-	
+	//funzione per l'eliminazione di un evento specifico
 	public boolean deleteEvent ( int idEvent) throws SQLException {
 		String query = "DELETE FROM t_events WHERE id_event = ?";
 		int r = 0;
 		try{
-			statement = connection.prepareStatement(query);
+			statement = connection.prepareStatement(query); //imposto l'id dell'evento cercato e invio al db la query
 			statement.setInt(1, idEvent);
 		    r=statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'eliminazione è avvenuta con successo
 		    if(r>0) {
 		    	return true;
 		    }else {
@@ -247,21 +239,21 @@ public class EventDao {
 		
 	}
 	
+	//funzione per l'aggiornamento di un evento
 	public boolean updateEvent (int idEvent, int idCreator, int idLocation, String eventName, String date) throws SQLException {
 		String query = "UPDATE t_events SET id_creator=?, id_location=?, name=?, data_time=?  WHERE id_event = ?";
 		int r=0;
-		//ciao
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		LocalDateTime data = LocalDateTime.parse(date, formatter);	
+		LocalDateTime data = LocalDateTime.parse(date, formatter); //formattazione data, si passa da stringa a LocalDateTime	
 		try {
-			statement = connection.prepareStatement(query);
-			
+			statement = connection.prepareStatement(query); //setto valori e id dell'evento cercato e invio la query al db
 			statement.setInt(1, idCreator);
 			statement.setInt(2, idLocation);
 			statement.setString(3, eventName);
 			statement.setObject(4, data);
 			statement.setInt(5, idEvent);		
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che la modifica è avvenuta con successo
 		    if(r>0) {
 		    return true;
 		    }else {

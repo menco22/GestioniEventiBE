@@ -20,20 +20,16 @@ public class RoleDao {
 		this.connection = connection;
 	}	
 	
+	//funzione che restituisce i ruoli possibili per un utente, l'ordinamento o viene specificato dall'utente o si usa quello previsto di default 
 	public ArrayList<RoleBean> getRole (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <RoleBean> roleList = new ArrayList();
 		
 		query = "SELECT * FROM t_roles Order by " + orderBy + " " + orderDirection;
 		
 		try {
-			// A prepared statement is used here because the query contains parameters
 			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			
 			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
 			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
 				int idRole = result.getInt("id_role");
 				String role = result.getString("code");
 				RoleBean roles = new RoleBean( idRole, role);
@@ -59,12 +55,13 @@ public class RoleDao {
 		return roleList;
 	}
 	
+	//funzione che restituisce il ruolo corrispondente ad un certo id
 	public RoleBean getRoleById (int idRole) throws SQLException {
 		RoleBean role =null;
 		String query = "SELECT * FROM t_roles WHERE id_role = ?";
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, idRole);
+			statement.setInt(1, idRole);//imposto l'id del ruolo cercato
 			result = statement.executeQuery();
 			while(result.next()) {
 				String roleCode = result.getString("code");	
@@ -88,6 +85,7 @@ public class RoleDao {
 		}
 		return role;
 	}
+	
 	
 	public boolean addRole( String code) throws SQLException
 	{

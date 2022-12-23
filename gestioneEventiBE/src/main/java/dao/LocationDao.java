@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 
 import beans.LocationBean;
+import beans.LocationTypeBean;
 
 public class LocationDao {
 	private Connection connection;
@@ -19,26 +20,23 @@ public class LocationDao {
 		this.connection = connection;
 	}
 	
+	// funzione per recuperare tutte le locations contenute nell'apposita tabella con ordine specificato dall'utente 
+	//(in caso non venga specificato è previsto un ordinamento di default)
 	public ArrayList<LocationBean> getLocations (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <LocationBean> locationList = new ArrayList();
-		
 		query = "SELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_locations.location_type,t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type  WHERE t_locations.deleted = false Order by " + orderBy + " " + orderDirection;
-		
+		//recupero tutti i dati delle locations e dei loro relativi tipi
 		try {
-			// A prepared statement is used here because the query contains parameters
-			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			
+			statement = connection.prepareStatement(query);	
 			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
 			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
 				int idLocation = result.getInt("id_location");
 				String locationName = result.getString("location_name");
 				String locationAddress = result.getString("address");
 				int locationType = result.getInt("location_type");
 				String description = result.getString("description");
-				LocationBean location = new LocationBean(idLocation,locationName, locationAddress, locationType,description);
+				LocationTypeBean locationTypeBean = new LocationTypeBean(locationType, description);
+				LocationBean location = new LocationBean(idLocation,locationName, locationAddress, locationTypeBean);
 				locationList.add(location);
 			}
 		} catch (SQLException e) {
@@ -61,9 +59,11 @@ public class LocationDao {
 		return locationList;
 	}
 	
+	//funzione che recupera la location corrispondente all'id passatole 
 	public LocationBean getLocationById(int idLocation) throws SQLException {
 		LocationBean location = null;
-		String query = "SSELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type WHERE t_locations_id=? AND deleted = false";
+		String query = "SELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type WHERE t_locations_id=? AND deleted = false";
+		//query che recupera le info di una data location insieme alle info relative al tipo di location di cui si tratta
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idLocation);
@@ -73,7 +73,8 @@ public class LocationDao {
 				String address = result.getString("address");
 				int locationType = result.getInt("location_type");
 				String description = result.getString("description");
-				location = new LocationBean(idLocation, locationName, address, locationType, description);
+				LocationTypeBean locationTypeBean = new LocationTypeBean(locationType, description);
+				location = new LocationBean(idLocation, locationName, address, locationTypeBean);
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();
@@ -170,19 +171,18 @@ public class LocationDao {
 		return locationList;
 	}*/
 	
+	//funzione per l'aggiunta di una nuova location 
 	public boolean addLocation( String name, String address, int locationType) throws SQLException
 	{
 			String query = "INSERT INTO t_locations (location_name, address, location_type) VALUES(?, ?, ?)";
 			int r=0;
 			try {
 				statement = connection.prepareStatement(query);
-				//statement.setInt(1, id_person);
-				statement.setString(1, name);
+				statement.setString(1, name);//imposto i vari valori corrispondenti a ? nella query
 				statement.setString(2, address);
 				statement.setInt(3, locationType);
 			    r=statement.executeUpdate();
-				//result = statement.executeUpdate();
-				// If there is an affected row, it means the user has been added
+				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
 			    if(r>0) {
 			    return true;
 			    }else {
@@ -200,13 +200,16 @@ public class LocationDao {
 			
 		}
 	
+	//funzione per l'eliminazione logica, nell caso della location si procede con un'eliminazione logica quindi viene posto un flag a true
+	//(l'eliminazione vera e propria comporterebbe l'eliminazione di tutti gli eventi associati sia futuri che passati)
 	public boolean deleteLocation(int idLocation) throws SQLException {
 		String query = "UPDATE t_locations SET deleted = true WHERE id_location=?";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, idLocation);
+			statement.setInt(1, idLocation);//imposta l'id della location da eliminare
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'eliminazione è avvenuta con successo
 			if(r>0) {
 			    return true;
 			    }else {
@@ -223,16 +226,18 @@ public class LocationDao {
 		}
 	}
 	
+	//funzione per l'aggiotnamento dei dati di una determinata location
 	public boolean updateLocation (int idLocation, String locationName, String address, int locationType) throws SQLException {
 		String query = "UPDATE t_locations SET location_name = ?, address = ?, location_type = ? WHERE id_location = ? AND deleted = false";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setString(1, locationName);
+			statement.setString(1, locationName);//imposto il valore dei campi e l'id della location da modificare
 			statement.setString(2, address);
 			statement.setInt(3, locationType);
 			statement.setInt(4, idLocation);
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che la modifica è avvenuta con successo
 			if(r>0) {
 			    return true;
 			    }else {

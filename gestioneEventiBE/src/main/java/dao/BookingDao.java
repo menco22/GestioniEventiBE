@@ -20,15 +20,14 @@ public class BookingDao {
 		this.connection = connection;
 	}
 	
+	// funzione per recuperare tutte le prenotazionni contenute nell'apposita tabella con ordine specificato dall'utente 
+	//(in caso non venga specificato è previsto un ordinamento di default)
 	public ArrayList<BookingBean> getBooking (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
-		
 		query = "SELECT * FROM t_bookings Order by " + orderBy + " " + orderDirection;
-		
 		try {
-			statement = connection.prepareStatement(query);
-			result = statement.executeQuery();
-			
+			statement = connection.prepareStatement(query); 
+			result = statement.executeQuery(); 
 			while(result.next()) {
 				int idBooking = result.getInt("id_booking");
 				String code = result.getString("code");
@@ -38,6 +37,7 @@ public class BookingDao {
 				int idTable = result.getInt("id_table");
 				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, idEvent, idTable);
 				bookingList.add(booking);
+				
 			}
 		} catch (SQLException e) {
 		    e.printStackTrace();
@@ -59,12 +59,13 @@ public class BookingDao {
 		return bookingList;
 	}
 	
+	//funzione che restituisce una prenotazione specifica in base all'id passatole
 	public BookingBean getBookingById(int idBooking) throws SQLException {
 		String query ="SELECT * FROM t_bookings WHERE id_booking = ?";
 		BookingBean booking = null;
 		try {
-			statement = connection.prepareStatement(query);
-			statement.setInt(1, idBooking);
+			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
+			statement.setInt(1, idBooking); 
 			result=statement.executeQuery();
 			while(result.next()) {
 				String code = result.getString("code");
@@ -93,21 +94,19 @@ public class BookingDao {
 		return booking;
 	}
 	
-	public boolean addBooking( String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException
-	{
+	//funzione per l'aggiunta delle prenotazioni
+	public boolean addBooking( String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException{
 			String query = "INSERT INTO t_bookings (code, booking_type, id_user, id_event, id_table) VALUES(?, ?, ?, ?, ?)";
 			int r=0;
 			try {
-				statement = connection.prepareStatement(query);
-				//statement.setInt(1, id_person);
-				statement.setString(1, code);
+				statement = connection.prepareStatement(query); 
+				statement.setString(1, code); //imposta i vari valori corrispondenti ai ? nella query
 				statement.setString(2, bookingType);
 				statement.setInt(3, idUser);
 				statement.setInt(4, idEvent);
 				statement.setInt(5, idTable);
 			    r=statement.executeUpdate();
-				//result = statement.executeUpdate();
-				// If there is an affected row, it means the user has been added
+				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
 			    if(r>0) {
 			    return true;
 			    }else {
@@ -124,18 +123,20 @@ public class BookingDao {
 			}
 		}
 	
+ //funzione per l'aggiornamento della prenotazione	
 	public boolean updateBooking (int idBooking, String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException {
 		String query = "UPDATE t_bookings SET code=?, booking_type=?, id_user=?, id_event=?, id_table=?  WHERE id_booking=?";
 		int r = 0;
 		try {
-			statement = connection.prepareStatement(query);
-			statement.setString(1, code);
+			statement = connection.prepareStatement(query); 
+			statement.setString(1, code);//imposta i vari valori da settare
 			statement.setString(2, bookingType);
 			statement.setInt(3, idUser);
 			statement.setInt(4, idEvent);
 			statement.setInt(5, idTable);
-			statement.setInt(6, idBooking);
+			statement.setInt(6, idBooking); //imposta il parametro del where
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che la modifica è avvenuta con successo
 			if (r>0) {
 				return true;
 			}else {
@@ -152,13 +153,15 @@ public class BookingDao {
 		}
 	}
 	
+	//funzione per l'eliminazione di una prenotazione
 	public boolean deleteBooking(int idBooking) throws SQLException {
 		String query = "DELETE FROM t_bookings WHERE id_booking = ?";
 		int r = 0;
 		try {
-			statement = connection.prepareStatement(query);
-			statement.setInt(1, idBooking);
+			statement = connection.prepareStatement(query); 
+			statement.setInt(1, idBooking); //imposta l'id della prenotazione desiderata
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'eliminazione è avvenuta con successo
 			if (r>0) {
 				return true;
 			}else {

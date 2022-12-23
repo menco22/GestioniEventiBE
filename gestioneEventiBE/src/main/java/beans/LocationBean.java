@@ -5,18 +5,23 @@ public class LocationBean {
 	private int idLocation;
 	private String locationName;
 	private String address;
-	private int locationType;
-	private String description;
+	private LocationTypeBean locationType;
 	
 	
-	public LocationBean(int idLocation, String name, String address, int locationType, String description) {
+	public LocationBean(int idLocation, String name, String address, LocationTypeBean locationType) {
 		//costruttore
 		super();
 		this.idLocation = idLocation;
 		this.locationName = name;
 		this.address = address;
 		this.locationType = locationType;
-		this.description = description;
+	}
+	
+	public LocationBean (int idLocation, String name, String address) {
+		super();
+		this.idLocation = idLocation;
+		this.locationName = name;
+		this.address = address;
 	}
 	
 	public int getIdLocation() {
@@ -25,14 +30,6 @@ public class LocationBean {
 
 	public void setIdLocation(int idLocation) {
 		this.idLocation = idLocation;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	//getters e setters delle proprietà
@@ -52,11 +49,11 @@ public class LocationBean {
 		this.address = address;
 	}
 
-	public int getLocationType() {
+	public LocationTypeBean getLocationType() {
 		return locationType;
 	}
 
-	public void setLocationType(int locationType) {
+	public void setLocationType(LocationTypeBean locationType) {
 		this.locationType = locationType;
 	}
 }

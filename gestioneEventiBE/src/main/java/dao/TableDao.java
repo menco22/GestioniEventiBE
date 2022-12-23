@@ -19,6 +19,7 @@ public class TableDao {
 		this.connection = connection;
 	}
 	
+	//funzione che restituisce tutti i tavoli presenti con ordinamento di default o scelto dall'utente
 	public ArrayList<TableBean> getTables (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <TableBean> tableList = new ArrayList();
 		
@@ -55,12 +56,13 @@ public class TableDao {
 		return tableList;
 	}
 	
+	//funzione che restituisce il tavolo corrispondente all'id passatogli
 	public TableBean getTableById (int idTable) throws SQLException {
 		TableBean table = null;
 		String query = "SELECT * FROM t_tables WHERE id_table = ? AND deleted=false";
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, idTable);
+			statement.setInt(1, idTable);//imposta l'id del tavolo ricercato
 			result = statement.executeQuery();
 			while(result.next()) {
 				int tableCapacity = result.getInt("table_capacity");
@@ -118,18 +120,17 @@ public class TableDao {
 		return tableList;
 	}
 	
+	//funzione per l'aggiunta di un nuovo tavolo
 	public boolean addTable(int tableCapacity, int idEvent) throws SQLException
 	{
 			String query = "INSERT INTO t_tables (table_capacity, id_event) VALUES(?, ?)";
 			int r=0;
 			try {
 				statement = connection.prepareStatement(query);
-				//statement.setInt(1, id_person);
-				statement.setInt(1, tableCapacity);
+				statement.setInt(1, tableCapacity); //passo i valori corrispondenti a ? nella query
 				statement.setInt(2, idEvent);
 			    r=statement.executeUpdate();
-				//result = statement.executeUpdate();
-				// If there is an affected row, it means the user has been added
+				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
 			    if(r>0) {
 			    return true;
 			    }else {
@@ -147,15 +148,17 @@ public class TableDao {
 			
 		}
 	
+	//funzione per la modifca dei dati relativi ad un determinato tavolo
 	public boolean updateTable (int idTable, int tableCapacity, int idEvent) throws SQLException {
 		String query = "UPDATE t_tables SET table_capacity=?, id_event=? WHERE id_table=? AND deleted=false";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, tableCapacity);
+			statement.setInt(1, tableCapacity);//passo i nuovi valori e l'id del tavolo da modificare
 			statement.setInt(2, idEvent);
 			statement.setInt(3, idTable);
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che la modifica è avvenuta con successo
 			if (r>0) {
 				return true;
 			}else {
@@ -172,13 +175,15 @@ public class TableDao {
 		}
 	}
 	
+	//funzione per l'eliminazione di un tavolo, anche qui eliminazione logica
 	public boolean deleteTable (int idTable) throws SQLException {
 		String query = "UPDATE t_tables SET deleted = true WHERE id_table = ?";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, idTable);
+			statement.setInt(1, idTable);//passo l'id del tavolo da eliminare
 			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'eliminazione è avvenuta con successo
 			if (r>0) {
 				return true;
 			}else {
