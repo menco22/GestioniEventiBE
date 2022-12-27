@@ -62,12 +62,15 @@ public class UserProfileController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request);
-		String profileResponse = "";
+		//String profileResponse = "";
+		String roleResponse = "";
 		UserDao userDao = new UserDao (this.connection);
 		if(auth.checkToken(request)==true) {
 			try {
-				UserBean user = userDao.getUserById(auth.getIdUser(request));
-				profileResponse = new Gson().toJson(user);
+				int role = userDao.getUserRole(auth.getIdUser(request));
+				roleResponse = new Gson().toJson(role);
+				/*UserBean user = userDao.getUserById(auth.getIdUser(request));
+				profileResponse = new Gson().toJson(user);*/
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -76,7 +79,7 @@ public class UserProfileController extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-		response.getWriter().append(profileResponse);
+		response.getWriter().append(roleResponse);
 	}
 
 	/**

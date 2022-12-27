@@ -134,6 +134,35 @@ public class UserDao {
 		return userList;
 	}
 	
+	public int getUserRole(int idUser) throws SQLException {
+		int role = 0;
+		query = "SELECT role_id FROM t_users WHERE id_user=?";
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idUser);
+			result = statement.executeQuery();
+			while(result.next()){
+				role = result.getInt("role_id");		
+			}
+		} catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return role;
+	}
+	
 	//funzione che dati username e password restituisce l'utente associato
 	public UserBean getUser(String username, String password) throws SQLException {
 		UserBean user = null;
