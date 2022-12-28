@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
+import beans.RoleIdBean;
 import beans.UserBean;
 
 public class UserDao {
@@ -136,6 +137,7 @@ public class UserDao {
 	
 	public int getUserRole(int idUser) throws SQLException {
 		int role = 0;
+		RoleIdBean roleId = null;
 		query = "SELECT role_id FROM t_users WHERE id_user=?";
 		try {
 			statement = connection.prepareStatement(query);
@@ -160,6 +162,7 @@ public class UserDao {
 				throw new SQLException(e2);
 			}
 		}
+		
 		return role;
 	}
 	
