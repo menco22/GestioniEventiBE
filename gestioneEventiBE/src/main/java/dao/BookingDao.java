@@ -24,7 +24,7 @@ public class BookingDao {
 	//(in caso non venga specificato è previsto un ordinamento di default)
 	public ArrayList<BookingBean> getBooking (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
-		query = "SELECT * FROM t_bookings Order by " + orderBy + " " + orderDirection;
+		query = "SELECT * FROM t_bookings WHERE deleted = false Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query); 
 			result = statement.executeQuery(); 
@@ -61,7 +61,7 @@ public class BookingDao {
 	
 	//funzione che restituisce una prenotazione specifica in base all'id passatole
 	public BookingBean getBookingById(int idBooking) throws SQLException {
-		String query ="SELECT * FROM t_bookings WHERE id_booking = ?";
+		String query ="SELECT * FROM t_bookings WHERE id_booking = ? AND deleted = false";
 		BookingBean booking = null;
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
@@ -155,7 +155,7 @@ public class BookingDao {
 	
 	//funzione per l'eliminazione di una prenotazione
 	public boolean deleteBooking(int idBooking) throws SQLException {
-		String query = "DELETE FROM t_bookings WHERE id_booking = ?";
+		String query = "UPDATE t_bookings SET deleted = true WHERE id_booking = ?";
 		int r = 0;
 		try {
 			statement = connection.prepareStatement(query); 

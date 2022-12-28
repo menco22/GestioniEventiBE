@@ -144,20 +144,14 @@ public class BookingController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(id != null && action.equalsIgnoreCase("delete")) {
-				 FeedbackDao feedbackDao = new FeedbackDao(this.connection);
 				 boolean deleteBooking = false;  
 				 try {
-					 ArrayList <FeedbackBean>feedbackList = feedbackDao.getFeedbackByBooking(Integer.parseInt(id));
-					if(feedbackList.isEmpty()) {
 						deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
 						if(deleteBooking == true) {
 							System.out.println("Prenotazione rimossa con successo");
 						}else {
 							System.out.println("Eliminazione non avvenuta");
 						}
-					}else {
-						System.out.println("Eliminazione non avvenuta");
-					}
 				 } catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					 e.printStackTrace();
