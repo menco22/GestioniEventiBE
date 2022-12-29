@@ -13,8 +13,9 @@ import java.sql.SQLException;
 
 import com.google.gson.Gson;
 
-import beans.RoleIdBean;
+import beans.RoleBean;
 import beans.UserBean;
+import dao.RoleDao;
 import dao.UserDao;
 
 /**
@@ -65,16 +66,13 @@ public class UserProfileController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController(request);
 		//String profileResponse = "";
 		String roleResponse = "";
-		RoleIdBean roleId = null;
 		UserDao userDao = new UserDao (this.connection);
+		RoleDao roleDao = new RoleDao (this.connection);
 		if(auth.checkToken(request)==true) {
 			try {
-				int role = userDao.getUserRole(auth.getIdUser(request));
-				/*int role = userDao.getUserRole(auth.getIdUser(request));*/
-				roleId = new RoleIdBean(role); 
-				roleResponse = new Gson().toJson(roleId);
-				/*UserBean user = userDao.getUserById(auth.getIdUser(request));
-				profileResponse = new Gson().toJson(user);*/
+				int idRole = userDao.getUserRole(auth.getIdUser(request));
+				RoleBean role = roleDao.getRoleById(idRole);
+				roleResponse = new Gson().toJson(role);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
