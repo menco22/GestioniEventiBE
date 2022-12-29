@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
+import beans.ProfileBean;
 import beans.UserBean;
 
 public class UserDao {
@@ -134,15 +135,17 @@ public class UserDao {
 		return userList;
 	}
 	
-	public int getUserRole(int idUser) throws SQLException {
-		int role = 0;
-		query = "SELECT role_id FROM t_users WHERE id_user=?";
+	public ProfileBean getUsernameAndRole(int idUser) throws SQLException {
+		ProfileBean profile = null;
+		query = "SELECT username, role_id FROM t_users WHERE id_user=?";
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idUser);
 			result = statement.executeQuery();
 			while(result.next()){
-				role = result.getInt("role_id");		
+				int role = result.getInt("role_id");	
+				String username = result.getString("username");
+				profile = new ProfileBean (username, role);
 			}
 		} catch (SQLException e) {
 		    e.printStackTrace();
@@ -161,7 +164,7 @@ public class UserDao {
 			}
 		}
 		
-		return role;
+		return profile;
 	}
 	
 	//funzione che dati username e password restituisce l'utente associato

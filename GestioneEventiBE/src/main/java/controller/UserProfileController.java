@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 import com.google.gson.Gson;
 
+import beans.ProfileBean;
 import beans.RoleBean;
 import beans.UserBean;
 import dao.RoleDao;
@@ -70,9 +71,9 @@ public class UserProfileController extends HttpServlet {
 		RoleDao roleDao = new RoleDao (this.connection);
 		if(auth.checkToken(request)==true) {
 			try {
-				int idRole = userDao.getUserRole(auth.getIdUser(request));
-				RoleBean role = roleDao.getRoleById(idRole);
-				roleResponse = new Gson().toJson(role);
+				ProfileBean profile = userDao.getUsernameAndRole(auth.getIdUser(request));
+				// RoleBean role = roleDao.getRoleById(idRole);
+				roleResponse = new Gson().toJson(profile);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
