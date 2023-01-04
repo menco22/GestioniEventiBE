@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +18,17 @@ public class TableDao {
 	public TableDao(Connection connection) {
 		super();
 		this.connection = connection;
+	}
+	
+	public TableDao() {
+		String dbUrl = "jdbc:mysql://localhost:3306/laurea";
+		String dbClass = "com.mysql.cj.jdbc.Driver";
+		try {
+			Class.forName(dbClass);
+			connection = DriverManager.getConnection(dbUrl, "root", "root");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	//funzione che restituisce tutti i tavoli presenti con ordinamento di default o scelto dall'utente
@@ -88,7 +100,7 @@ public class TableDao {
 		return table;
 	}
 	
-	public ArrayList <TableBean> getTableByCapacity (int tableCapacity) throws SQLException {
+	/*public ArrayList <TableBean> getTableByCapacity (int tableCapacity) throws SQLException {
 		ArrayList <TableBean> tableList = new ArrayList();
 		String query = "SELECT * FROM t_tables WHERE table_capacity = ? AND deleted=false";
 		try {
@@ -118,7 +130,7 @@ public class TableDao {
 			}
 		}
 		return tableList;
-	}
+	}*/
 	
 	//funzione per l'aggiunta di un nuovo tavolo
 	public boolean addTable(int tableCapacity, int idEvent) throws SQLException

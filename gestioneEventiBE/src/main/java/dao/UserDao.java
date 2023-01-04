@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,17 @@ public class UserDao {
 	public UserDao(Connection connection) {
 		super();
 		this.connection = connection;
+	}
+	
+	public UserDao() {
+		String dbUrl = "jdbc:mysql://localhost:3306/laurea";
+		String dbClass = "com.mysql.cj.jdbc.Driver";
+		try {
+			Class.forName(dbClass);
+			connection = DriverManager.getConnection(dbUrl, "root", "root");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	//funzione che recupere lo user cosrrispondente allo username passatogli

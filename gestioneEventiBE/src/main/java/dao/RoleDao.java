@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +20,17 @@ public class RoleDao {
 		super();
 		this.connection = connection;
 	}	
+	
+	public RoleDao() {
+		String dbUrl = "jdbc:mysql://localhost:3306/laurea";
+		String dbClass = "com.mysql.cj.jdbc.Driver";
+		try {
+			Class.forName(dbClass);
+			connection = DriverManager.getConnection(dbUrl, "root", "root");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	//funzione che restituisce i ruoli possibili per un utente, l'ordinamento o viene specificato dall'utente o si usa quello previsto di default 
 	public ArrayList<RoleBean> getRole (String orderBy, String orderDirection) throws SQLException {

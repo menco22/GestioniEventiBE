@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +19,17 @@ public class BookingDao {
 	public BookingDao(Connection connection) {
 		super();
 		this.connection = connection;
+	}
+	
+	public BookingDao() {
+		String dbUrl = "jdbc:mysql://localhost:3306/laurea";
+		String dbClass = "com.mysql.cj.jdbc.Driver";
+		try {
+			Class.forName(dbClass);
+			connection = DriverManager.getConnection(dbUrl, "root", "root");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// funzione per recuperare tutte le prenotazionni contenute nell'apposita tabella con ordine specificato dall'utente 

@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,10 +20,21 @@ public class FeedbackDao {
 	this.connection = connection;
 	}
 	
+	public FeedbackDao (){
+		String dbUrl = "jdbc:mysql://localhost:3306/laurea";
+		String dbClass = "com.mysql.cj.jdbc.Driver";
+		try {
+			Class.forName(dbClass);
+			connection = DriverManager.getConnection(dbUrl, "root", "root");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	// funzione per recuperare tutti i feedback contenuti nell'apposita tabella con ordine specificato dall'utente 
 	//(in caso non venga specificato è previsto un ordinamento di default)
 	public ArrayList<FeedbackBean> getFeedback (String orderBy, String orderDirection) throws SQLException {
-		ArrayList <FeedbackBean> feedbackList = new ArrayList();
+		ArrayList <FeedbackBean> feedbackList = new ArrayList <>();
 		
 		String query = "SELECT * FROM t_feedbacks Order by " + orderBy + " " + orderDirection;
 		

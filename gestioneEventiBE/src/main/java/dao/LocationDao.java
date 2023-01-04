@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +19,17 @@ public class LocationDao {
 	
 	public LocationDao (Connection connection) {
 		this.connection = connection;
+	}
+	
+	public LocationDao () {
+		String dbUrl = "jdbc:mysql://localhost:3306/laurea";
+		String dbClass = "com.mysql.cj.jdbc.Driver";
+		try {
+			Class.forName(dbClass);
+			connection = DriverManager.getConnection(dbUrl, "root", "root");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// funzione per recuperare tutte le locations contenute nell'apposita tabella con ordine specificato dall'utente 
@@ -62,7 +74,7 @@ public class LocationDao {
 	//funzione che recupera la location corrispondente all'id passatole 
 	public LocationBean getLocationById(int idLocation) throws SQLException {
 		LocationBean location = null;
-		String query = "SELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type WHERE t_locations_id=? AND deleted = false";
+		String query = "SELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_locations.location_type ,t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type WHERE t_locations.id_location=? AND t_locations.deleted = false";
 		//query che recupera le info di una data location insieme alle info relative al tipo di location di cui si tratta
 		try {
 			statement = connection.prepareStatement(query);
@@ -95,82 +107,7 @@ public class LocationDao {
 		
 		return location;
 	}
-	
-	/*public ArrayList<LocationBean> getLocationsByType (int type) throws SQLException {
-		ArrayList <LocationBean> locationList = new ArrayList();
 		
-		query = "SELECT t_locations.id_location, t_locations.location_name, t_locations.address, t_location_types.description FROM t_locations left join t_location_types on t_locations.location_type = t_location_types.id_location_type WHERE t_locations_id=? AND deleted = false";
-		
-		try {
-			// A prepared statement is used here because the query contains parameters
-			statement = connection.prepareStatement(query);
-			// This sets the article's code as first parameter of the query
-			statement.setInt(1, type);
-			result = statement.executeQuery();
-			// If there is a match the entire row is returned here as a result
-			while(result.next()) {
-				// Here an Article object is initialized and the attributes obtained from the database are set
-				int locationId = result.getInt("id_location");
-				String locationName = result.getString("location_name");
-				String locationAddress = result.getString("address");
-				int locationType = result.getInt("location_type");
-				String description = result.getString("description");
-				LocationBean location = new LocationBean(locationId, locationName, locationAddress, locationType, description);
-				locationList.add(location);
-			}
-		} catch (SQLException e) {
-		    e.printStackTrace();
-			throw new SQLException(e);
-
-		} finally {
-			try {
-				result.close();
-			} catch (Exception e1) {
-				throw new SQLException(e1);
-			}
-			try {
-				statement.close();
-			} catch (Exception e2) {
-				throw new SQLException(e2);
-			}
-		}	
-		
-		return locationList;
-	}
-	
-	public ArrayList<LocationBean> getLocationByName (String locationName) throws SQLException{
-		ArrayList <LocationBean> locationList = new ArrayList();
-		String query = "SELECT * FROM t_locations WHERE location_name = ? AND deleted = false";
-		try {
-			statement = connection.prepareStatement(query);
-			statement.setString(1, locationName);
-			result = statement.executeQuery();
-			while(result.next()) {
-				int idLocation = result.getInt("id_location");
-				String locationAddress = result.getString("address");
-				int locationType = result.getInt("location_type");
-				LocationBean location = new LocationBean (idLocation, locationName, locationAddress, locationType);
-				locationList.add(location);
-			}
-		} catch (SQLException e) {
-		    e.printStackTrace();
-			throw new SQLException(e);
-
-		} finally {
-			try {
-				result.close();
-			} catch (Exception e1) {
-				throw new SQLException(e1);
-			}
-			try {
-				statement.close();
-			} catch (Exception e2) {
-				throw new SQLException(e2);
-			}
-		}	
-		return locationList;
-	}*/
-	
 	//funzione per l'aggiunta di una nuova location 
 	public boolean addLocation( String name, String address, int locationType) throws SQLException
 	{
