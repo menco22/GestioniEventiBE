@@ -6,6 +6,8 @@ public class NewEventBean {
 	private int idLocation;
 	private String eventName;
 	private String date;
+	private String dataScadenza;
+	private int standingPlaces;
 
 	public int getIdLocation() {
 		return idLocation;
@@ -25,4 +27,17 @@ public class NewEventBean {
 	public void setDate(String date) {
 		this.date = date;
 	}
+	public String getDataScadenza() {
+		return dataScadenza;
+	}
+	public void setDataScadenza(String dataScadenza) {
+		this.dataScadenza = dataScadenza;
+	}
+	public int getStandingPlaces() {
+		return standingPlaces;
+	}
+	public void setStandingPlaces(int standingPlaces) {
+		this.standingPlaces = standingPlaces;
+	}
+	
 }

@@ -37,11 +37,62 @@ public class EventDao {
 			e.printStackTrace();
 		}
 	}
+	
+	public ArrayList<EventBean> getEventsByCreator(String orderBy, String orderDirection, int idCreator) throws SQLException {
+		ArrayList <EventBean> eventList = new ArrayList();
+		boolean canBook;
+		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.data_scadenza ,t_events.standing_places,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_creator=? Order by " + orderBy + " " + orderDirection;
+		try {
+			statement = connection.prepareStatement(query); 
+			statement.setInt(1, idCreator);
+			result =statement.executeQuery(); 
+			while(result.next()) {
+				int idEvent = result.getInt("id_event");
+				int idLocation = result.getInt("id_location");
+				String locationName = result.getString("location_name");
+				String address = result.getString("address");
+				String eventName = result.getString("name");
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				LocalDateTime dataScadenza = (LocalDateTime) result.getObject("data_scadenza");
+				int standingPlaces = result.getInt("standing_places");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				LocalDateTime dataOdierna = LocalDateTime.now();
+				String formattedDateTime = date.format(formatter); //formatto la data da LocalDateTime a String 
+				String formattedDataScadenza = dataScadenza.format(formatter);
+				if(dataOdierna.isBefore(dataScadenza)) {
+					canBook = true;
+				}else {
+					canBook = false;
+				}
+				LocationBean location = new LocationBean(idLocation, locationName, address); 
+				EventBean event = new EventBean( idEvent, idCreator,eventName, formattedDateTime, formattedDataScadenza,standingPlaces ,location, canBook);
+					eventList.add(event); 
+			}
+		} catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
 		
+		return eventList;
+	}
+	
 	//funzione che ritorna l'elenco di eventi la cui location non risulti eliminata
 	public ArrayList<EventBean> getEvents (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <EventBean> eventList = new ArrayList();
-		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false Order by " + orderBy + " " + orderDirection;
+		boolean canBook;
+		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.data_scadenza,t_events.standing_places  ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query); 
 			result = statement.executeQuery(); 
@@ -53,11 +104,23 @@ public class EventDao {
 				String address = result.getString("address");
 				String eventName = result.getString("name");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				LocalDateTime dataScadenza = (LocalDateTime) result.getObject("data_scadenza");
+				LocalDateTime dataOdierna = LocalDateTime.now();
+				int standingPlaces = result.getInt("standing_places");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); //formatto la data da LocalDateTime a String 
+				String formattedDataScadenza = dataScadenza.format(formatter);
+				if(dataOdierna.isBefore(dataScadenza)) {
+					canBook = true;
+				}else {
+					canBook = false;
+				}
 				LocationBean location = new LocationBean(idLocation, locationName, address); 
-				EventBean event = new EventBean( idEvent, idCreator,eventName, formattedDateTime, location);
-				eventList.add(event); 
+				EventBean event = new EventBean( idEvent, idCreator,eventName, formattedDateTime, formattedDataScadenza,standingPlaces ,location,canBook);
+				System.out.println(canBook);
+				if(canBook == true) {
+					eventList.add(event); 
+				}
 			}
 		} catch (SQLException e) {
 		    e.printStackTrace();
@@ -82,7 +145,8 @@ public class EventDao {
 	//funzione per recuperare l'evento con un dato id
 	public EventBean getEventById (int idEvent) throws SQLException {
 		EventBean event = null;
-		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_event = ?";
+		boolean canBook;
+		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.standing_places ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_event = ?";
 		try {
 			statement = connection.prepareStatement(query); //impostazione del parametro e invio dellla query al db
 			statement.setInt(1, idEvent);
@@ -97,10 +161,19 @@ public class EventDao {
 				String locationName = result.getString("location_name");
 				String address = result.getString("address");
 				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				LocalDateTime dataScadenza = (LocalDateTime) result.getObject("data_scadenza");
+				int standingPlaces = result.getInt("standing_places");
+				LocalDateTime dataOdierna = LocalDateTime.now();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); //formattazione della data, si passa da LocalDateTime a stringa
+				String formattedDataScadenza = dataScadenza.format(formatter);
+				if(dataOdierna.isBefore(dataScadenza)) {
+					canBook = true;
+				}else {
+					canBook = false;
+				}
 				LocationBean location = new LocationBean(idLocation, locationName, address); 
-				event = new EventBean( idEvent, idCreator, eventName, formattedDateTime, location);
+				event = new EventBean( idEvent, idCreator, eventName, formattedDateTime,formattedDataScadenza,standingPlaces ,location, canBook);
 				
 			}
 		}catch(SQLException e) {
@@ -124,17 +197,21 @@ public class EventDao {
 	}
 		
 	//funzione per l'aggiunta di un evento
-	public boolean addEvent( int idCreator, int idLocation, String eventName, String date) throws SQLException{
-			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?)";
+	public boolean addEvent( int idCreator, int idLocation, String eventName, String date, String dataScadenza, int standingPlaces) throws SQLException{
+			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?, ?, ?)";
 			int r=0;
+			
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-			LocalDateTime data = LocalDateTime.parse(date, formatter); //formatto la data, si passa da stringa a LocalDateTime		
+			LocalDateTime data = LocalDateTime.parse(date, formatter); //formatto la data, si passa da stringa a LocalDateTime
+			LocalDateTime dataScad = LocalDateTime.parse(dataScadenza, formatter);
 			try {
 				statement = connection.prepareStatement(query); // imposto valori e invio la query a db
 				statement.setInt(1, idCreator);
 				statement.setInt(2, idLocation);
 				statement.setString(3, eventName);
 				statement.setObject(4, data);
+				statement.setObject(5, dataScad);
+				statement.setInt(6, standingPlaces);
 			    r=statement.executeUpdate();
 				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
 			    if(r>0) {

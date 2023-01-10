@@ -107,6 +107,22 @@ public class EventController extends HttpServlet {
 						e.printStackTrace();
 					}
 					response.getWriter().append(eventResponse);
+				}else {
+					try {
+						String orderBy = request.getParameter("orderBy");
+						String orderDirection = request.getParameter("orderDirection");
+						if(orderBy == null) {
+							orderBy = "id_event";
+						}
+						if (orderDirection == null) {
+							orderDirection = "asc";
+						}
+						ArrayList <EventBean> eventList = eventDao.getEvents(orderBy, orderDirection);
+						eventResponse = new Gson().toJson(eventList);
+					}catch (SQLException e) {
+						e.printStackTrace();
+					}
+					response.getWriter().append(eventResponse);
 				}
 			}
 				
@@ -141,7 +157,7 @@ public class EventController extends HttpServlet {
 				Gson datas = new Gson();
 				try {
 					newEvent = datas.fromJson(data, NewEventBean.class );
-					addedEvent = eventDao.addEvent(auth.getIdUser(request), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate());
+					addedEvent = eventDao.addEvent(auth.getIdUser(request), newEvent.getIdLocation(),newEvent.getEventName(),newEvent.getDate(), newEvent.getDataScadenza(), newEvent.getStandingPlaces());
 					if(addedEvent == true ) {
 						System.out.println("Evento aggiunto con successo");
 					}else {

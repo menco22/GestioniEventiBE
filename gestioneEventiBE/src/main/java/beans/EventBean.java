@@ -8,21 +8,24 @@ public class EventBean {
 	//proprietà di ogni evento
 	private int idEvent;
 	private int idCreator;
-	//private int idLocation;
 	private String eventName;
 	private String date;
-	//private String locationName;
-	//private String address;
+	private String dataScadenza;
+	private int standingPlaces;
 	private LocationBean locationBean;
+	private boolean canBook;
 	
-	public EventBean(int idEvent, int idCreator, String eventName, String date, LocationBean locationBean) {
+	public EventBean(int idEvent, int idCreator, String eventName, String date, String dataScadenza,int standingPlaces ,LocationBean locationBean, boolean canBook) {
 		//costruttore
 		super();
 		this.idEvent = idEvent;
 		this.idCreator = idCreator;
 		this.eventName = eventName;
 		this.date = date;
+		this.dataScadenza = dataScadenza;
+		this.standingPlaces = standingPlaces;
 		this.locationBean = locationBean;
+		this.canBook = canBook;
 	}
 
 	//getters e setters per le varie proprietà
@@ -52,11 +55,35 @@ public class EventBean {
 		this.date = date;
 	}
 
+	public String getDataScadenza() {
+		return dataScadenza;
+	}
+
+	public void setDataScadenza(String dataScadenza) {
+		this.dataScadenza = dataScadenza;
+	}
+	
+	public int getStandingPlaces() {
+		return standingPlaces;
+	}
+
+	public void setStandingPlaces(int standingPlaces) {
+		this.standingPlaces = standingPlaces;
+	}
+
 	public LocationBean getLocationBean() {
 		return locationBean;
 	}
 
 	public void setLocationBean(LocationBean locationBean) {
 		this.locationBean = locationBean;
+	}
+	
+	public boolean isCanBook() {
+		return canBook;
+	}
+
+	public void setCanBook(boolean canBook) {
+		this.canBook = canBook;
 	}
 }
