@@ -79,7 +79,7 @@ public class EventController extends HttpServlet {
 		String eventResponse ="";
 		if(auth.checkToken(request)==true) {
 			System.out.println(auth.getIdUser(request));
-			//System.out.println("token valido");
+			System.out.println(auth.isAdmin(request));
 			String id = request.getParameter("id");	
 			if(id != null) {
 				try {
@@ -91,23 +91,25 @@ public class EventController extends HttpServlet {
 				response.getWriter().append(eventResponse);
 				
 			}else {
-			
-				try {
-					String orderBy = request.getParameter("orderBy");
-					String orderDirection = request.getParameter("orderDirection");
-					if(orderBy == null) {
-						orderBy = "id_event";
+				if(auth.isAdmin(request) == true) {
+					try {
+						String orderBy = request.getParameter("orderBy");
+						String orderDirection = request.getParameter("orderDirection");
+						if(orderBy == null) {
+							orderBy = "id_event";
+						}
+						if (orderDirection == null) {
+							orderDirection = "asc";
+						}
+						ArrayList <EventBean> eventList = eventDao.getEventsByCreator(orderBy, orderDirection, auth.getIdUser(request));
+						eventResponse = new Gson().toJson(eventList);
+					}catch (SQLException e) {
+						e.printStackTrace();
 					}
-					if (orderDirection == null) {
-						orderDirection = "asc";
-					}
-					ArrayList <EventBean> eventList = eventDao.getEvents(orderBy, orderDirection);
-					eventResponse = new Gson().toJson(eventList);
-				}catch (SQLException e) {
-				e.printStackTrace();
+					response.getWriter().append(eventResponse);
 				}
-				response.getWriter().append(eventResponse);
 			}
+				
 		}else {
 			response.sendError(401,"Effettuare il login");
 		}
