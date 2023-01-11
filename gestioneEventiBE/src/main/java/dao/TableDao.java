@@ -70,9 +70,10 @@ public class TableDao {
 	
 	public ArrayList<TableBean> getTablesByEvent (String orderBy, String orderDirection, int idEvent) throws SQLException {
 		ArrayList <TableBean> tableList = new ArrayList();
-		
 		query = "SELECT * FROM t_tables WHERE deleted=false AND id_event=? Order by " + orderBy + " " + orderDirection;
-		
+		if(idEvent == 0) {
+			return null;
+		}
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, idEvent);
