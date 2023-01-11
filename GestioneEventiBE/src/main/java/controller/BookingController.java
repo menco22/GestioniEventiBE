@@ -118,6 +118,7 @@ public class BookingController extends HttpServlet {
 					}
 					try {
 						ArrayList <BookingBean> bookingList = bookingDao.getBookingByUser(orderBy, orderDirection, auth.getIdUser(request));
+						System.out.println(bookingList.size());
 						bookingResponse = new Gson().toJson(bookingList);
 				   } catch (SQLException e) {
 					  // TODO Auto-generated catch block

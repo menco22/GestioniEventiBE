@@ -41,6 +41,9 @@ public class EventDao {
 	public ArrayList<EventBean> getEventsByCreator(String orderBy, String orderDirection, int idCreator) throws SQLException {
 		ArrayList <EventBean> eventList = new ArrayList();
 		boolean canBook;
+		if(idCreator == 0) {
+			return null;
+		}
 		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.data_scadenza ,t_events.standing_places,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_creator=? Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query); 
@@ -146,7 +149,7 @@ public class EventDao {
 	public EventBean getEventById (int idEvent) throws SQLException {
 		EventBean event = null;
 		boolean canBook;
-		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.standing_places ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_event = ?";
+		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.data_scadenza,t_events.standing_places ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_event = ?";
 		try {
 			statement = connection.prepareStatement(query); //impostazione del parametro e invio dellla query al db
 			statement.setInt(1, idEvent);
@@ -258,17 +261,20 @@ public class EventDao {
 	}
 	
 	//funzione per l'aggiornamento di un evento
-	public boolean updateEvent (int idEvent, int idCreator, int idLocation, String eventName, String date) throws SQLException {
-		String query = "UPDATE t_events SET id_creator=?, id_location=?, name=?, data_time=?  WHERE id_event = ?";
+	public boolean updateEvent (int idEvent, int idCreator, int idLocation, String eventName, String date, String dataScadenza, int standingPlaces) throws SQLException {
+		String query = "UPDATE t_events SET id_creator=?, id_location=?, name=?, data_time=?, data_scadenza=?, standing_places=?  WHERE id_event = ?";
 		int r=0;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		LocalDateTime data = LocalDateTime.parse(date, formatter); //formattazione data, si passa da stringa a LocalDateTime	
+		LocalDateTime dataScad = LocalDateTime.parse(dataScadenza, formatter);
 		try {
 			statement = connection.prepareStatement(query); //setto valori e id dell'evento cercato e invio la query al db
 			statement.setInt(1, idCreator);
 			statement.setInt(2, idLocation);
 			statement.setString(3, eventName);
 			statement.setObject(4, data);
+			statement.setObject(5, dataScad);
+			statement.setInt(6, standingPlaces);
 			statement.setInt(5, idEvent);		
 			r = statement.executeUpdate();
 			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che la modifica è avvenuta con successo

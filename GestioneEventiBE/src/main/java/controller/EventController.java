@@ -194,7 +194,8 @@ public class EventController extends HttpServlet {
 				try {
 					newDetailEvent = datas.fromJson(data, NewEventBean.class );
 					updatedEvent = eventDao.updateEvent(Integer.parseInt(id), auth.getIdUser(request),
-					newDetailEvent.getIdLocation(), newDetailEvent.getEventName(), newDetailEvent.getDate());
+					newDetailEvent.getIdLocation(), newDetailEvent.getEventName(), newDetailEvent.getDate(),
+					newDetailEvent.getDataScadenza(), newDetailEvent.getStandingPlaces());
 					if(updatedEvent == true) {
 						System.out.println("Dati Evento aggiornati con successo");
 					}else {

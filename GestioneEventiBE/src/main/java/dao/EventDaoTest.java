@@ -21,8 +21,29 @@ public class EventDaoTest {
 		String orderBy = "id_event";
 		String orderDirection = "asc";
 		eventList = eventDao.getEvents(orderBy, orderDirection);
-		int expeted = 3;
+		int expeted = 2;
 		assertEquals(expeted, eventList.size());
+	}
+	
+	@Test
+	public void testGetEventsByCreator() throws SQLException {
+		EventDao eventDao = new EventDao ();
+		ArrayList <EventBean> eventList1 = new ArrayList ();
+		String orderBy = "id_event";
+		String orderDirection = "asc";
+		//caso id presente
+		eventList1 = eventDao.getEventsByCreator(orderBy, orderDirection,19);
+		assertEquals(1, eventList1.size());
+		
+		//caso id = 0
+		ArrayList <EventBean> eventList2 = new ArrayList();
+		eventList2 = eventDao.getEventsByCreator(orderBy, orderDirection,0);
+		assertNull(eventList2);
+		
+		//caso id non presente
+		ArrayList <EventBean> eventList3 = new ArrayList();
+		eventList3 = eventDao.getEventsByCreator(orderBy, orderDirection,190);
+		assertEquals(0,eventList3.size());
 	}
 
 	@Test
@@ -35,6 +56,8 @@ public class EventDaoTest {
 		assertEquals(6, event.getIdEvent());
 		assertEquals("evento33*33", event.getEventName());
 		assertEquals("2022-12-30 21:30", event.getDate());
+		assertEquals("2022-01-09 20:30", event.getDataScadenza());
+		assertEquals(100, event.getStandingPlaces());
 		assertEquals(4, location.getIdLocation());
 		assertEquals("chillout", location.getLocationName());
 		assertEquals("via fiorentina 10", location.getAddress());
@@ -44,7 +67,7 @@ public class EventDaoTest {
 		assertNull(event2);
 		
 		// caso id non presente
-		EventBean event3 = eventDao.getEventById(10);
+		EventBean event3 = eventDao.getEventById(100);
 		assertNull(event3);
 	}
 
