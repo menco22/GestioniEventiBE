@@ -73,6 +73,9 @@ public class BookingDao {
 	
 	public ArrayList<BookingBean> getBookingByEvent (String orderBy, String orderDirection, int idEvent) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
+		if(idEvent == 0) {
+			return null;
+		}
 		query = "SELECT * FROM t_bookings WHERE deleted = false AND id_event=? Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
@@ -103,13 +106,15 @@ public class BookingDao {
 				throw new SQLException(e2);
 			}
 		}	
-		
 		return bookingList;
 	} 
 	
 	public ArrayList<BookingBean> getBookingByUser (String orderBy, String orderDirection, int idUser) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
 		query = "SELECT * FROM t_bookings WHERE deleted = false AND id_user=? Order by " + orderBy + " " + orderDirection;
+		if(idUser == 0) {
+			return null;
+		}
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
 			statement.setInt(1, idUser); 
