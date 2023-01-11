@@ -68,6 +68,42 @@ public class TableDao {
 		return tableList;
 	}
 	
+	public ArrayList<TableBean> getTablesByEvent (String orderBy, String orderDirection, int idEvent) throws SQLException {
+		ArrayList <TableBean> tableList = new ArrayList();
+		
+		query = "SELECT * FROM t_tables WHERE deleted=false AND id_event=? Order by " + orderBy + " " + orderDirection;
+		
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idEvent);
+			result = statement.executeQuery();
+		
+			while(result.next()) {
+				int idTable = result.getInt("id_table");
+				int tableCapacity = result.getInt("table_capacity");
+				TableBean table = new TableBean( idTable, tableCapacity, idEvent);
+				tableList.add(table);
+			}
+		} catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}	
+		
+		return tableList;
+	}
+	
 	//funzione che restituisce il tavolo corrispondente all'id passatogli
 	public TableBean getTableById (int idTable) throws SQLException {
 		TableBean table = null;

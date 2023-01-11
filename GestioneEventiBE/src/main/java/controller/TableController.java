@@ -68,38 +68,45 @@ public class TableController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request);
+		System.out.println(auth.checkToken(request));
 		TableDao tableDao = new TableDao(this.connection);
 		String tableResponse ="";
 		if(auth.checkToken(request)==true) {
 			String id = request.getParameter("id");
-			if(id != null) {
-				try {
-					TableBean table = tableDao.getTableById(Integer.parseInt(id));
-					tableResponse = new Gson().toJson(table);
-				}catch (SQLException e) {
-					e.printStackTrace();
+			String idEvent = request.getParameter("idEvent");
+			if(idEvent != null) { 
+				if(id != null) {
+					try {
+						TableBean table = tableDao.getTableById(Integer.parseInt(id));
+						tableResponse = new Gson().toJson(table);
+					}catch (SQLException e) {
+						e.printStackTrace();
+					}
+					response.getWriter().append(tableResponse);
+				}else {
+					try {
+						String orderBy = request.getParameter("orderBy");
+						String orderDirection = request.getParameter("orderDirection");
+						if(orderBy == null) {
+							orderBy = "id_table";
+						}
+						if (orderDirection == null) {
+							orderDirection = "asc";
+						}
+						ArrayList <TableBean> tableList = tableDao.getTablesByEvent(orderBy, orderDirection, Integer.parseInt(idEvent));
+						tableResponse = new Gson().toJson(tableList);
+					}catch (SQLException e) {
+						e.printStackTrace();
 				}
 				response.getWriter().append(tableResponse);
+				}
 			}else {
-				try {
-					String orderBy = request.getParameter("orderBy");
-					String orderDirection = request.getParameter("orderDirection");
-					if(orderBy == null) {
-						orderBy = "id_table";
-					}
-					if (orderDirection == null) {
-						orderDirection = "asc";
-					}
-					ArrayList <TableBean> tableList = tableDao.getTables(orderBy, orderDirection);
-					tableResponse = new Gson().toJson(tableList);
-				}catch (SQLException e) {
-					e.printStackTrace();
-				}
-				response.getWriter().append(tableResponse);
+				response.sendError(400,"Specificare evento");
 			}
 		}else {
-			response.sendError(401,"Effettuare il login");
+			response.sendError(401,"Effettuare login!");
 		}
+
 	}
 
 	/**
