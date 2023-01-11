@@ -71,6 +71,78 @@ public class BookingDao {
 		return bookingList;
 	}
 	
+	public ArrayList<BookingBean> getBookingByEvent (String orderBy, String orderDirection, int idEvent) throws SQLException {
+		ArrayList <BookingBean> bookingList = new ArrayList();
+		query = "SELECT * FROM t_bookings WHERE deleted = false AND id_event=? Order by " + orderBy + " " + orderDirection;
+		try {
+			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
+			statement.setInt(1, idEvent); 
+			result=statement.executeQuery();
+			while(result.next()) {
+				int idBooking = result.getInt("id_booking");
+				String code = result.getString("code");
+				String bookingType = result.getString("booking_type");
+				int idUser = result.getInt("id_user");
+				int idTable = result.getInt("id_table");
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, idEvent, idTable);
+				bookingList.add(booking);
+			}
+		}catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}	
+		
+		return bookingList;
+	} 
+	
+	public ArrayList<BookingBean> getBookingByUser (String orderBy, String orderDirection, int idUser) throws SQLException {
+		ArrayList <BookingBean> bookingList = new ArrayList();
+		query = "SELECT * FROM t_bookings WHERE deleted = false AND id_user=? Order by " + orderBy + " " + orderDirection;
+		try {
+			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
+			statement.setInt(1, idUser); 
+			result=statement.executeQuery();
+			while(result.next()) {
+				int idBooking = result.getInt("id_booking");
+				String code = result.getString("code");
+				String bookingType = result.getString("booking_type");
+				int idEvent = result.getInt("id_event");
+				int idTable = result.getInt("id_table");
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, idEvent, idTable);
+				bookingList.add(booking);
+			}
+		}catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}	
+		
+		return bookingList;
+	} 
+	
 	//funzione che restituisce una prenotazione specifica in base all'id passatole
 	public BookingBean getBookingById(int idBooking) throws SQLException {
 		String query ="SELECT * FROM t_bookings WHERE id_booking = ? AND deleted = false";

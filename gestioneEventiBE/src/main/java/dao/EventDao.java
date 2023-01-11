@@ -66,7 +66,7 @@ public class EventDao {
 				}
 				LocationBean location = new LocationBean(idLocation, locationName, address); 
 				EventBean event = new EventBean( idEvent, idCreator,eventName, formattedDateTime, formattedDataScadenza,standingPlaces ,location, canBook);
-					eventList.add(event); 
+				eventList.add(event); 
 			}
 		} catch (SQLException e) {
 		    e.printStackTrace();
@@ -198,7 +198,7 @@ public class EventDao {
 		
 	//funzione per l'aggiunta di un evento
 	public boolean addEvent( int idCreator, int idLocation, String eventName, String date, String dataScadenza, int standingPlaces) throws SQLException{
-			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time) VALUES(?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO t_events (id_creator, id_location, name, data_time, data_scadenza, standing_places) VALUES(?, ?, ?, ?, ?, ?)";
 			int r=0;
 			
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

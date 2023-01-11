@@ -85,7 +85,29 @@ public class BookingController extends HttpServlet {
 				}
 				response.getWriter().append(bookingResponse);
 			}else {
-				try {
+				if(auth.isAdmin(request) == true) {
+					String orderBy = request.getParameter("orderBy");
+					String orderDirection = request.getParameter("orderDirection");
+					String idEvent = request.getParameter("idEvent");
+					if(orderBy == null) {
+						orderBy = "id_booking";
+					}
+					if (orderDirection == null) {
+						orderDirection = "asc";
+					}
+					if (idEvent != null) {
+						try {
+							ArrayList <BookingBean> bookingList = bookingDao.getBookingByEvent(orderBy, orderDirection,Integer.parseInt(idEvent) );
+							bookingResponse = new Gson().toJson(bookingList);
+					  } catch (SQLException e) {
+						  // TODO Auto-generated catch block
+						  e.printStackTrace();
+					  }
+					response.getWriter().append(bookingResponse);
+					}else {
+						response.sendError(400,"Specificare evento");
+					}
+				}else {
 					String orderBy = request.getParameter("orderBy");
 					String orderDirection = request.getParameter("orderDirection");
 					if(orderBy == null) {
@@ -94,14 +116,16 @@ public class BookingController extends HttpServlet {
 					if (orderDirection == null) {
 						orderDirection = "asc";
 					}
-					ArrayList <BookingBean> bookingList = bookingDao.getBooking(orderBy, orderDirection);
-					bookingResponse = new Gson().toJson(bookingList);
-				
-				} catch (SQLException e) {
-				// TODO Auto-generated catch block
-					e.printStackTrace();
+					try {
+						ArrayList <BookingBean> bookingList = bookingDao.getBookingByUser(orderBy, orderDirection, auth.getIdUser(request));
+						bookingResponse = new Gson().toJson(bookingList);
+				   } catch (SQLException e) {
+					  // TODO Auto-generated catch block
+					  e.printStackTrace();
+				   }
+				 response.getWriter().append(bookingResponse);
+					
 				}
-				response.getWriter().append(bookingResponse);
 		  }
 		}else {
 			response.sendError(401,"Effettuare login");
