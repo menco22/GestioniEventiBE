@@ -98,7 +98,6 @@ public class BookingController extends HttpServlet {
 					if (orderDirection == null) {
 						orderDirection = "asc";
 					}
-					if (idEvent != null) {
 						try {
 							ArrayList <BookingBean> bookingList = bookingDao.getBooking(orderBy, orderDirection);
 							bookingResponse = new Gson().toJson(bookingList);
@@ -107,9 +106,7 @@ public class BookingController extends HttpServlet {
 						  e.printStackTrace();
 					  }
 					response.getWriter().append(bookingResponse);
-					}else {
-						response.sendError(400,"Specificare evento");
-					}
+			
 				}else {
 					// utente non admin si restituiscono le prenotazioni effettuate dall'utente loggato
 					String orderBy = request.getParameter("orderBy");
