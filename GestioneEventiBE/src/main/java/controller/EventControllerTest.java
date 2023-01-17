@@ -130,8 +130,8 @@ public class EventControllerTest {
 		event.setIdLocation(4);
 		event.setEventName("nuovo evento");
 		event.setDate("2023-03-03 21:00");
-		event.setDataScadenza("2023-03-01 21:00");
-		event.setStandingPlaces(50);
+		event.setDataScadenza("2023-03-01 14:00");
+		event.setStandingPlaces(55);
 		JSONObject json2 = new JSONObject(event);
 		String eventStr = json2.toString();
 		String part0Stringa = String.valueOf(part0);
@@ -145,7 +145,7 @@ public class EventControllerTest {
         assertEquals(response.statusCode(), 200);
         
         // eliminazione evento
-        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/EventController?id=19&action=delete"))
+        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/EventController?id=23&action=delete"))
         		.header("Cookie", loginCookie[1]).POST(HttpRequest.BodyPublishers.noBody()).build();
         HttpResponse<String> responseDlt = client.send(requestDlt, BodyHandlers.ofString());
         System.out.println(responseDlt.statusCode());
@@ -154,9 +154,9 @@ public class EventControllerTest {
         // modifica evento
 		NewEventBean eventUpd = new NewEventBean();
 		eventUpd.setIdLocation(5);
-		eventUpd.setEventName("nuovo evento3");
+		eventUpd.setEventName("nuovo evento43");
 		eventUpd.setDate("2023-03-03 21:30");
-		eventUpd.setDataScadenza("2023-03-01 12:00");
+		eventUpd.setDataScadenza("2023-03-01 12:30");
 		eventUpd.setStandingPlaces(45);
 		JSONObject json3 = new JSONObject(eventUpd);
 		String UpdateStr = json3.toString();

@@ -142,10 +142,10 @@ public class BookingControllerTest{
 		}
 		// aggiunta prenotazione
 		NewBookingBean booking = new NewBookingBean();
-		booking.setCode("iaghig6t6rjhvc");
+		booking.setCode("abcneo45");
 		booking.setBookingType("singolo");
 		booking.setIdEvent(10);
-		booking.setIdTable(6);
+		booking.setIdTable(8);
 		JSONObject json2 = new JSONObject(booking);
 		String bookingStr = json2.toString();
 		System.out.println(bookingStr);
@@ -169,7 +169,7 @@ public class BookingControllerTest{
         
         // modifica prenotazione
         NewBookingBean bookingUpd = new NewBookingBean();
-        bookingUpd.setBookingType("tavolo grande");
+        bookingUpd.setBookingType("tavolo grande!");
         bookingUpd.setCode("ohciòfdx");
         bookingUpd.setIdEvent(10);
         bookingUpd.setIdTable(7);

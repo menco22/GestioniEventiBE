@@ -19,11 +19,11 @@ public class RegistrationControllerTest {
 	@Test
 	public void testDoPostHttpServletRequestHttpServletResponse() throws IOException, InterruptedException {
 		RegistrationBean registration = new RegistrationBean();
-		registration.setName("Silvio");
+		registration.setName("Alberto");
 		registration.setSurname("Daveri");
-		registration.setEmail("silviodaveri@gmail.com");
-		registration.setUsername("silviodave3");
-		registration.setPassword("silviodave81");
+		registration.setEmail("albertodaveri@gmail.com");
+		registration.setUsername("albedave");
+		registration.setPassword("albedave56");
 		registration.setIdRole(2);
 		JSONObject json = new JSONObject(registration);
 		String registrationStr = json.toString();

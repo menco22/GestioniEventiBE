@@ -102,7 +102,7 @@ public class TableControllerTest {
 		}
 		NewTableBean table = new NewTableBean();
 		table.setIdEvent(10);
-		table.setTableCapacity(10);
+		table.setTableCapacity(8);
 		JSONObject json2 = new JSONObject(table);
 		String tableStr = json2.toString();
 		String part0Stringa = String.valueOf(part0);
@@ -119,7 +119,7 @@ public class TableControllerTest {
         assertEquals(response.statusCode(), 200);
         
         // rimozione tavolo
-        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/TableController?id=2&action=delete"))
+        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/TableController?id=8&action=delete"))
         		.header("Cookie", loginCookie[1]).POST(HttpRequest.BodyPublishers.noBody()).build();
         HttpResponse<String> responseDlt = client.send(requestDlt, BodyHandlers.ofString());
         System.out.println(responseDlt.statusCode());
@@ -128,7 +128,7 @@ public class TableControllerTest {
         // modifica tavolo
 		NewTableBean tableUpdate = new NewTableBean();
 		tableUpdate.setIdEvent(10);
-		tableUpdate.setTableCapacity(12);
+		tableUpdate.setTableCapacity(15);
 		JSONObject json3 = new JSONObject(tableUpdate);
 		String updateStr = json3.toString();
         HttpRequest requestUpd = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/TableController?id=6&action=update"))

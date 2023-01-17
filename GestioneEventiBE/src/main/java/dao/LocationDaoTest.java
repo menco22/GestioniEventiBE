@@ -19,7 +19,7 @@ public class LocationDaoTest {
 		String orderBy = "id_location";
 		String orderDirection = "asc";
 		locationList = locationDao.getLocations(orderBy, orderDirection);
-		assertEquals(4, locationList.size());
+		assertEquals(11, locationList.size());
 	}
 
 	@Test
@@ -30,7 +30,7 @@ public class LocationDaoTest {
 		assertNull(location1);
 		
 		// caso id non presente
-		LocationBean location2 = locationDao.getLocationById(10);
+		LocationBean location2 = locationDao.getLocationById(50);
 		assertNull(location2);
 		
 		//caso id presente

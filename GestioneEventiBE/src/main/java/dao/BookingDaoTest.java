@@ -19,7 +19,7 @@ public class BookingDaoTest {
 		String orderBy = "id_booking";
 		String orderDirection = "asc";
 		bookingList = bookingDao1.getBooking(orderBy, orderDirection);
-		assertEquals(1, bookingList.size()); 
+		assertEquals(2, bookingList.size()); 
 	}
 	
 	@Test
@@ -30,11 +30,12 @@ public class BookingDaoTest {
 		String orderDirection = "asc";
 		//caso id presente
 		bookingList1 = bookingDao1.getBookingByEvent(orderBy, orderDirection, 10);
-		assertEquals(1, bookingList1.size()); 
+		assertEquals(2, bookingList1.size()); 
 		//caso id=0
 		ArrayList <BookingBean> bookingList2 = new ArrayList ();
 		bookingList2 = bookingDao1.getBookingByEvent(orderBy, orderDirection, 0);
 		assertNull(bookingList2); 
+		
 		//caso id non presente
 		ArrayList <BookingBean> bookingList3 = new ArrayList ();
 		bookingList3 = bookingDao1.getBookingByEvent(orderBy, orderDirection, 20);
@@ -49,7 +50,7 @@ public class BookingDaoTest {
 		String orderDirection = "asc";
 		// caso id presente
 		bookingList1 = bookingDao1.getBookingByUser(orderBy, orderDirection, 19);
-		assertEquals(1, bookingList1.size()); 
+		assertEquals(2, bookingList1.size()); 
 		//caso id=0
 		ArrayList <BookingBean> bookingList2 = new ArrayList ();
 		bookingList2 = bookingDao1.getBookingByUser(orderBy, orderDirection, 0);
@@ -74,10 +75,10 @@ public class BookingDaoTest {
 		BookingBean booking3 = bookingDao.getBookingById(1);
 		assertEquals(1, booking3.getIdBooking());
 		assertEquals("ohciòfdx", booking3.getCode()); 
-		assertEquals("doppio", booking3.getBookingType());
+		assertEquals("tavolo grande", booking3.getBookingType());
 		assertEquals(19, booking3.getIdUser());
 		assertEquals(10, booking3.getIdEvent());
-		assertEquals(4, booking3.getIdTable());
+		assertEquals(7, booking3.getIdTable());
 	}
 
 }

@@ -96,7 +96,7 @@ public class FeedbackControllerTest {
 		}
 		// aggiunta feedback
 		NewFeedbackBean feedback = new NewFeedbackBean();
-		feedback.setDescription("bene");
+		feedback.setDescription("benissimo");
 		feedback.setEvaluation(10);
 		feedback.setIdBooking(1);
 		JSONObject json2 = new JSONObject(feedback);
@@ -112,7 +112,7 @@ public class FeedbackControllerTest {
         assertEquals(response.statusCode(), 200);
         
         // delete feedback
-        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/FeedbackController?id=5&action=delete"))
+        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/FeedbackController?id=6&action=delete"))
         		.header("Cookie", loginCookie[1]).POST(HttpRequest.BodyPublishers.noBody()).build();
         HttpResponse<String> responseDlt = client.send(requestDlt, BodyHandlers.ofString());
         System.out.println(responseDlt.statusCode());
@@ -120,7 +120,7 @@ public class FeedbackControllerTest {
         
         // update feedback
 		NewFeedbackBean feedbackUpd = new NewFeedbackBean();
-		feedbackUpd.setDescription("benissimo");
+		feedbackUpd.setDescription("benissimoo");
 		feedbackUpd.setEvaluation(10);
 		feedbackUpd.setIdBooking(1);
 		JSONObject json3 = new JSONObject(feedbackUpd);

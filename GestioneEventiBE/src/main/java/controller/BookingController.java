@@ -93,14 +93,14 @@ public class BookingController extends HttpServlet {
 					String orderDirection = request.getParameter("orderDirection");
 					String idEvent = request.getParameter("idEvent");
 					if(orderBy == null) {
-						orderBy = "id_booking";
+						orderBy = "id_event";
 					}
 					if (orderDirection == null) {
 						orderDirection = "asc";
 					}
 					if (idEvent != null) {
 						try {
-							ArrayList <BookingBean> bookingList = bookingDao.getBookingByEvent(orderBy, orderDirection,Integer.parseInt(idEvent) );
+							ArrayList <BookingBean> bookingList = bookingDao.getBooking(orderBy, orderDirection);
 							bookingResponse = new Gson().toJson(bookingList);
 					  } catch (SQLException e) {
 						  // TODO Auto-generated catch block

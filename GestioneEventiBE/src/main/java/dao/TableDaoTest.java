@@ -18,7 +18,7 @@ public class TableDaoTest {
 		String orderBy = "id_table";
 		String orderDirection = "asc";
 		tableList = tableDao.getTables(orderBy, orderDirection);
-		assertEquals(2, tableList.size());
+		assertEquals(4, tableList.size());
 	}
 
 	@Test
@@ -48,14 +48,14 @@ public class TableDaoTest {
 		assertNull(table1);
 		
 		// caso id non presente
-		TableBean table2 = tableDao.getTableById(10);
+		TableBean table2 = tableDao.getTableById(150);
 		assertNull(table2);
 		
 		// caso id presente
-		TableBean table3 = tableDao.getTableById(2);
-		assertEquals(2, table3.getIdTable());
-		assertEquals(3, table3.getTableCapacity());
-		assertEquals(4, table3.getIdEvent());
+		TableBean table3 = tableDao.getTableById(3);
+		assertEquals(3, table3.getIdTable());
+		assertEquals(6, table3.getTableCapacity());
+		assertEquals(6, table3.getIdEvent());
 		}
 
 }

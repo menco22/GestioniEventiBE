@@ -93,8 +93,8 @@ public class LocationControllerTest {
 		}
 		// aggiunta location
 		NewLocationBean location = new NewLocationBean();
-		location.setLocationName("ciao");
-		location.setAddress("via arno 3");
+		location.setLocationName("ciaociao");
+		location.setAddress("via arno 9");
 		location.setLocationType(1);
 		JSONObject json2 = new JSONObject(location);
 		String locationStr = json2.toString();
@@ -109,7 +109,7 @@ public class LocationControllerTest {
         assertEquals(response.statusCode(), 200);
         
         // delete location
-        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/LocationController?id=15&action=delete"))
+        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/LocationController?id=16&action=delete"))
         		.header("Cookie", loginCookie[1]).POST(HttpRequest.BodyPublishers.noBody()).build();
         HttpResponse<String> responseDlt = client.send(requestDlt, BodyHandlers.ofString());
         System.out.println(responseDlt.statusCode());
@@ -117,8 +117,8 @@ public class LocationControllerTest {
         
         // update location
 		NewLocationBean locationUpd = new NewLocationBean();
-		locationUpd.setLocationName("ciao!!");
-		locationUpd.setAddress("via arno 2");
+		locationUpd.setLocationName("ciao?!");
+		locationUpd.setAddress("via arno 23");
 		locationUpd.setLocationType(1);
 		JSONObject json3 = new JSONObject(locationUpd);
 		String updateStr = json3.toString();

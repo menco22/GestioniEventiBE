@@ -108,7 +108,7 @@ public class LocationTypeControllerTest {
         assertEquals(response.statusCode(), 200);
         
         // delete tipo location
-        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/LocationTypeController?id=6&action=delete"))
+        HttpRequest requestDlt = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/LocationTypeController?id=8&action=delete"))
         		.header("Cookie", loginCookie[1]).POST(HttpRequest.BodyPublishers.noBody()).build();
         HttpResponse<String> responseDlt = client.send(requestDlt, BodyHandlers.ofString());
         System.out.println(responseDlt.statusCode());
@@ -116,10 +116,10 @@ public class LocationTypeControllerTest {
         
         //update tipo location
 		NewTypeBean typeUpd = new NewTypeBean();
-		typeUpd.setDescription("ristorante stellato");
+		typeUpd.setDescription("osteria");
 		JSONObject json3 = new JSONObject(typeUpd);
 		String updateStr = json3.toString(); 
-        HttpRequest requestUpd = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/LocationTypeController?id=5&action=update"))
+        HttpRequest requestUpd = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/GestioneEventiBE/LocationTypeController?id=7&action=update"))
         		.header("Cookie", loginCookie[1]).POST(HttpRequest.BodyPublishers.ofString(updateStr)).build();
         HttpResponse<String> responseUpd = client.send(requestUpd, BodyHandlers.ofString());
         System.out.println(responseUpd.statusCode());

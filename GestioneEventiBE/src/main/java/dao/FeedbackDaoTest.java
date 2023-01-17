@@ -18,7 +18,7 @@ public class FeedbackDaoTest {
 		String orderBy = "id_feedback";
 		String orderDirection = "asc";
 		feedbackList = feedbackDao.getFeedback(orderBy, orderDirection);
-		assertEquals(1, feedbackList.size());
+		assertEquals(3, feedbackList.size());
 	}
 
 	@Test

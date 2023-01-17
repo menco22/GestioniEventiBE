@@ -63,7 +63,7 @@ public class UserDaoTest {
 		String orderBy = "id_user";
 		String orderDirection = "asc";
 		usersList = userDao.getUserList(orderBy, orderDirection);
-		assertEquals(8, usersList.size());
+		assertEquals(10, usersList.size());
 	}
 
 	@Test

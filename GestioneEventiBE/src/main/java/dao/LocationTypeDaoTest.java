@@ -18,7 +18,7 @@ public class LocationTypeDaoTest {
 		String orderBy = "id_location_type";
 		String orderDirection = "asc";
 		types = typeDao.getLocationType(orderBy, orderDirection);
-		assertEquals(2, types.size());
+		assertEquals(5, types.size());
 	}
 	@Test
 	public void testGetTypeById() throws SQLException {
