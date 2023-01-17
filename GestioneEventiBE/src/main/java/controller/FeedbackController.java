@@ -68,9 +68,11 @@ public class FeedbackController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController(request);
 		FeedbackDao feedbackDao = new FeedbackDao(this.connection);
 		String feedbackResponse = "";
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
 			String id = request.getParameter("id");	
 			if(id != null) {
+				// get del feedback richiesto
 				try {
 					FeedbackBean feedback = feedbackDao.getFeedbackById(Integer.parseInt(id));
 					feedbackResponse = new Gson().toJson(feedback);
@@ -79,6 +81,7 @@ public class FeedbackController extends HttpServlet {
 				}
 				response.getWriter().append(feedbackResponse);
 			}else {
+				// get della lista completa di feedback
 				try {
 				String orderBy = request.getParameter("orderBy");
 				String orderDirection = request.getParameter("orderDirection");
@@ -107,8 +110,8 @@ public class FeedbackController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request);
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
-			connectToDb();
 			FeedbackDao feedbackDao = new FeedbackDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
@@ -117,6 +120,7 @@ public class FeedbackController extends HttpServlet {
 			String action = request.getParameter("action");	
 			System.out.println(id + " " + action);
 			if(action == null && id == null) { 
+				// action e id null -> aggiunta di un nuovo feedback
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());
@@ -138,6 +142,7 @@ public class FeedbackController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(id != null && action.equalsIgnoreCase("delete")) {
+				// eliminazione feedback
 				boolean deletedFeedback = false;
 				try {
 					deletedFeedback = feedbackDao.deleteFeedback(Integer.parseInt(id));
@@ -154,6 +159,7 @@ public class FeedbackController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(action.equalsIgnoreCase("update") && id!=null) {
+				// update feedback
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());

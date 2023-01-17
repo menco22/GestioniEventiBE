@@ -74,9 +74,11 @@ public class LocationController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController (request);
 		LocationDao locationDao = new LocationDao(this.connection);
 		String locationResponse = "";
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
 			String id = request.getParameter("id");
 			if(id == null) {
+				// get lista locations
 				try { 
 					String orderBy = request.getParameter("orderBy");
 					String orderDirection = request.getParameter("orderDirection");
@@ -95,6 +97,7 @@ public class LocationController extends HttpServlet {
 				}
 				response.getWriter().append(locationResponse);
 			}else {
+				// get location specifica
 				try {
 					LocationBean location  = locationDao.getLocationById(Integer.parseInt(id));
 					locationResponse = new Gson().toJson(location);
@@ -118,8 +121,9 @@ public class LocationController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController (request);
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
-			connectToDb();
+			//connectToDb();
 			LocationDao locationDao = new LocationDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
@@ -128,6 +132,7 @@ public class LocationController extends HttpServlet {
 			String action = request.getParameter("action");
 			System.out.println(id + " " + action);
 			if(id == null && action == null) {
+				// id e action nulli -> aggiunta di una nuova location
 			    while ((line = reader.readLine()) != null) {
 			    	buffer.append(line);
 			    	buffer.append(System.lineSeparator());
@@ -148,6 +153,7 @@ public class LocationController extends HttpServlet {
 			    	e.printStackTrace();
 			    }  
 			}else if(id != null && action.equalsIgnoreCase("update")) {
+				// aggiornamento location
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());
@@ -169,6 +175,7 @@ public class LocationController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(action.equalsIgnoreCase("delete") && id != null) {
+				// eliminazione location
 				boolean deletedLocation = false;
 				try {
 					deletedLocation = locationDao.deleteLocation(Integer.parseInt(id));

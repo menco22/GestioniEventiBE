@@ -275,7 +275,7 @@ public class EventDao {
 			statement.setObject(4, data);
 			statement.setObject(5, dataScad);
 			statement.setInt(6, standingPlaces);
-			statement.setInt(5, idEvent);		
+			statement.setInt(7, idEvent);		
 			r = statement.executeUpdate();
 			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che la modifica è avvenuta con successo
 		    if(r>0) {

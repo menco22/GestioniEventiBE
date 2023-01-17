@@ -69,9 +69,11 @@ public class LocationTypeController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController(request);
 		LocationTypeDao typeDao = new LocationTypeDao(this.connection);
 		String typeResponse = "";
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
 			String id = request.getParameter("id");
 			if(id != null) {
+				// get del tipo di location specifico
 				try {
 					LocationTypeBean type = typeDao.getTypeById(Integer.parseInt(id));
 					typeResponse = new Gson().toJson(type);
@@ -80,6 +82,7 @@ public class LocationTypeController extends HttpServlet {
 				}
 				response.getWriter().append(typeResponse);
 			}else {
+				// get lista tipi location
 				try {
 					String orderBy = request.getParameter("orderBy");
 					String orderDirection = request.getParameter("orderDirection");
@@ -109,7 +112,7 @@ public class LocationTypeController extends HttpServlet {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request);
 		if(auth.checkToken(request)==true) {
-			connectToDb();
+			// connectToDb();
 			LocationTypeDao typeDao = new LocationTypeDao (this.connection);
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
@@ -118,6 +121,7 @@ public class LocationTypeController extends HttpServlet {
 			String action = request.getParameter("action");	
 			System.out.println(id + " " + action);
 			if(action == null && id == null) { 
+				// action e id null -> aggiunta nuovo tipo
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());
@@ -138,6 +142,7 @@ public class LocationTypeController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(id != null && action.equalsIgnoreCase("delete")) {
+				// eliminazione tipo
 				boolean deletedType = false;
 				try {
 					deletedType = typeDao.deleteLocationType(Integer.parseInt(id));
@@ -150,6 +155,7 @@ public class LocationTypeController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(action.equalsIgnoreCase("update") && id!=null) {
+				// aggiornamento tipo
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());

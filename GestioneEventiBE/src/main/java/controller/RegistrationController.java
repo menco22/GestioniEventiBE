@@ -73,7 +73,7 @@ public class RegistrationController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		doPost(request, response);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class RegistrationController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		connectToDb();
+		//connectToDb();
 		StringBuilder buffer = new StringBuilder();
 	    BufferedReader reader = request.getReader();
 	    String line;
@@ -91,18 +91,9 @@ public class RegistrationController extends HttpServlet {
 	    }
 	    String data = buffer.toString();
 	    System.out.println("i parametri sono:" +data);
-	    
-	    String name ="";
-	    String surname ="";
-	    String email ="";
-	    String username ="";
-	    String password = "";
-	    int idRole = -1;
-	    JSONObject jsonObject = null;
 		UserDao registrationDao = new UserDao(this.connection);
 		RegistrationBean registration = null;
 		boolean addedUser = false;
-		//UserBean newUser = null;
 		Gson datas = new Gson();
 		try {
 			registration = datas.fromJson(data, RegistrationBean.class );
@@ -110,25 +101,11 @@ public class RegistrationController extends HttpServlet {
 								registration.getEmail(), registration.getUsername(), registration.getPassword(), registration.getIdRole());
 			if(addedUser == true ) {
 				System.out.println("Utente aggiunto con successo");
-				/*String jwtToken = Jwts.builder()
-						   .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS*60))
-						   .setSubject(registration.getUsername())
-						   //.claim("id", registration.getIdUser())
-						   .claim("email", registration.getEmail())
-						   .claim("roles", registration.getIdRole())
-						  //.signWith( SignatureAlgorithm.HS512, JwtConstants.SECRET)
-						   .compact();
-				System.out.println(jwtToken);		
-				Cookie cookie = new Cookie("signInCookie", jwtToken);
-				//cookie.setMaxAge(60*60);
-				//cookie.setPath("/LocationController");
-				cookie.setHttpOnly(true);
-				response.addCookie(cookie);*/
 			}
 		}catch(JsonSyntaxException | SQLException e) {
 			e.printStackTrace();
 		}
-		//doGet(request, response);
+		
 	}
    //CHECK: stampare la query
 }

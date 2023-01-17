@@ -67,11 +67,13 @@ public class RoleController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController (request);
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
 			RoleDao roleDao = new RoleDao(this.connection);
 			String roleResponse = "";
 			String id = request.getParameter("id");
 			if(id != null) {
+				// get del ruolo specifico
 				try {
 					RoleBean role = roleDao.getRoleById(Integer.parseInt(id));
 					roleResponse = new Gson().toJson(role);
@@ -84,6 +86,7 @@ public class RoleController extends HttpServlet {
 				}
 				response.getWriter().append(roleResponse);
 			}else {
+				// get lista ruoli
 				String orderBy = request.getParameter("orderBy");
 				String orderDirection = request.getParameter("orderDirection");
 				if(orderBy == null) {
@@ -113,6 +116,7 @@ public class RoleController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		// i ruoli sono predefiniti non possono essere né aggiunti né eliminati
 		doGet(request, response);
 	}
 

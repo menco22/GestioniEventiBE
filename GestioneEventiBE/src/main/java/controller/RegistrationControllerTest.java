@@ -22,7 +22,7 @@ public class RegistrationControllerTest {
 		registration.setName("Silvio");
 		registration.setSurname("Daveri");
 		registration.setEmail("silviodaveri@gmail.com");
-		registration.setUsername("silviodave");
+		registration.setUsername("silviodave3");
 		registration.setPassword("silviodave81");
 		registration.setIdRole(2);
 		JSONObject json = new JSONObject(registration);

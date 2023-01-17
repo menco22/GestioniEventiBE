@@ -72,10 +72,12 @@ public class TableController extends HttpServlet {
 		TableDao tableDao = new TableDao(this.connection);
 		String tableResponse ="";
 		if(auth.checkToken(request)==true) {
+			// controllo che l'utente sia loggato
 			String id = request.getParameter("id");
 			String idEvent = request.getParameter("idEvent");
 			if(idEvent != null) { 
 				if(id != null) {
+					// get tavolo specifico di un dato evento
 					try {
 						TableBean table = tableDao.getTableById(Integer.parseInt(id));
 						tableResponse = new Gson().toJson(table);
@@ -84,6 +86,7 @@ public class TableController extends HttpServlet {
 					}
 					response.getWriter().append(tableResponse);
 				}else {
+					// get lista dei tavoli relativi ad un evento
 					try {
 						String orderBy = request.getParameter("orderBy");
 						String orderDirection = request.getParameter("orderDirection");
@@ -115,8 +118,9 @@ public class TableController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController(request); 
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
-			connectToDb();
+			//connectToDb();
 			TableDao tableDao = new TableDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
@@ -125,6 +129,7 @@ public class TableController extends HttpServlet {
 			String action = request.getParameter("action");	
 			System.out.println(id + " " + action);
 			if(action == null && id == null) { 
+				// action e id nulli -> aggiunta nuovo tavolo
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());
@@ -145,6 +150,7 @@ public class TableController extends HttpServlet {
 						e.printStackTrace();
 					}
 				}else if(id != null && action.equalsIgnoreCase("delete")) {
+					// eliminazione tavolo
 					boolean deletedTable = false;
 					try {
 						deletedTable = tableDao.deleteTable(Integer.parseInt(id));
@@ -157,6 +163,7 @@ public class TableController extends HttpServlet {
 						e.printStackTrace();
 					}
 				}else if(action.equalsIgnoreCase("update") && id!=null) {
+					// aggiornamento tavolo
 					while ((line = reader.readLine()) != null) {
 						buffer.append(line);
 						buffer.append(System.lineSeparator());

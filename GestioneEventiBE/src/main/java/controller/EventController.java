@@ -77,11 +77,13 @@ public class EventController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController(request);
 		EventDao eventDao = new EventDao(this.connection);
 		String eventResponse ="";
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
 			System.out.println(auth.getIdUser(request));
 			System.out.println(auth.isAdmin(request));
 			String id = request.getParameter("id");	
 			if(id != null) {
+				// get dell'evento corrispondente all'id dato
 				try {
 					EventBean event = eventDao.getEventById(Integer.parseInt(id));
 					eventResponse = new Gson().toJson(event);
@@ -92,6 +94,7 @@ public class EventController extends HttpServlet {
 				
 			}else {
 				if(auth.isAdmin(request) == true) {
+					// utente è admin -> lista degli eventi da lui creati
 					try {
 						String orderBy = request.getParameter("orderBy");
 						String orderDirection = request.getParameter("orderDirection");
@@ -108,6 +111,7 @@ public class EventController extends HttpServlet {
 					}
 					response.getWriter().append(eventResponse);
 				}else {
+					// utente non admin -> lista completa di tutti gli eventi
 					try {
 						String orderBy = request.getParameter("orderBy");
 						String orderDirection = request.getParameter("orderDirection");
@@ -139,7 +143,7 @@ public class EventController extends HttpServlet {
 		AuthenticationController auth = new AuthenticationController(request); 
 		if(auth.checkToken(request)==true) {
 			System.out.println(auth.getIdUser(request));
-			connectToDb();
+			//connectToDb();
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
 			String line;

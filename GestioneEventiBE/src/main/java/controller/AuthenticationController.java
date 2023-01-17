@@ -16,6 +16,8 @@ import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.*;  
 
+// classe che interagisce con i controller veri e propri
+
 public class AuthenticationController {
 	public AuthenticationController(HttpServletRequest request) {
 		super();
@@ -25,6 +27,7 @@ public class AuthenticationController {
 	HttpServletRequest request; 
 	HttpServletResponse response;
 	
+	// verifica validità del token
 	public boolean checkToken( HttpServletRequest request ) {
 		Cookie[]cookie = request.getCookies();
 		ArrayList <Cookie> cookies = new ArrayList();
@@ -65,6 +68,8 @@ public class AuthenticationController {
 		}return false;
 	}
 	
+	
+	// verifica se un utente è admin o meno
 	public boolean isAdmin( HttpServletRequest request ) throws IOException {
 		Cookie[]cookie = request.getCookies();
 		ArrayList <Cookie> cookies = new ArrayList();
@@ -103,7 +108,7 @@ public class AuthenticationController {
 		
 	}
 
-	
+	// ritorna l'id dell'utente loggato al momento
 	public int getIdUser ( HttpServletRequest request ) throws IOException {
 		Cookie[]cookie = request.getCookies();
 		ArrayList <Cookie> cookies = new ArrayList();

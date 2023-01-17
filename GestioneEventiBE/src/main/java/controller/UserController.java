@@ -139,7 +139,8 @@ public class UserController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		connectToDb();
+		//connectToDb();
+		// login
 		StringBuilder buffer = new StringBuilder();
 	    BufferedReader reader = request.getReader();
 	    String line;

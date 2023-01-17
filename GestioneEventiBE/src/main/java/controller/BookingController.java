@@ -78,6 +78,7 @@ public class BookingController extends HttpServlet {
 			String id = request.getParameter("id");
 			if(id != null) {
 				try {
+					// id diverso da null si procede con la ricerca della prenotazione specifica
 					BookingBean booking = bookingDao.getBookingById(Integer.parseInt(id));
 					bookingResponse = new Gson().toJson(booking);
 				}catch (SQLException e) {
@@ -85,7 +86,9 @@ public class BookingController extends HttpServlet {
 				}
 				response.getWriter().append(bookingResponse);
 			}else {
+				// id null quindi si vuole la lista completa di prenotazioni 
 				if(auth.isAdmin(request) == true) {
+					// se l'utente è user si restituiscono le prenotazioni relative ad un dato evento
 					String orderBy = request.getParameter("orderBy");
 					String orderDirection = request.getParameter("orderDirection");
 					String idEvent = request.getParameter("idEvent");
@@ -108,6 +111,7 @@ public class BookingController extends HttpServlet {
 						response.sendError(400,"Specificare evento");
 					}
 				}else {
+					// utente non admin si restituiscono le prenotazioni effettuate dall'utente loggato
 					String orderBy = request.getParameter("orderBy");
 					String orderDirection = request.getParameter("orderDirection");
 					if(orderBy == null) {
@@ -139,8 +143,9 @@ public class BookingController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		AuthenticationController auth = new AuthenticationController (request);
+		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
-			connectToDb();
+			//connectToDb();
 			BookingDao bookingDao = new BookingDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
@@ -148,6 +153,7 @@ public class BookingController extends HttpServlet {
 			String id = request.getParameter("id");	
 			String action = request.getParameter("action");	
 			if(action == null && id == null) {
+				// action e id nulli si procede con l'aggiunta di una nuova prenotazione
 				while ((line = reader.readLine()) != null) {
 					buffer.append(line);
 					buffer.append(System.lineSeparator());
@@ -169,6 +175,7 @@ public class BookingController extends HttpServlet {
 					e.printStackTrace();
 				}
 			}else if(id != null && action.equalsIgnoreCase("delete")) {
+				// eliminazione prenotazione data
 				 boolean deleteBooking = false;  
 				 try {
 						deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
@@ -185,6 +192,7 @@ public class BookingController extends HttpServlet {
 					 e.printStackTrace();
 				 }
 			   }else if(id != null && action.equalsIgnoreCase("update")) {
+				   // agggiornamento prenotazione data
 					while ((line = reader.readLine()) != null) {
 				    	buffer.append(line);
 				    	buffer.append(System.lineSeparator());

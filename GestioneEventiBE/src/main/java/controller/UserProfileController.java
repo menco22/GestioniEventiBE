@@ -68,11 +68,9 @@ public class UserProfileController extends HttpServlet {
 		//String profileResponse = "";
 		String roleResponse = "";
 		UserDao userDao = new UserDao (this.connection);
-		RoleDao roleDao = new RoleDao (this.connection);
 		if(auth.checkToken(request)==true) {
 			try {
 				ProfileBean profile = userDao.getUsernameAndRole(auth.getIdUser(request));
-				// RoleBean role = roleDao.getRoleById(idRole);
 				roleResponse = new Gson().toJson(profile);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -81,6 +79,8 @@ public class UserProfileController extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}else {
+			response.sendError(401, "Effettuare login");
 		}
 		response.getWriter().append(roleResponse);
 	}
