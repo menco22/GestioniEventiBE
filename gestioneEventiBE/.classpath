@@ -35,5 +35,10 @@
 	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.13.2.jar"/>
 	<classpathentry kind="lib" path="lib/io.wcm.testing.aem-mock-1.9.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-1.12.19.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.12.19.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-core-4.11.0.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-subclass-4.11.0.jar"/>
+	<classpathentry kind="lib" path="lib/objenesis-3.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
