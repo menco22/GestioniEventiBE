@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import beans.BookingBean;
+import beans.EventBean;
 import beans.FeedbackBean;
 import beans.NewBookingBean;
 import beans.NewLocationBean;
@@ -146,6 +147,7 @@ public class BookingController extends HttpServlet {
 			//connectToDb();
 			TableDao table = new TableDao (this.connection);
 			BookingDao bookingDao = new BookingDao(this.connection);
+			EventDao eventDao = new EventDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
 		    String line;
@@ -171,6 +173,12 @@ public class BookingController extends HttpServlet {
 							boolean book = table.bookTable(newBooking.getIdTable());
 							if(book == true) {
 								System.out.println("Booking aggiunto con successo");
+							}
+							if(newBooking.getBookingType().equalsIgnoreCase("ingresso singolo") || newBooking.getBookingType().equalsIgnoreCase("singolo")) {
+								EventBean event = eventDao.getEventById(newBooking.getIdEvent());
+								event.setStandingPlaces(event.getStandingPlaces()-1);	
+								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
+										event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());
 							}
 						}
 					}else {
