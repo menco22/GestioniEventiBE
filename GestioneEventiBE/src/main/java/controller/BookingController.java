@@ -211,9 +211,16 @@ public class BookingController extends HttpServlet {
 					boolean updatedBooking = false;
 					Gson datas = new Gson();
 					try {
+						BookingBean booking = bookingDao.getBookingById(Integer.parseInt(id));
 						newBookingDetail = datas.fromJson(data, NewBookingBean.class);
 						updatedBooking = bookingDao.updateBooking(Integer.parseInt(id), newBookingDetail.getCode(),
 								newBookingDetail.getBookingType(), auth.getIdUser(request), newBookingDetail.getIdEvent(), newBookingDetail.getIdTable());
+						if(booking.getIdTable() != newBookingDetail.getIdTable()) {
+							if(booking.getIdTable() != 0) {
+								table.unbookTable(booking.getIdTable());
+							}
+							table.bookTable(newBookingDetail.getIdTable());
+						}
 						if(updatedBooking == true) {
 							System.out.println("Dati prenotazione aggiornati con successo");
 						}else {
