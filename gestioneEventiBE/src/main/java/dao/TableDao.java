@@ -35,7 +35,7 @@ public class TableDao {
 	public ArrayList<TableBean> getTables (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <TableBean> tableList = new ArrayList();
 		
-		query = "SELECT * FROM t_tables WHERE deleted=false Order by " + orderBy + " " + orderDirection;
+		query = "SELECT * FROM t_tables WHERE deleted=false AND booked=false Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			statement = connection.prepareStatement(query);
@@ -70,7 +70,7 @@ public class TableDao {
 	
 	public ArrayList<TableBean> getTablesByEvent (String orderBy, String orderDirection, int idEvent) throws SQLException {
 		ArrayList <TableBean> tableList = new ArrayList();
-		query = "SELECT * FROM t_tables WHERE deleted=false AND id_event=? Order by " + orderBy + " " + orderDirection;
+		query = "SELECT * FROM t_tables WHERE deleted=false AND booked=false AND id_event=? Order by " + orderBy + " " + orderDirection;
 		if(idEvent == 0) {
 			return null;
 		}
@@ -214,6 +214,30 @@ public class TableDao {
 				return false;
 			}
 		}catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	public boolean bookTable (int idTable) throws SQLException {
+		String query = "UPDATE t_tables SET booked = true WHERE id_table=? AND deleted=false";
+		int r=0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idTable);//passo l'id del tavolo da eliminare
+			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'eliminazione è avvenuta con successo
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		} catch (SQLException e) {
 			throw new SQLException(e);
 		} finally {
 			try {

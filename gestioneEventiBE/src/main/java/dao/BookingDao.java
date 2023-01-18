@@ -185,6 +185,32 @@ public class BookingDao {
 	
 	//funzione per l'aggiunta delle prenotazioni
 	public boolean addBooking( String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException{
+		if(idTable == 0) {
+			String query = "INSERT INTO t_bookings (code, booking_type, id_user, id_event) VALUES(?, ?, ?, ?)";
+			int r=0;
+			try {
+				statement = connection.prepareStatement(query); 
+				statement.setString(1, code); //imposta i vari valori corrispondenti ai ? nella query
+				statement.setString(2, bookingType);
+				statement.setInt(3, idUser);
+				statement.setInt(4, idEvent);
+			    r=statement.executeUpdate();
+				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
+			    if(r>0) {
+			    return true;
+			    }else {
+			    	return false;
+			    }
+			} catch (SQLException e) {
+				throw new SQLException(e);
+			} finally {
+				try {
+					statement.close();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		}else {
 			String query = "INSERT INTO t_bookings (code, booking_type, id_user, id_event, id_table) VALUES(?, ?, ?, ?, ?)";
 			int r=0;
 			try {
@@ -211,6 +237,7 @@ public class BookingDao {
 				}
 			}
 		}
+	}
 	
  //funzione per l'aggiornamento della prenotazione	
 	public boolean updateBooking (int idBooking, String code, String bookingType, int idUser, int idEvent, int idTable) throws SQLException {

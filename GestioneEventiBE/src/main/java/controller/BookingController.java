@@ -25,6 +25,7 @@ import beans.NewLocationBean;
 import dao.BookingDao;
 import dao.EventDao;
 import dao.FeedbackDao;
+import dao.TableDao;
 
 /**
  * Servlet implementation class BookingController
@@ -143,6 +144,7 @@ public class BookingController extends HttpServlet {
 		// controllo se l'utente è loggato
 		if(auth.checkToken(request)==true) {
 			//connectToDb();
+			TableDao table = new TableDao (this.connection);
 			BookingDao bookingDao = new BookingDao(this.connection);
 			StringBuilder buffer = new StringBuilder();
 		    BufferedReader reader = request.getReader();
@@ -161,10 +163,16 @@ public class BookingController extends HttpServlet {
 				Gson datas = new Gson();
 				try {
 					newBooking = datas.fromJson(data, NewBookingBean.class);
+					//System.out.println(newBooking.getIdTable());
 					addedBooking = bookingDao.addBooking(newBooking.getCode(), newBooking.getBookingType(), 
 		    			               auth.getIdUser(request), newBooking.getIdEvent(), newBooking.getIdTable());
 					if(addedBooking == true) {
-						System.out.println("Booking aggiunto con successo");
+						if(newBooking.getIdTable() != 0) {
+							boolean book = table.bookTable(newBooking.getIdTable());
+							if(book == true) {
+								System.out.println("Booking aggiunto con successo");
+							}
+						}
 					}else {
 						System.out.println("Aggiunta fallita");
 					}
@@ -175,9 +183,13 @@ public class BookingController extends HttpServlet {
 				// eliminazione prenotazione data
 				 boolean deleteBooking = false;  
 				 try {
+					 	BookingBean booking = bookingDao.getBookingById(Integer.parseInt(id));
 						deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
 						if(deleteBooking == true) {
-							System.out.println("Prenotazione rimossa con successo");
+							boolean unbook = table.unbookTable(booking.getIdTable());
+							if(unbook == true) {
+								System.out.println("Prenotazione rimossa con successo");
+							}
 						}else {
 							System.out.println("Eliminazione non avvenuta");
 						}
