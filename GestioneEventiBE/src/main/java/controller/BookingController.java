@@ -174,7 +174,7 @@ public class BookingController extends HttpServlet {
 							if(book == true) {
 								System.out.println("Booking aggiunto con successo");
 							}
-							if(newBooking.getBookingType().equalsIgnoreCase("ingresso singolo") || newBooking.getBookingType().equalsIgnoreCase("singolo")) {
+							if(newBooking.getBookingType().equalsIgnoreCase("entrata singola") || newBooking.getBookingType().equalsIgnoreCase("singolo")) {
 								EventBean event = eventDao.getEventById(newBooking.getIdEvent());
 								event.setStandingPlaces(event.getStandingPlaces()-1);	
 								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
