@@ -224,6 +224,30 @@ public class TableDao {
 		}
 	}
 	
+	public boolean unbookTable(int idTable) throws SQLException{
+		String query = "UPDATE t_tables SET booked = false WHERE id_table=? AND deleted=false AND booked = true";
+		int r=0;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idTable);//passo l'id del tavolo da eliminare
+			r = statement.executeUpdate();
+			// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'eliminazione è avvenuta con successo
+			if (r>0) {
+				return true;
+			}else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				statement.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
 	public boolean bookTable (int idTable) throws SQLException {
 		String query = "UPDATE t_tables SET booked = true WHERE id_table=? AND deleted=false";
 		int r=0;
