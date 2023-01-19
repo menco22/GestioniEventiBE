@@ -195,10 +195,14 @@ public class BookingController extends HttpServlet {
 					 	BookingBean booking = bookingDao.getBookingById(Integer.parseInt(id));
 						deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
 						if(deleteBooking == true) {
-							boolean unbook = table.unbookTable(booking.getIdTable());
-							if(unbook == true) {
-								System.out.println("Prenotazione rimossa con successo");
+							if(booking.getIdTable() != 0) {
+								table.unbookTable(booking.getIdTable());
+							}else {
+								EventBean event = eventDao.getEventById(booking.getIdEvent());
+								event.setStandingPlaces(event.getStandingPlaces() +1);
 							}
+							    
+								System.out.println("Prenotazione rimossa con successo");
 						}else {
 							System.out.println("Eliminazione non avvenuta");
 						}
@@ -225,10 +229,18 @@ public class BookingController extends HttpServlet {
 						updatedBooking = bookingDao.updateBooking(Integer.parseInt(id), newBookingDetail.getCode(),
 								newBookingDetail.getBookingType(), auth.getIdUser(request), newBookingDetail.getIdEvent(), newBookingDetail.getIdTable());
 						if(booking.getIdTable() != newBookingDetail.getIdTable()) {
-							if(booking.getIdTable() != 0) {
+							if(booking.getIdTable() != 0 && newBookingDetail.getIdTable() != 0) {
 								table.unbookTable(booking.getIdTable());
+								table.bookTable(newBookingDetail.getIdTable());
+							}else if (booking.getIdTable() == 0 && newBookingDetail.getIdTable() != 0) {
+								EventBean event = eventDao.getEventById(booking.getIdBooking());
+								event.setStandingPlaces(event.getStandingPlaces()+1);
+								table.bookTable(newBookingDetail.getIdTable());
+							}else if (booking.getIdTable() != 0 && newBookingDetail.getIdTable() == 0) {
+								EventBean event = eventDao.getEventById(booking.getIdBooking());
+								event.setStandingPlaces(event.getStandingPlaces()-1);
 							}
-							table.bookTable(newBookingDetail.getIdTable());
+						
 						}
 						if(updatedBooking == true) {
 							System.out.println("Dati prenotazione aggiornati con successo");
