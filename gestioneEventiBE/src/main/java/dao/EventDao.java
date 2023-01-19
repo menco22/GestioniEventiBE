@@ -1,6 +1,5 @@
 package dao;
 
-import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -45,7 +44,7 @@ public class EventDao {
 		if(idCreator == 0) {
 			return null;
 		}
-		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.data_scadenza ,t_events.standing_places,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_creator=? Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.data_scadenza ,t_events.standing_places,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.deleted=false AND t_events.id_creator=? Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query); 
 			statement.setInt(1, idCreator);
@@ -96,7 +95,7 @@ public class EventDao {
 	public ArrayList<EventBean> getEvents (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <EventBean> eventList = new ArrayList();
 		boolean canBook;
-		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.data_scadenza,t_events.standing_places  ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time,t_events.data_scadenza,t_events.standing_places  ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.deleted=false Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query); 
 			result = statement.executeQuery(); 
@@ -150,7 +149,7 @@ public class EventDao {
 	public EventBean getEventById (int idEvent) throws SQLException {
 		EventBean event = null;
 		boolean canBook;
-		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.data_scadenza,t_events.standing_places ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.id_event = ?";
+		String query="SELECT t_events.id_event, t_events.id_creator ,t_events.name, t_events.data_time, t_events.data_scadenza,t_events.standing_places ,t_events.id_location, t_locations.location_name, t_locations.address FROM t_events LEFT JOIN t_locations on t_events.id_location = t_locations.id_location WHERE t_locations.deleted = false AND t_events.deleted=false AND t_events.id_event = ?";
 		try {
 			statement = connection.prepareStatement(query); //impostazione del parametro e invio dellla query al db
 			statement.setInt(1, idEvent);
@@ -237,7 +236,7 @@ public class EventDao {
 
 	//funzione per l'eliminazione di un evento specifico
 	public boolean deleteEvent ( int idEvent) throws SQLException {
-		String query = "DELETE FROM t_events WHERE id_event = ?";
+		String query = "UPDATE t_events SET deleted=true WHERE id_event = ?";
 		int r = 0;
 		try{
 			statement = connection.prepareStatement(query); //imposto l'id dell'evento cercato e invio al db la query
