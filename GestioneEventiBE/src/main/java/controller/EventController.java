@@ -130,7 +130,8 @@ public class EventController extends HttpServlet {
 							for(int i = 0; i < eventList.size(); i++) {
 								if(i < bookings.size()) {
 									if(eventList.get(i).getIdEvent() == bookings.get(i).getEvent().getIdEvent()) {
-										eventList.remove(eventList.get(i));
+										System.out.println(eventList.get(i).getEventName());
+										eventList.remove(i);
 									}
 								}
 							}	
