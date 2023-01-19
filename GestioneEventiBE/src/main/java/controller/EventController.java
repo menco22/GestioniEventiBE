@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import beans.BookingBean;
 import beans.EventBean;
 import beans.NewEventBean;
 import beans.RegistrationBean;
+import dao.BookingDao;
 import dao.EventDao;
 import dao.UserDao;
 import controller.AuthenticationController;
@@ -121,7 +123,15 @@ public class EventController extends HttpServlet {
 						if (orderDirection == null) {
 							orderDirection = "asc";
 						}
+						BookingDao bookingDao = new BookingDao(this.connection);
+						ArrayList<BookingBean> bookings = bookingDao.getBookingByUser(orderBy, orderDirection, auth.getIdUser(request));
 						ArrayList <EventBean> eventList = eventDao.getEvents(orderBy, orderDirection);
+						for(int i = 0; i < bookings.size(); i++) {
+							if(bookings.get(i).getEvent().getIdEvent() == eventList.get(i).getIdEvent()) {
+								eventList.remove(i);
+							}	
+						}
+						
 						eventResponse = new Gson().toJson(eventList);
 					}catch (SQLException e) {
 						e.printStackTrace();
