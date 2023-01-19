@@ -79,7 +79,7 @@ public class BookingDao {
 		if(idEvent == 0) {
 			return null;
 		}
-		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event WHERE t_bookings.deleted = false AND t_eventsid_event=? Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event WHERE t_bookings.deleted = false AND t_events.id_event=? Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
 			statement.setInt(1, idEvent); 
