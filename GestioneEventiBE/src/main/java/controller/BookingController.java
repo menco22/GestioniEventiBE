@@ -165,22 +165,23 @@ public class BookingController extends HttpServlet {
 				Gson datas = new Gson();
 				try {
 					newBooking = datas.fromJson(data, NewBookingBean.class);
-					//System.out.println(newBooking.getIdTable());
+					System.out.println(newBooking.getBookingType());
 					addedBooking = bookingDao.addBooking(newBooking.getCode(), newBooking.getBookingType(), 
 		    			               auth.getIdUser(request), newBooking.getIdEvent(), newBooking.getIdTable());
 					if(addedBooking == true) {
 						if(newBooking.getIdTable() != 0) {
-							boolean book = table.bookTable(newBooking.getIdTable());
-							if(book == true) {
-								System.out.println("Booking aggiunto con successo");
+							table.bookTable(newBooking.getIdTable());
 							}
+							System.out.println("Booking aggiunto con successo");
 							if(newBooking.getBookingType().equalsIgnoreCase("S") || newBooking.getBookingType().equalsIgnoreCase("singolo")) {
 								EventBean event = eventDao.getEventById(newBooking.getIdEvent());
-								event.setStandingPlaces(event.getStandingPlaces()-1);	
-								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
-										event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());
+								if(event.getStandingPlaces() > 0) {
+									event.setStandingPlaces(event.getStandingPlaces()-1);	
+									eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
+											event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());
+								}
 							}
-						}
+						
 					}else {
 						System.out.println("Aggiunta fallita");
 					}
