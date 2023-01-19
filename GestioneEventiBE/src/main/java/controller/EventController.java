@@ -126,11 +126,14 @@ public class EventController extends HttpServlet {
 						BookingDao bookingDao = new BookingDao(this.connection);
 						ArrayList<BookingBean> bookings = bookingDao.getBookingByUser(orderBy, orderDirection, auth.getIdUser(request));
 						ArrayList <EventBean> eventList = eventDao.getEvents(orderBy, orderDirection);
-						for(int i = 0; i < eventList.size(); i++) {
-							if(bookings.get(i).getEvent().getIdEvent() == eventList.get(i).getIdEvent()) {
-								eventList.remove(i);
-							}	
+						if(bookings.size() > 0) {
+							for(int i = 0; i < eventList.size(); i++) {
+								if(bookings.get(i).getEvent().getIdEvent() == eventList.get(i).getIdEvent()) {
+									eventList.remove(i);
+								}	
+							}
 						}
+						
 						
 						eventResponse = new Gson().toJson(eventList);
 					}catch (SQLException e) {
