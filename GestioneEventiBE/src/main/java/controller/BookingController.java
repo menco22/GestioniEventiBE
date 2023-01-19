@@ -200,6 +200,8 @@ public class BookingController extends HttpServlet {
 							}else {
 								EventBean event = eventDao.getEventById(booking.getIdEvent());
 								event.setStandingPlaces(event.getStandingPlaces() +1);
+								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
+										event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());
 							}
 							    
 								System.out.println("Prenotazione rimossa con successo");
@@ -235,10 +237,14 @@ public class BookingController extends HttpServlet {
 							}else if (booking.getIdTable() == 0 && newBookingDetail.getIdTable() != 0) {
 								EventBean event = eventDao.getEventById(booking.getIdBooking());
 								event.setStandingPlaces(event.getStandingPlaces()+1);
+								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
+										event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());
 								table.bookTable(newBookingDetail.getIdTable());
 							}else if (booking.getIdTable() != 0 && newBookingDetail.getIdTable() == 0) {
 								EventBean event = eventDao.getEventById(booking.getIdBooking());
 								event.setStandingPlaces(event.getStandingPlaces()-1);
+								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
+										event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());
 							}
 						
 						}
