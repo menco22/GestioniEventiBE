@@ -37,7 +37,7 @@ public class BookingDao {
 	//(in caso non venga specificato è previsto un ordinamento di default)
 	public ArrayList<BookingBean> getBooking (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
-		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_bookings.id_event, t_events.name, t_bookings.id_table FROM t_bookings LEFT JOIN t_events ON t_bookings.id_booking=t_events.id_event WHERE deleted = false Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event WHERE t_bookings.deleted = false Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query); 
 			result = statement.executeQuery(); 
@@ -79,7 +79,7 @@ public class BookingDao {
 		if(idEvent == 0) {
 			return null;
 		}
-		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_bookings.id_event, t_events.name, t_bookings.id_table FROM t_bookings LEFT JOIN t_events ON t_bookings.id_booking=t_events.id_event WHERE deleted = false AND id_event=? Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event WHERE t_bookings.deleted = false AND id_event=? Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
 			statement.setInt(1, idEvent); 
@@ -116,7 +116,7 @@ public class BookingDao {
 	
 	public ArrayList<BookingBean> getBookingByUser (String orderBy, String orderDirection, int idUser) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
-		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_bookings.id_event, t_events.name, t_bookings.id_table FROM t_bookings LEFT JOIN t_events ON t_bookings.id_booking=t_events.id_event WHERE deleted = false AND id_user=? Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event WHERE t_bookings.deleted = false AND id_user=? Order by " + orderBy + " " + orderDirection;
 		if(idUser == 0) {
 			return null;
 		}
@@ -157,7 +157,7 @@ public class BookingDao {
 	
 	//funzione che restituisce una prenotazione specifica in base all'id passatole
 	public BookingBean getBookingById(int idBooking) throws SQLException {
-		String query ="SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_bookings.id_event, t_events.name, t_bookings.id_table FROM t_bookings LEFT JOIN t_events ON t_bookings.id_booking=t_events.id_event WHERE id_booking = ? AND deleted = false";
+		String query ="SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event WHERE t_bookings.deleted = false AND id_booking = ?";
 		BookingBean booking = null;
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
