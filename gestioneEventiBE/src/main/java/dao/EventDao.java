@@ -15,6 +15,7 @@ import java.util.*;
 
 import beans.EventBean;
 import beans.LocationBean;
+import beans.TableBean;
 
 public class EventDao {
 	public  Connection connection;
@@ -113,16 +114,16 @@ public class EventDao {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter); //formatto la data da LocalDateTime a String 
 				String formattedDataScadenza = dataScadenza.format(formatter);
-				if(dataOdierna.isBefore(dataScadenza)) {
+				if(dataOdierna.isBefore(dataScadenza) ) {
 					canBook = true;
 				}else {
 					canBook = false;
 				}
 				LocationBean location = new LocationBean(idLocation, locationName, address); 
 				EventBean event = new EventBean( idEvent, idCreator,eventName, formattedDateTime, formattedDataScadenza,standingPlaces ,location,canBook);
-				System.out.println(canBook);
+				//System.out.println(canBook);
 				if(canBook == true) {
-					eventList.add(event); 
+						eventList.add(event); 
 				}
 			}
 		} catch (SQLException e) {

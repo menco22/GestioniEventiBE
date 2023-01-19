@@ -27,6 +27,11 @@ public class EventBean {
 		this.locationBean = locationBean;
 		this.canBook = canBook;
 	}
+	
+	public EventBean (int idEvent, String eventName) {
+		this.idEvent = idEvent;
+		this.eventName = eventName;
+	}
 
 	//getters e setters per le varie proprietà
 	public int getIdEvent() {

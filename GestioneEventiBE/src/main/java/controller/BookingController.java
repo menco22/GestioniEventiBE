@@ -198,7 +198,7 @@ public class BookingController extends HttpServlet {
 							if(booking.getIdTable() != 0) {
 								table.unbookTable(booking.getIdTable());
 							}else {
-								EventBean event = eventDao.getEventById(booking.getIdEvent());
+								EventBean event = eventDao.getEventById(booking.getEvent().getIdEvent());
 								event.setStandingPlaces(event.getStandingPlaces() +1);
 								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
 										event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());

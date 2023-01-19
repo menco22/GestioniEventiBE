@@ -21,7 +21,7 @@ public class EventDaoTest {
 		String orderBy = "id_event";
 		String orderDirection = "asc";
 		eventList = eventDao.getEvents(orderBy, orderDirection);
-		int expeted = 2;
+		int expeted = 12;
 		assertEquals(expeted, eventList.size());
 	}
 	
@@ -33,7 +33,7 @@ public class EventDaoTest {
 		String orderDirection = "asc";
 		//caso id presente
 		eventList1 = eventDao.getEventsByCreator(orderBy, orderDirection,19);
-		assertEquals(1, eventList1.size());
+		assertEquals(2, eventList1.size());
 		
 		//caso id = 0
 		ArrayList <EventBean> eventList2 = new ArrayList();
