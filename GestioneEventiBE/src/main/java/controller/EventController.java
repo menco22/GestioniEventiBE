@@ -128,13 +128,13 @@ public class EventController extends HttpServlet {
 						ArrayList <EventBean> eventList = eventDao.getEvents(orderBy, orderDirection);
 						if(bookings.size() > 0) {
 							for(int i = 0; i < eventList.size(); i++) {
-								if(i < bookings.size()) {
+								//if(i < bookings.size()) {
 									for(int k = 0; k < bookings.size(); k++) {
 										if(eventList.get(i).getIdEvent() == bookings.get(k).getEvent().getIdEvent()) {
 											eventList.remove(i);
 										}
 									}
-								}
+								//}
 							}	
 						}
 						eventResponse = new Gson().toJson(eventList);
