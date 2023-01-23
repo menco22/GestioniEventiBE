@@ -77,8 +77,8 @@ public class BookingDaoTest {
 		assertEquals("ohciòfdx", booking3.getCode()); 
 		assertEquals("tavolo grande", booking3.getBookingType());
 		assertEquals(19, booking3.getIdUser());
-		assertEquals(10, booking3.getIdEvent());
-		assertEquals(7, booking3.getIdTable());
+		assertEquals(10, booking3.getEvent().getIdEvent());
+		assertEquals(7, booking3.getTable().getIdTable());
 	}
 
 }

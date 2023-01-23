@@ -195,8 +195,8 @@ public class BookingController extends HttpServlet {
 					 	BookingBean booking = bookingDao.getBookingById(Integer.parseInt(id));
 						deleteBooking = bookingDao.deleteBooking(Integer.parseInt(id));
 						if(deleteBooking == true) {
-							if(booking.getIdTable() != 0) {
-								table.unbookTable(booking.getIdTable());
+							if(booking.getTable().getIdTable() != 0) {
+								table.unbookTable(booking.getTable().getIdTable());
 							}else {
 								EventBean event = eventDao.getEventById(booking.getEvent().getIdEvent());
 								event.setStandingPlaces(event.getStandingPlaces() +1);
@@ -230,17 +230,17 @@ public class BookingController extends HttpServlet {
 						newBookingDetail = datas.fromJson(data, NewBookingBean.class);
 						updatedBooking = bookingDao.updateBooking(Integer.parseInt(id), newBookingDetail.getCode(),
 								newBookingDetail.getBookingType(), auth.getIdUser(request), newBookingDetail.getIdEvent(), newBookingDetail.getIdTable());
-						if(booking.getIdTable() != newBookingDetail.getIdTable()) {
-							if(booking.getIdTable() != 0 && newBookingDetail.getIdTable() != 0) {
-								table.unbookTable(booking.getIdTable());
+						if(booking.getTable().getIdTable() != newBookingDetail.getIdTable()) {
+							if(booking.getTable().getIdTable() != 0 && newBookingDetail.getIdTable() != 0) {
+								table.unbookTable(booking.getTable().getIdTable());
 								table.bookTable(newBookingDetail.getIdTable());
-							}else if (booking.getIdTable() == 0 && newBookingDetail.getIdTable() != 0) {
+							}else if (booking.getTable().getIdTable() == 0 && newBookingDetail.getIdTable() != 0) {
 								EventBean event = eventDao.getEventById(booking.getIdBooking());
 								event.setStandingPlaces(event.getStandingPlaces()+1);
 								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),
 										event.getEventName(), event.getDate(), event.getDataScadenza(), event.getStandingPlaces());
 								table.bookTable(newBookingDetail.getIdTable());
-							}else if (booking.getIdTable() != 0 && newBookingDetail.getIdTable() == 0) {
+							}else if (booking.getTable().getIdTable() != 0 && newBookingDetail.getIdTable() == 0) {
 								EventBean event = eventDao.getEventById(booking.getIdBooking());
 								event.setStandingPlaces(event.getStandingPlaces()-1);
 								eventDao.updateEvent(event.getIdEvent(), event.getIdCreator(), event.getLocationBean().getIdLocation(),

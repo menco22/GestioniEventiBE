@@ -13,6 +13,13 @@ public class TableBean {
 		this.tableCapacity = tableCapacity;
 		this.idEvent = idEvent;
 	}
+
+	public TableBean(int idTable, int tableCapacity) {
+		//costruttore
+		super();
+		this.idTable = idTable;
+		this.tableCapacity = tableCapacity;;
+	}
 	
 	//getters e setters delle varie proprietà
 	public int getIdTable() {

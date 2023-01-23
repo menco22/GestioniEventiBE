@@ -6,18 +6,18 @@ public class BookingBean {
 	private String code;
 	private String bookingType;
 	private int idUser;
-	private int idTable;
 	private EventBean event;
+	private TableBean table;
 	
-	public BookingBean (int idBooking, String code, String bookingType, int idUser, int idTable, EventBean event) {
+	public BookingBean (int idBooking, String code, String bookingType, int idUser,EventBean event, TableBean table) {
 		//costruttore
 		super() ;
 		this.idBooking = idBooking;
 		this.code = code;
 		this.bookingType = bookingType;
 		this.idUser = idUser;
-		this.idTable = idTable;
 		this.event = event;
+		this.table = table;
 	}
 	
 	//getters e setters per le varie proprietà
@@ -53,13 +53,6 @@ public class BookingBean {
 		this.idUser = idUser;
 	}
 
-	public int getIdTable() {
-		return idTable;
-	}
-
-	public void setIdTable(int idTable) {
-		this.idTable = idTable;
-	}
 
 	public EventBean getEvent() {
 		return event;
@@ -68,4 +61,14 @@ public class BookingBean {
 	public void setEvent(EventBean event) {
 		this.event = event;
 	}
+
+	public TableBean getTable() {
+		return table;
+	}
+
+	public void setTable(TableBean table) {
+		this.table = table;
+	}
+	
+	
 }
