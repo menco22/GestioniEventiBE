@@ -134,4 +134,14 @@
     <servlet-name>LogoutController</servlet-name>
     <url-pattern>/LogoutController</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SendEmailController</display-name>
+    <servlet-name>SendEmailController</servlet-name>
+    <servlet-class>controller.SendEmailController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SendEmailController</servlet-name>
+    <url-pattern>/SendEmailController</url-pattern>
+  </servlet-mapping>
 </web-app>
