@@ -68,6 +68,7 @@ public class SendEmailController extends HttpServlet {
 			prop.put("mail.smtp.socketFactory.fallback", "true");
 			prop.put("mail.smtp.host", "smtp-mail.outlook.com");
 			prop.put("mail.smtp.port", "587");
+			prop.put("mail.smtp.ssl.trust", "smtp-mail.outlook.com");
 			prop.put("mail.smtp.starttls.enable", "true");
 			prop.put("mail.smtp.auth", "true");
 			
