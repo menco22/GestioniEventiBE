@@ -98,7 +98,7 @@ public class RegistrationController extends HttpServlet {
 		try {
 			registration = datas.fromJson(data, RegistrationBean.class );
 			addedUser = registrationDao.addUser(registration.getName(), registration.getSurname(),
-								registration.getEmail(), registration.getUsername(), registration.getPassword(), registration.getIdRole());
+								registration.getEmail(), registration.getUsername(), registration.getPassword());
 			if(addedUser == true ) {
 				System.out.println("Utente aggiunto con successo");
 			}

@@ -41,32 +41,6 @@ public class SendEmailController extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-   
-   public void init()
-   {
-   	System.out.println("mi connetto al db");
-   	connection = connectToDb();
-   	System.out.println("connessione avvenuta con successo");
-   }
-   
-   private Connection connectToDb(){
-		try {
-			// The following lines takes the parameters used to log into the database
-			ServletContext context = getServletContext();
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			// This initializes the driver used to interact with the database
-			Class.forName(driver);
-			// This returns the connection
-			return DriverManager.getConnection(url, user, password);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
-			return null;
-		}
-   }
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -82,9 +56,7 @@ public class SendEmailController extends HttpServlet {
 	    }
 	    String data = buffer.toString();
 	    //System.out.println("i parametri sono:" +data);
-		UserDao registrationDao = new UserDao(this.connection);
 		RegistrationBean registration = null;
-		boolean addedUser = false;
 		Gson datas = new Gson();
 		try {
 			registration = datas.fromJson(data, RegistrationBean.class );
