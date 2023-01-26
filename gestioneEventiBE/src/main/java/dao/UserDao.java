@@ -255,7 +255,7 @@ public class UserDao {
 	}
 	
 	//funzione per l'aggiunta di un nuovo utente
-	public boolean addUser( String name, String surname, String email, String username, String password, int roleId) throws SQLException
+	public boolean addUser( String name, String surname, String email, String username, String password) throws SQLException
 	{
 			String query = "INSERT INTO t_users (name, surname, email, username, password, role_id) VALUES(?, ?, ?, ?, ?, ?)";
 			int r=0;
@@ -266,7 +266,7 @@ public class UserDao {
 				statement.setString(3, email);
 				statement.setString(4, username);
 				statement.setString(5, password);
-				statement.setInt(6, roleId);
+				statement.setInt(6, 2);
 			    r=statement.executeUpdate();
 				// se r>0 significa che almeno una riga è stata modificata, nel nostro caso ciò significa che l'aggiunta è avvenuta con successo
 			    if(r>0) {

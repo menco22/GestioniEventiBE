@@ -88,11 +88,6 @@ public class SendEmailController extends HttpServlet {
 		Gson datas = new Gson();
 		try {
 			registration = datas.fromJson(data, RegistrationBean.class );
-			addedUser = registrationDao.addUser(registration.getName(), registration.getSurname(),
-								registration.getEmail(), registration.getUsername(), registration.getPassword(), registration.getIdRole());
-			if(addedUser == true ) {
-				System.out.println("Utente aggiunto con successo");
-			}
 			String from	 = "event.drop@outlook.it";
 			String to= "event.drop23@gmail.com";
 			Properties prop = new Properties();
