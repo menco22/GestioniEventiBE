@@ -192,7 +192,7 @@ public class UserController extends HttpServlet {
 			response.addCookie(cookie1);
             //TODO: if user == null
 		}else {
-			response.sendError(401, "Utente o password errati");
+			response.sendError(403, "Utente o password errati");
 		}
 	}
 
