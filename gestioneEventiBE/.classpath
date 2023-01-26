@@ -40,5 +40,11 @@
 	<classpathentry kind="lib" path="lib/mockito-core-4.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/mockito-subclass-4.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-3.3.jar"/>
+	<classpathentry kind="lib" path="lib/angus-activation-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.activation-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.activation-api-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.mail-2.0.1.jar" sourcepath="lib/jakarta.mail-api-2.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.mail-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/smtp-2.0.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
