@@ -39,7 +39,7 @@ public class FeedbackDao {
 	public ArrayList<FeedbackBean> getFeedback (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <FeedbackBean> feedbackList = new ArrayList <>();
 		
-		String query = "SELECT t_feedbacks.id_feedback, t_feedbacks.id_creator, t_feedbacks.id_booking, t_feedbacks.evaluation, t_feedbacks.description FROM t_feedbacks left join t_bookings on t_feedbacks.id_booking = t_bookings.id_booking Order by " + orderBy + " " + orderDirection;
+		String query = "SELECT t_feedbacks.id_feedback, t_feedbacks.id_creator, t_feedbacks.id_booking, t_feedbacks.evaluation, t_feedbacks.description, t_bookings.id_event FROM t_feedbacks left join t_bookings on t_feedbacks.id_booking = t_bookings.id_booking Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			statement = connection.prepareStatement(query);
@@ -50,14 +50,15 @@ public class FeedbackDao {
 				int idCreator = result.getInt("id_creator");
 				int idBooking = result.getInt("id_booking");
 				int evaluation = result.getInt("evaluation");
+				int idEvent = result.getInt("id_event");
 				String description = result.getString("description");
 				BookingDao bookingDao = new BookingDao(this.connection);
 				BookingBean booking = bookingDao.getBookingById(idBooking);
 				EventDao eventDao = new EventDao(this.connection);
-				EventBean event = eventDao.getEventById(booking.getEvent().getIdEvent());
+				EventBean event = eventDao.getEventById(idEvent);
 				UserDao userDao = new UserDao(this.connection);
 				UserBean user = userDao.getUserById(idCreator);
-				FeedbackBean feedback = new FeedbackBean( idFeedback, evaluation, description, booking, event, user);
+				FeedbackBean feedback = new FeedbackBean( idFeedback, evaluation, description, booking, event, user.getUsername());
 				feedbackList.add(feedback);
 			}
 		} catch (SQLException e) {
@@ -102,7 +103,7 @@ public class FeedbackDao {
 				EventBean event = eventDao.getEventById(booking.getEvent().getIdEvent());
 				UserDao userDao = new UserDao(this.connection);
 				UserBean user = userDao.getUserById(idCreator);
-				FeedbackBean feedback = new FeedbackBean( idFeedback, evaluation, description, booking, event, user);
+				FeedbackBean feedback = new FeedbackBean( idFeedback, evaluation, description, booking, event, user.getUsername());
 				feedbackList.add(feedback);
 			}
 		} catch (SQLException e) {
