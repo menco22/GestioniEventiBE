@@ -7,6 +7,9 @@ public class FeedbackBean {
 	private int idBooking;
 	private int evaluation;
 	private String description;
+	private BookingBean booking;
+	private EventBean event;
+	private UserBean user;
 	
 	public FeedbackBean(int idFeedback, int idCreator, int idBooking, int evaluation, String description) {
 		//costruttore
@@ -16,6 +19,15 @@ public class FeedbackBean {
 		this.idBooking = idBooking;
 		this.evaluation = evaluation;
 		this.description = description;
+	}
+	
+	public FeedbackBean(int idFeedback,  int evaluation, String description, BookingBean booking, EventBean event, UserBean user) {
+		this.idFeedback = idFeedback;
+		this.evaluation = evaluation;
+		this.description = description;
+		this.booking = booking;
+		this.event = event;
+		this.user = user;
 	}
 	
 	//getters e setters delle varie proprietà
@@ -48,6 +60,30 @@ public class FeedbackBean {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public BookingBean getBooking() {
+		return booking;
+	}
+
+	public void setBooking(BookingBean booking) {
+		this.booking = booking;
+	}
+
+	public EventBean getEvent() {
+		return event;
+	}
+
+	public void setEvent(EventBean event) {
+		this.event = event;
+	}
+
+	public UserBean getUser() {
+		return user;
+	}
+
+	public void setUser(UserBean user) {
+		this.user = user;
 	}
 
 

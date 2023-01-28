@@ -7,7 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import beans.BookingBean;
+import beans.EventBean;
 import beans.FeedbackBean;
+import beans.UserBean;
 
 public class FeedbackDao {
 	private Connection connection;
@@ -36,7 +39,7 @@ public class FeedbackDao {
 	public ArrayList<FeedbackBean> getFeedback (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <FeedbackBean> feedbackList = new ArrayList <>();
 		
-		String query = "SELECT * FROM t_feedbacks Order by " + orderBy + " " + orderDirection;
+		String query = "SELECT t_feedbacks.id_feedback, t_feedbacks.id_creator, t_feedbacks.id_booking, t_feedbacks.evaluation, t_feedbacks.description FROM t_feedbacks left join t_bookings on t_feedbacks.id_booking = t_bookings.id_booking Order by " + orderBy + " " + orderDirection;
 		
 		try {
 			statement = connection.prepareStatement(query);
@@ -48,7 +51,13 @@ public class FeedbackDao {
 				int idBooking = result.getInt("id_booking");
 				int evaluation = result.getInt("evaluation");
 				String description = result.getString("description");
-				FeedbackBean feedback = new FeedbackBean( idFeedback, idCreator, idBooking, evaluation, description);
+				BookingDao bookingDao = new BookingDao(this.connection);
+				BookingBean booking = bookingDao.getBookingById(idBooking);
+				EventDao eventDao = new EventDao(this.connection);
+				EventBean event = eventDao.getEventById(booking.getEvent().getIdEvent());
+				UserDao userDao = new UserDao(this.connection);
+				UserBean user = userDao.getUserById(idCreator);
+				FeedbackBean feedback = new FeedbackBean( idFeedback, evaluation, description, booking, event, user);
 				feedbackList.add(feedback);
 			}
 		} catch (SQLException e) {
@@ -70,6 +79,52 @@ public class FeedbackDao {
 		
 		return feedbackList;
 	}
+	
+	public ArrayList<FeedbackBean> getFeedbackByEventCreator (String orderBy, String orderDirection, int idCreatorEvent) throws SQLException {
+		ArrayList <FeedbackBean> feedbackList = new ArrayList <>();
+		
+		String query = "SELECT t_feedbacks.id_feedback, t_feedbacks.id_creator, t_feedbacks.id_booking, t_feedbacks.evaluation, t_feedbacks.description FROM t_feedbacks LEFT JOIN t_bookings ON t_feedbacks.id_booking = t_bookings.id_booking LEFT JOIN t_events ON t_bookings.id_event = t_events.id_event WHERE t_events.id_creator =?  Order by " + orderBy + " " + orderDirection;
+		
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, idCreatorEvent);
+			result = statement.executeQuery();
+
+			while(result.next()) {
+				int idFeedback = result.getInt("id_feedback");
+				int idCreator = result.getInt("id_creator");
+				int idBooking = result.getInt("id_booking");
+				int evaluation = result.getInt("evaluation");
+				String description = result.getString("description");
+				BookingDao bookingDao = new BookingDao(this.connection);
+				BookingBean booking = bookingDao.getBookingById(idBooking);
+				EventDao eventDao = new EventDao(this.connection);
+				EventBean event = eventDao.getEventById(booking.getEvent().getIdEvent());
+				UserDao userDao = new UserDao(this.connection);
+				UserBean user = userDao.getUserById(idCreator);
+				FeedbackBean feedback = new FeedbackBean( idFeedback, evaluation, description, booking, event, user);
+				feedbackList.add(feedback);
+			}
+		} catch (SQLException e) {
+		    e.printStackTrace();
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				statement.close();
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}	
+		
+		return feedbackList;
+	}
+	
 	
 	//funzione che restituisce il feedback corrispondente all'id passatole
 	public FeedbackBean getFeedbackById(int idFeedback) throws SQLException {

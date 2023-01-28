@@ -17,9 +17,15 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import beans.BookingBean;
+import beans.EventBean;
 import beans.FeedbackBean;
 import beans.NewFeedbackBean;
+import beans.UserBean;
+import dao.BookingDao;
+import dao.EventDao;
 import dao.FeedbackDao;
+import dao.UserDao;
 
 /**
  * Servlet implementation class FeedbackController
@@ -82,22 +88,41 @@ public class FeedbackController extends HttpServlet {
 				response.getWriter().append(feedbackResponse);
 			}else {
 				// get della lista completa di feedback
-				try {
-				String orderBy = request.getParameter("orderBy");
-				String orderDirection = request.getParameter("orderDirection");
-				if(orderBy == null) {
-					orderBy = "id_feedback";
-				}
-				if (orderDirection == null) {
-					orderDirection = "asc";
-				}
-				ArrayList <FeedbackBean> feedbackList = feedbackDao.getFeedback(orderBy, orderDirection);
-				feedbackResponse = new Gson().toJson(feedbackList);
-				}catch (SQLException e) {
-					e.printStackTrace();
-				}
+				if(auth.isAdmin(request) == true) {
+					try {
+						String orderBy = request.getParameter("orderBy");
+						String orderDirection = request.getParameter("orderDirection");
+						if(orderBy == null) {
+							orderBy = "t_bookings.id_event";
+						}
+						if (orderDirection == null) {
+							orderDirection = "asc";
+						}
+						ArrayList <FeedbackBean> feedbackList = feedbackDao.getFeedbackByEventCreator(orderBy, orderDirection, auth.getIdUser(request));
+						feedbackResponse = new Gson().toJson(feedbackList);
+					}catch (SQLException e) {
+						e.printStackTrace();
+					}
+				response.getWriter().append(feedbackResponse);
+				}else {
+					try {
+						String orderBy = request.getParameter("orderBy");
+						String orderDirection = request.getParameter("orderDirection");
+						if(orderBy == null) {
+							orderBy = "t_bookings.id_event";
+						}
+						if (orderDirection == null) {
+							orderDirection = "asc";
+						}
+						ArrayList <FeedbackBean> feedbackList = feedbackDao.getFeedback(orderBy, orderDirection);
+						feedbackResponse = new Gson().toJson(feedbackList);
+					}catch (SQLException e) {
+						e.printStackTrace();
+					}
 				response.getWriter().append(feedbackResponse);
 			}
+				}
+	
 		}else {
 			response.sendError(401,"Effettuare il login");
 		}
