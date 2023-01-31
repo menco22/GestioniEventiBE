@@ -70,6 +70,7 @@ public class UserProfileController extends HttpServlet {
 		UserDao userDao = new UserDao (this.connection);
 		if(auth.checkToken(request)==true) {
 			try {
+				// get dell'username e ruolo
 				ProfileBean profile = userDao.getUsernameAndRole(auth.getIdUser(request));
 				roleResponse = new Gson().toJson(profile);
 			} catch (SQLException e) {

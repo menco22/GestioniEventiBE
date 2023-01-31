@@ -69,15 +69,15 @@ public class UserController extends HttpServlet {
     
     private Connection connectToDb(){
 		try {
-			// The following lines takes the parameters used to log into the database
+			// parametri per connettersi al db
 			ServletContext context = getServletContext();
 			String driver = context.getInitParameter("dbDriver");
 			String url = context.getInitParameter("dbUrl");
 			String user = context.getInitParameter("dbUser");
 			String password = context.getInitParameter("dbPassword");
-			// This initializes the driver used to interact with the database
+			// inizializzazione del driver usato per la connessione
 			Class.forName(driver);
-			// This returns the connection
+			// ritorna la connessione
 			return DriverManager.getConnection(url, user, password);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

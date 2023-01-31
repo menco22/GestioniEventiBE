@@ -45,6 +45,8 @@ public class SendEmailController extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+   
+   // utilizzata per inviare la richiesta di account da creator
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		StringBuilder buffer = new StringBuilder();

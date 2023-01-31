@@ -50,15 +50,15 @@ public class FeedbackController extends HttpServlet {
 
     private Connection connectToDb(){
 		try {
-			// The following lines takes the parameters used to log into the database
+			// parametri per connettersi al db
 			ServletContext context = getServletContext();
 			String driver = context.getInitParameter("dbDriver");
 			String url = context.getInitParameter("dbUrl");
 			String user = context.getInitParameter("dbUser");
 			String password = context.getInitParameter("dbPassword");
-			// This initializes the driver used to interact with the database
+			// inizializzazione del driver usato per la connessione
 			Class.forName(driver);
-			// This returns the connection
+			// ritorna la connessione
 			return DriverManager.getConnection(url, user, password);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -88,6 +88,7 @@ public class FeedbackController extends HttpServlet {
 				response.getWriter().append(feedbackResponse);
 			}else {
 				// get della lista completa di feedback
+				// se utente admin vede solo le recensioni dei suoi eventi
 				if(auth.isAdmin(request) == true) {
 					try {
 						String orderBy = request.getParameter("orderBy");
@@ -105,6 +106,7 @@ public class FeedbackController extends HttpServlet {
 					}
 				response.getWriter().append(feedbackResponse);
 				}else {
+					// utente normale vede tutte i feedback ordinati per evento
 					try {
 						String orderBy = request.getParameter("orderBy");
 						String orderDirection = request.getParameter("orderDirection");

@@ -8,8 +8,6 @@ public class FeedbackBean {
 	private int evaluation;
 	private String description;
 	private BookingBean booking;
-	private EventBean event;
-	private UserBean user;
 	private String username;
 	
 	public FeedbackBean(int idFeedback, int idCreator, int idBooking, int evaluation, String description) {
@@ -22,12 +20,11 @@ public class FeedbackBean {
 		this.description = description;
 	}
 	
-	public FeedbackBean(int idFeedback,  int evaluation, String description, BookingBean booking, EventBean event, String username) {
+	public FeedbackBean(int idFeedback,  int evaluation, String description, BookingBean booking, String username) {
 		this.idFeedback = idFeedback;
 		this.evaluation = evaluation;
 		this.description = description;
 		this.booking = booking;
-		this.event = event;
 		this.username = username;
 	}
 	
@@ -69,22 +66,6 @@ public class FeedbackBean {
 
 	public void setBooking(BookingBean booking) {
 		this.booking = booking;
-	}
-
-	public EventBean getEvent() {
-		return event;
-	}
-
-	public void setEvent(EventBean event) {
-		this.event = event;
-	}
-
-	public UserBean getUser() {
-		return user;
-	}
-
-	public void setUser(UserBean user) {
-		this.user = user;
 	}
 
 	public String getUsername() {
