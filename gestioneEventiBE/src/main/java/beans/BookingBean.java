@@ -8,8 +8,9 @@ public class BookingBean {
 	private int idUser;
 	private EventBean event;
 	private TableBean table;
+	private boolean canReview;
 	
-	public BookingBean (int idBooking, String code, String bookingType, int idUser,EventBean event, TableBean table) {
+	public BookingBean (int idBooking, String code, String bookingType, int idUser,EventBean event, TableBean table, boolean canReview) {
 		//costruttore
 		super() ;
 		this.idBooking = idBooking;
@@ -18,6 +19,7 @@ public class BookingBean {
 		this.idUser = idUser;
 		this.event = event;
 		this.table = table;
+		this.canReview = canReview;
 	}
 	
 	//getters e setters per le varie proprietà
@@ -69,6 +71,13 @@ public class BookingBean {
 	public void setTable(TableBean table) {
 		this.table = table;
 	}
-	
+
+	public boolean isCanReview() {
+		return canReview;
+	}
+
+	public void setCanReview(boolean canReview) {
+		this.canReview = canReview;
+	}
 	
 }

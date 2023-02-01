@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import beans.BookingBean;
@@ -38,7 +40,8 @@ public class BookingDao {
 	//(in caso non venga specificato è previsto un ordinamento di default)
 	public ArrayList<BookingBean> getBooking (String orderBy, String orderDirection) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
-		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table, t_bookings.id_event, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table  WHERE t_bookings.deleted = false AND t_events.deleted=false Order by " + orderBy + " " + orderDirection;
+		boolean canReview;
+		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_events.data_time, t_bookings.id_table, t_bookings.id_event, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table  WHERE t_bookings.deleted = false AND t_events.deleted=false Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query); 
 			result = statement.executeQuery(); 
@@ -49,11 +52,20 @@ public class BookingDao {
 				int idUser = result.getInt("id_user");
 				int  idEvent = result.getInt("id_event");
 				String eventName = result.getString("name");
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				String formattedDateTime = date.format(formatter);
 				int idTable = result.getInt("id_table");
 				int tableCapacity = result.getInt("table_capacity");
 				TableBean table = new TableBean(idTable, tableCapacity);
-				EventBean event = new EventBean(idEvent, eventName);
-				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table);
+				EventBean event = new EventBean(idEvent, eventName, formattedDateTime);
+				LocalDateTime dataOdierna = LocalDateTime.now();
+				if(dataOdierna.isBefore(date)) {
+					canReview = false;
+				}else {
+					canReview = true;
+				}
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table, canReview);
 				bookingList.add(booking);
 				
 			}
@@ -79,10 +91,11 @@ public class BookingDao {
 	
 	public ArrayList<BookingBean> getBookingByEvent (String orderBy, String orderDirection, int idEvent) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
+		boolean canReview;
 		if(idEvent == 0) {
 			return null;
 		}
-		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user,  t_bookings.id_event, t_events.name, t_bookings.id_table, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table WHERE t_bookings.deleted = false AND t_events.deleted=? AND t_events.id_event=? Order by " + orderBy + " " + orderDirection;
+		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user,  t_bookings.id_event, t_events.name, t_events.data_time, t_bookings.id_table, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table WHERE t_bookings.deleted = false AND t_events.deleted=? AND t_events.id_event=? Order by " + orderBy + " " + orderDirection;
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
 			statement.setInt(1, idEvent); 
@@ -95,9 +108,18 @@ public class BookingDao {
 				int idTable = result.getInt("id_table");
 				int tableCapacity = result.getInt("table_capacity");
 				String eventName = result.getString("name");
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				String formattedDateTime = date.format(formatter);
+				LocalDateTime dataOdierna = LocalDateTime.now();
+				if(dataOdierna.isBefore(date)) {
+					canReview = false;
+				}else {
+					canReview = true;
+				}
 				TableBean table = new TableBean(idTable, tableCapacity);
-				EventBean event = new EventBean(idEvent, eventName);
-				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table);
+				EventBean event = new EventBean(idEvent, eventName, formattedDateTime);
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table, canReview);
 				bookingList.add(booking);
 			}
 		}catch (SQLException e) {
@@ -121,7 +143,8 @@ public class BookingDao {
 	
 	public ArrayList<BookingBean> getBookingByUser (String orderBy, String orderDirection, int idUser) throws SQLException {
 		ArrayList <BookingBean> bookingList = new ArrayList();
-		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_bookings.id_table,  t_bookings.id_event, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table WHERE t_bookings.deleted = false AND t_events.deleted=false AND t_bookings.id_user=? Order by " + orderBy + " " + orderDirection;
+		boolean canReview;
+		query = "SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user, t_events.name, t_events.data_time, t_bookings.id_table,  t_bookings.id_event, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table WHERE t_bookings.deleted = false AND t_events.deleted=false AND t_bookings.id_user=? Order by " + orderBy + " " + orderDirection;
 		if(idUser == 0) {
 			return null;
 		}
@@ -137,9 +160,18 @@ public class BookingDao {
 				int idTable = result.getInt("id_table");
 				int tableCapacity = result.getInt("table_capacity");
 				String eventName = result.getString("name");
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				String formattedDateTime = date.format(formatter);
+				LocalDateTime dataOdierna = LocalDateTime.now();
+				if(dataOdierna.isBefore(date)) {
+					canReview = false;
+				}else {
+					canReview = true;
+				}
 				TableBean table = new TableBean(idTable, tableCapacity);
-				EventBean event = new EventBean(idEvent, eventName); 
-				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table);
+				EventBean event = new EventBean(idEvent, eventName, formattedDateTime); 
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table, canReview);
 				bookingList.add(booking);
 			}
 		}catch (SQLException e) {
@@ -164,8 +196,9 @@ public class BookingDao {
 	
 	//funzione che restituisce una prenotazione specifica in base all'id passatole
 	public BookingBean getBookingById(int idBooking) throws SQLException {
-		String query ="SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user,  t_bookings.id_event, t_events.name, t_bookings.id_table, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table WHERE t_bookings.deleted = false AND t_events.deleted=false AND t_bookings.id_booking = ?";
+		String query ="SELECT t_bookings.id_booking, t_bookings.code, t_bookings.booking_type, t_bookings.id_user,  t_bookings.id_event, t_events.name, t_events.data_time, t_bookings.id_table, t_tables.table_capacity FROM t_events right JOIN t_bookings ON t_events.id_event=t_bookings.id_event left join t_tables on t_tables.id_table = t_bookings.id_table WHERE t_bookings.deleted = false AND t_events.deleted=false AND t_bookings.id_booking = ?";
 		BookingBean booking = null;
+		boolean canReview;
 		try {
 			statement = connection.prepareStatement(query);//impostazione del parametro e invio della query al db
 			statement.setInt(1, idBooking); 
@@ -178,9 +211,18 @@ public class BookingDao {
 				String eventName = result.getString("name");
 				int idTable = result.getInt("id_table");
 				int tableCapacity = result.getInt("table_capacity");
+				LocalDateTime date = (LocalDateTime) result.getObject("data_time");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				String formattedDateTime = date.format(formatter);
+				LocalDateTime dataOdierna = LocalDateTime.now();
+				if(dataOdierna.isBefore(date)) {
+					canReview = false;
+				}else {
+					canReview = true;
+				}
 				TableBean table = new TableBean(idTable, tableCapacity);
-				EventBean event = new EventBean (idEvent, eventName);
-				booking = new BookingBean(idBooking, code, bookingType, idUser, event, table);
+				EventBean event = new EventBean (idEvent, eventName, formattedDateTime);
+				booking = new BookingBean(idBooking, code, bookingType, idUser, event, table, canReview);
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();
