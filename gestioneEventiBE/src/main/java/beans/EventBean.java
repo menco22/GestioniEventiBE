@@ -28,9 +28,10 @@ public class EventBean {
 		this.canBook = canBook;
 	}
 	
-	public EventBean (int idEvent, String eventName) {
+	public EventBean (int idEvent, String eventName, String date) {
 		this.idEvent = idEvent;
 		this.eventName = eventName;
+		this.date = date;
 	}
 
 	//getters e setters per le varie proprietà
