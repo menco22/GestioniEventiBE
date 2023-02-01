@@ -82,7 +82,7 @@ public class SendEmailController extends HttpServlet {
 		
 			//Session emailSession = Session.getDefaultInstance(prop, null);
 			String msgBody = "Si chiede account come creator del seguente utente: "+ registration.getName() +" "
-					+ registration.getSurname() + " " + registration.getUsername();
+					+ registration.getSurname() + " " + registration.getUsername() + " " + registration.getEmail();
 			Message msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(from));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
