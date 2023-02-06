@@ -86,7 +86,7 @@ public class SendEmailController extends HttpServlet {
 			Message msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(from));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-			msg.setSubject("Richiesta account come admin da " + registration.getUsername());
+			msg.setSubject("Richiesta account come creator da " + registration.getUsername());
 			msg.setText(msgBody);
 			Transport.send(msg);
 		}catch (Exception e) {
