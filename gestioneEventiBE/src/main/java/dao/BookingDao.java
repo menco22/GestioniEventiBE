@@ -59,13 +59,16 @@ public class BookingDao {
 				int tableCapacity = result.getInt("table_capacity");
 				TableBean table = new TableBean(idTable, tableCapacity);
 				EventBean event = new EventBean(idEvent, eventName, formattedDateTime);
+				UserDao userDao = new UserDao(this.connection);
+				UserBean user = userDao.getUserById(idUser);
+				String username = user.getUsername();
 				LocalDateTime dataOdierna = LocalDateTime.now();
 				if(dataOdierna.isBefore(date)) {
 					canReview = false;
 				}else {
 					canReview = true;
 				}
-				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table, canReview);
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, username, event, table, canReview);
 				bookingList.add(booking);
 				
 			}
@@ -112,6 +115,9 @@ public class BookingDao {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter);
 				LocalDateTime dataOdierna = LocalDateTime.now();
+				UserDao userDao = new UserDao(this.connection);
+				UserBean user = userDao.getUserById(idUser);
+				String username = user.getUsername();
 				if(dataOdierna.isBefore(date)) {
 					canReview = false;
 				}else {
@@ -119,7 +125,7 @@ public class BookingDao {
 				}
 				TableBean table = new TableBean(idTable, tableCapacity);
 				EventBean event = new EventBean(idEvent, eventName, formattedDateTime);
-				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table, canReview);
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, username, event, table, canReview);
 				bookingList.add(booking);
 			}
 		}catch (SQLException e) {
@@ -164,6 +170,9 @@ public class BookingDao {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter);
 				LocalDateTime dataOdierna = LocalDateTime.now();
+				UserDao userDao = new UserDao(this.connection);
+				UserBean user = userDao.getUserById(idUser);
+				String username = user.getUsername();
 				if(dataOdierna.isBefore(date)) {
 					canReview = false;
 				}else {
@@ -171,7 +180,7 @@ public class BookingDao {
 				}
 				TableBean table = new TableBean(idTable, tableCapacity);
 				EventBean event = new EventBean(idEvent, eventName, formattedDateTime); 
-				BookingBean booking = new BookingBean( idBooking, code, bookingType, idUser, event, table, canReview);
+				BookingBean booking = new BookingBean( idBooking, code, bookingType, username, event, table, canReview);
 				bookingList.add(booking);
 			}
 		}catch (SQLException e) {
@@ -215,6 +224,9 @@ public class BookingDao {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 				String formattedDateTime = date.format(formatter);
 				LocalDateTime dataOdierna = LocalDateTime.now();
+				UserDao userDao = new UserDao(this.connection);
+				UserBean user = userDao.getUserById(idUser);
+				String username = user.getUsername();
 				if(dataOdierna.isBefore(date)) {
 					canReview = false;
 				}else {
@@ -222,7 +234,7 @@ public class BookingDao {
 				}
 				TableBean table = new TableBean(idTable, tableCapacity);
 				EventBean event = new EventBean (idEvent, eventName, formattedDateTime);
-				booking = new BookingBean(idBooking, code, bookingType, idUser, event, table, canReview);
+				booking = new BookingBean(idBooking, code, bookingType, username, event, table, canReview);
 			}
 		}catch(SQLException e) {
 		    e.printStackTrace();

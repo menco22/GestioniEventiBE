@@ -5,18 +5,18 @@ public class BookingBean {
 	private int idBooking;
 	private String code;
 	private String bookingType;
-	private int idUser;
+	private String username;
 	private EventBean event;
 	private TableBean table;
 	private boolean canReview;
 	
-	public BookingBean (int idBooking, String code, String bookingType, int idUser,EventBean event, TableBean table, boolean canReview) {
+	public BookingBean (int idBooking, String code, String bookingType, String username,EventBean event, TableBean table, boolean canReview) {
 		//costruttore
 		super() ;
 		this.idBooking = idBooking;
 		this.code = code;
 		this.bookingType = bookingType;
-		this.idUser = idUser;
+		this.username = username;
 		this.event = event;
 		this.table = table;
 		this.canReview = canReview;
@@ -47,12 +47,12 @@ public class BookingBean {
 		this.bookingType = bookingType;
 	}
 
-	public int getIdUser() {
-		return idUser;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setIdUser(int idUser) {
-		this.idUser = idUser;
+	public void setIdUser(String username) {
+		this.username = username;
 	}
 
 
